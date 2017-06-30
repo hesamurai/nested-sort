@@ -1,6 +1,6 @@
 {
   "name": "nested-sort",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-eslint": "^4.1.8",

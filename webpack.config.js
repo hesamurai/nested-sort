@@ -1,17 +1,14 @@
 var webpack = require('webpack');
 var path = require('path');
-var libraryName = 'nested-sort';
-var outputFile = libraryName + '.js';
 
 var config = {
-    entry: __dirname + '/src/index.js',
+    entry: __dirname + '/src/nested-sort.js',
     devtool: 'source-map',
     output: {
         path: __dirname + '/dist',
-        filename: outputFile,
-        library: libraryName,
-        libraryTarget: 'umd',
-        umdNamedDefine: true
+        filename: 'nested-sort.js',
+        library: 'nestedSort',
+        libraryTarget: 'var'
     },
     module: {
         loaders: [
