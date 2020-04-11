@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Nested Sort Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    #draggable {
+      padding: 0;
+    }
+
+    #draggable li {
+      list-style: none;
+      margin: 0 0 5px;
+      padding: 10px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+    }
+
+    #draggable li[draggable="true"] {
+      cursor: grab;
+    }
+
+    #draggable li:active {
+      cursor: grabbing;
+    }
+
+    #draggable li ul {
+      min-height: 30px;
+      padding: 0;
+      margin-top: 10px;
+      margin-bottom: -5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Creating nested lists</h1>
+
+  <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
+
+  <ul id="draggable">
+    <li>Topic 1</li>
+    <li>Topic 2</li>
+    <li>Topic 3</li>
+    <li>Topic 4</li>
+    <li>Topic 5</li>
+    <li>Topic 6</li>
+    <li>Topic 7</li>
+    <li>Topic 8</li>
+  </ul>
+
+</div>
+
+<!-- Scripts -->
+<script src="../dist/nested-sort.umd.js"></script>
+<script>
+  (function() {
+    new nestedSort({
+      el: 'draggable',
+      droppingEdge: 5
+    });
+  })();
+</script>
+</body>
+</html>

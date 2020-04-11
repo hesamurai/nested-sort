@@ -1,5 +1,6 @@
 .idea
-node_modules
-
-dist/*
-!dist/nested-sort.js
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+package-lock.json
