@@ -77,6 +77,16 @@ class nestedSort {
     }
   }
 
+  onDragLeave(e) {
+    e.preventDefault();
+  }
+
+  onDragEnd(e) {
+    e.preventDefault();
+    this.draggedNode.classList.remove('dragged');
+    this.cleanupPlaceholderLists();
+  }
+
   dragListener(e) {
     this.updateCoordination(e);
     this.managePlaceholderLists(e);
@@ -151,16 +161,6 @@ class nestedSort {
     this.distances.mouseTo.targetedElTopAbs = Math.abs(result);
     this.dimensions.targetedEl.H = this.targetedNode.clientHeight;
     this.distances.mouseTo.targetedElBot = this.distances.mouseTo.targetedElTopAbs - this.dimensions.targetedEl.H;
-  }
-
-  onDragLeave(e) {
-    e.preventDefault();
-  }
-
-  onDragEnd(e) {
-    e.preventDefault();
-    this.draggedNode.classList.remove('dragged');
-    this.cleanupPlaceholderLists();
   }
 
   areNested(child, parent) {
