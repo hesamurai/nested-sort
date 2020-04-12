@@ -242,11 +242,15 @@ class nestedSort {
     this.targetedNode.appendChild(list);
   }
 
+  targetNodeIsIdentified() {
+    return !!this.targetedNode;
+  }
+
   canBeDropped() {
     let result = true;
 
-    result &= !!this.targetedNode && this.targetedNode !== this.draggedNode;
-    result &= !(this.targetedNode.nodeName === 'UL' && this.targetedNode.querySelectorAll('li').length);
+    result &= this.targetNodeIsIdentified() && this.targetedNode !== this.draggedNode;
+    result &= this.targetNodeIsIdentified() && !(this.targetedNode.nodeName === 'UL' && this.targetedNode.querySelectorAll('li').length);
     result &= !this.areNested(this.targetedNode, this.draggedNode);
 
     return result;
