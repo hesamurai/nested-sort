@@ -25,8 +25,10 @@ class nestedSort {
       }
     };
 
-    this.cursorX = null;
-    this.cursorY = null;
+    this.cursor = {
+      X: null,
+      Y: null
+    };
     this.targetedNodeX = null;
     this.targetedNodeY = null;
 
@@ -128,8 +130,8 @@ class nestedSort {
     // cursorY = e.screenY;
 
     // we're having the client coords because on the next lines, we use getBoundingClientRect which behaves in the same way
-    this.cursorX = e.clientX;
-    this.cursorY = e.clientY;
+    this.cursor.X = e.clientX;
+    this.cursor.Y = e.clientY;
   }
 
   calcMouseToTargetedElDist() {
@@ -141,7 +143,7 @@ class nestedSort {
     this.targetedNodeX = offset.left;
     this.targetedNodeY = offset.top;
 
-    let result = this.targetedNodeY - this.cursorY;
+    let result = this.targetedNodeY - this.cursor.Y;
     this.distances.mouseTo.targetedElTop = result;
     this.distances.mouseTo.targetedElTopAbs = Math.abs(result);
     this.dimensions.targetedEl.H = this.targetedNode.clientHeight;
@@ -169,11 +171,11 @@ class nestedSort {
   }
 
   cursorIsIndentedEnough() {
-    return this.cursorX - this.targetedNodeX > 50;
+    return this.cursor.X - this.targetedNodeX > 50;
   }
 
   mouseHasMovedUp() {
-    return this.draggedNode.getBoundingClientRect().top > this.cursorY;
+    return this.draggedNode.getBoundingClientRect().top > this.cursor.Y;
   }
 
   mouseHasMovedDown() {
@@ -181,7 +183,7 @@ class nestedSort {
   }
 
   mouseIsTooCloseToTop() {
-    return this.cursorY - this.targetedNodeY < this.distances.droppingEdge;
+    return this.cursor.Y - this.targetedNodeY < this.distances.droppingEdge;
   }
 
   insertAfter(newNode, referenceNode) {
