@@ -11,6 +11,11 @@ class nestedSort {
     this.draggedNode = null;
     this.targetedNode = null;
 
+    this.targetNode = {
+      X: null,
+      Y: null
+    };
+
     this.distances = {
       droppingEdge,
       droppingEdgeNegative: droppingEdge * -1,
@@ -29,8 +34,6 @@ class nestedSort {
       X: null,
       Y: null
     };
-    this.targetedNodeX = null;
-    this.targetedNodeY = null;
 
     this.dropEvent = new Event('drop');
 
@@ -140,10 +143,10 @@ class nestedSort {
     }
 
     let offset = this.targetedNode.getBoundingClientRect();
-    this.targetedNodeX = offset.left;
-    this.targetedNodeY = offset.top;
+    this.targetNode.X = offset.left;
+    this.targetNode.Y = offset.top;
 
-    let result = this.targetedNodeY - this.cursor.Y;
+    let result = this.targetNode.Y - this.cursor.Y;
     this.distances.mouseTo.targetedElTop = result;
     this.distances.mouseTo.targetedElTopAbs = Math.abs(result);
     this.dimensions.targetedEl.H = this.targetedNode.clientHeight;
@@ -171,7 +174,7 @@ class nestedSort {
   }
 
   cursorIsIndentedEnough() {
-    return this.cursor.X - this.targetedNodeX > 50;
+    return this.cursor.X - this.targetNode.X > 50;
   }
 
   mouseHasMovedUp() {
@@ -183,7 +186,7 @@ class nestedSort {
   }
 
   mouseIsTooCloseToTop() {
-    return this.cursor.Y - this.targetedNodeY < this.distances.droppingEdge;
+    return this.cursor.Y - this.targetNode.Y < this.distances.droppingEdge;
   }
 
   insertAfter(newNode, referenceNode) {
