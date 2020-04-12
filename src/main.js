@@ -1,8 +1,6 @@
 class nestedSort {
 
   constructor(opt = {}) {
-    this.selector = opt.selector || '';
-
     this.sortableList = null;
     this.placeholderUl = null;
     this.placeholderInUse = null;
