@@ -1,6 +1,9 @@
 class nestedSort {
 
-  constructor({ droppingEdge, el } = {}) {
+  constructor({
+    droppingEdge = 15,
+    el
+  } = {}) {
     this.selector = el;
     this.sortableList = null;
     this.placeholderUl = null;
@@ -9,6 +12,8 @@ class nestedSort {
     this.targetedNode = null;
 
     this.distances = {
+      droppingEdge,
+      droppingEdgeNegative: droppingEdge * -1,
       mouseTo: {
         targetedElTop: undefined
       }
@@ -26,9 +31,6 @@ class nestedSort {
     this.targetedNodeY = null;
 
     this.dropEvent = new Event('drop');
-
-    this.distances.droppingEdge = droppingEdge || 15;
-    this.distances.droppingEdgeNegative = this.distances.droppingEdge * -1;
 
     this.initDragAndDrop();
   }
