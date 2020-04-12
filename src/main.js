@@ -35,7 +35,11 @@ class nestedSort {
       Y: null
     };
 
-    this.dropEvent = new Event('drop');
+    this.classNames = {
+      dragged: 'ns-dragged',
+      placeholder: 'ns-placeholder',
+      targeted: 'ns-targeted',
+    }
 
     this.initDragAndDrop();
   }
@@ -43,7 +47,6 @@ class nestedSort {
   initDragAndDrop() {
 
     document.addEventListener('dragover', this.dragListener.bind(this), false);
-    // document.addEventListener('touchmove', this.dragListener.bind(this), false);
 
     this.initPlaceholderList();
 
@@ -53,13 +56,9 @@ class nestedSort {
       el.setAttribute('draggable', 'true');
 
       el.addEventListener('dragstart', this.onDragStart.bind(this), false);
-      // el.addEventListener('touchstart', onDragStart, false);
-
       el.addEventListener('dragenter', this.onDragEnter.bind(this), false);
-      // el.addEventListener('dragexit', removeStyles, false);
-      el.addEventListener('dragleave', this.onDragLeave.bind(this), false);
       el.addEventListener('dragend', this.onDragEnd.bind(this), false);
-      el.addEventListener('drop', this.onDrop.bind(this), false);
+
       this.addListItemStyles(el)
     });
   }
@@ -78,36 +77,51 @@ class nestedSort {
 
   onDragStart(e) {
     this.draggedNode = e.target;
-    this.draggedNode.classList.add('dragged');
+    this.draggedNode.classList.add(this.classNames.dragged);
     e.dataTransfer.setData('text', 'Drag started!'); // Hack for Firefox!
   }
 
-  onDragEnter(e) {
-    e.preventDefault();
+  onDragOver(e) {
+    e.preventDefault(); // prevent default to allow drop
+  }
 
+  onDragEnter(e) {
     if (['LI', 'UL'].includes(e.target.nodeName)) {
+      e.preventDefault(); // prevent default to allow drop
+
+      if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted);
       this.targetedNode = e.target;
+      e.target.classList.add(this.classNames.targeted);
+
+      e.target.addEventListener('dragover', this.onDragOver.bind(this), false);
+      e.target.addEventListener('drop', this.onDrop.bind(this), false);
+      e.target.addEventListener('dragleave', this.onDragLeave.bind(this), false);
     }
   }
 
   onDragLeave(e) {
     e.preventDefault();
+    e.target.removeEventListener('dragover', this.onDrop);
+    e.target.removeEventListener('drop', this.onDrop);
+    e.target.removeEventListener('dragleave', this.onDragLeave);
   }
 
   onDragEnd(e) {
     e.preventDefault();
-    this.draggedNode.classList.remove('dragged');
+    this.draggedNode.classList.remove(this.classNames.dragged);
+    this.targetedNode.classList.remove(this.classNames.targeted)
     this.cleanupPlaceholderLists();
   }
 
-  onDrop() {
+  onDrop(e) {
+    e.preventDefault();
+    this.maybeDrop();
     this.cleanupPlaceholderLists();
   }
 
   dragListener(e) {
     this.updateCoordination(e);
     this.managePlaceholderLists(e);
-    this.maybeDrop();
   }
 
   updateCoordination(e) {
@@ -115,34 +129,22 @@ class nestedSort {
     this.calcMouseToTargetedElDist();
   }
 
-  maybeDrop() {
+  maybeDrop(e) {
     if (!this.canBeDropped()) {
       return;
     }
 
     let dropLocation;
     if (this.targetedNode.nodeName === 'LI' && !this.cursorIsIndentedEnough()) {
-      if (
-        this.distances.mouseTo.targetedElTop < 0
-        && this.distances.mouseTo.targetedElTop > this.distances.droppingEdgeNegative
-        // && mouseHasMovedUp()
-      ) {
-        dropLocation = 'before';
-      } else if (
-        this.distances.mouseTo.targetedElBot < 0
-        && this.distances.mouseTo.targetedElBot > this.distances.droppingEdgeNegative
-        // && mouseHasMovedDown()
-      ) {
-        dropLocation = 'after';
-      }
+      dropLocation = 'before';
     } else if (this.targetedNode.nodeName === 'UL') {
       dropLocation = 'inside';
     }
 
-    if (dropLocation) this.dropTheItem(dropLocation);
+    if (dropLocation) this.dropTheItem(dropLocation, e);
   }
 
-  dropTheItem(place) {
+  dropTheItem(place, e) {
     switch (place) {
       case 'before':
         this.targetedNode.parentNode.insertBefore(this.draggedNode, this.targetedNode);
@@ -154,14 +156,9 @@ class nestedSort {
         this.targetedNode.appendChild(this.draggedNode);
         break;
     }
-
-    this.draggedNode.dispatchEvent(this.dropEvent);
   }
 
   calcMouseCoords(e) {
-    // cursorX = e.screenX;
-    // cursorY = e.screenY;
-
     // we're having the client coords because on the next lines, we use getBoundingClientRect which behaves in the same way
     this.cursor.X = e.clientX;
     this.cursor.Y = e.clientY;
@@ -197,14 +194,6 @@ class nestedSort {
     return this.cursor.X - this.targetNode.X > 50;
   }
 
-  mouseHasMovedUp() {
-    return this.draggedNode.getBoundingClientRect().top > this.cursor.Y;
-  }
-
-  mouseHasMovedDown() {
-    return !this.mouseHasMovedUp();
-  }
-
   mouseIsTooCloseToTop() {
     return this.cursor.Y - this.targetNode.Y < this.distances.droppingEdge;
   }
@@ -233,7 +222,7 @@ class nestedSort {
   }
 
   targetedNodeIsPlaceholder() {
-    return this.targetedNode.nodeName === 'UL' && this.targetedNode.classList.contains('placeholder');
+    return this.targetedNode.nodeName === 'UL' && this.targetedNode.classList.contains(this.classNames.placeholder);
   }
 
   analysePlaceHolderSituation(e) {
@@ -282,15 +271,15 @@ class nestedSort {
     this.sortableList.querySelectorAll('ul').forEach(ul => {
       if (!ul.querySelectorAll('li').length) {
         ul.remove();
-      } else if (ul.classList.contains('placeholder')) {
-        ul.classList.remove('placeholder');
+      } else if (ul.classList.contains(this.classNames.placeholder)) {
+        ul.classList.remove(this.classNames.placeholder);
       }
     });
   }
 
   initPlaceholderList() {
     this.placeholderUl = document.createElement('ul');
-    this.placeholderUl.classList.add("placeholder");
+    this.placeholderUl.classList.add(this.classNames.placeholder);
   }
 
   getPlaceholderList() {
