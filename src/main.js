@@ -60,7 +60,20 @@ class nestedSort {
       el.addEventListener('dragleave', this.onDragLeave.bind(this), false);
       el.addEventListener('dragend', this.onDragEnd.bind(this), false);
       el.addEventListener('drop', this.onDrop.bind(this), false);
+      this.addListItemStyles(el)
     });
+  }
+
+  getComputedStyleValue(el, prop) {
+    return window.getComputedStyle(el, null).getPropertyValue(prop);
+  }
+
+  addListItemStyles(li) {
+    // let's add a move cursor icon if it does not already have a cursor css property
+    const cursor = this.getComputedStyleValue(li, 'cursor');
+    if (!cursor || cursor === 'auto') {
+      li.style.cursor = 'move';
+    }
   }
 
   onDragStart(e) {
