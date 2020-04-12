@@ -103,23 +103,26 @@ class nestedSort {
       return;
     }
 
+    let dropLocation;
     if (this.targetedNode.nodeName === 'LI' && !this.cursorIsIndentedEnough()) {
       if (
         this.distances.mouseTo.targetedElTop < 0
         && this.distances.mouseTo.targetedElTop > this.distances.droppingEdgeNegative
         // && mouseHasMovedUp()
       ) {
-        this.dropTheItem('before');
+        dropLocation = 'before';
       } else if (
         this.distances.mouseTo.targetedElBot < 0
         && this.distances.mouseTo.targetedElBot > this.distances.droppingEdgeNegative
         // && mouseHasMovedDown()
       ) {
-        this.dropTheItem('after');
+        dropLocation = 'after';
       }
     } else if (this.targetedNode.nodeName === 'UL') {
-      this.dropTheItem('inside');
+      dropLocation = 'inside';
     }
+
+    if (dropLocation) this.dropTheItem(dropLocation);
   }
 
   dropTheItem(place) {
