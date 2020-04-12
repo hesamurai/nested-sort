@@ -76,12 +76,12 @@ class nestedSort {
   }
 
   dragListener(e) {
-    this.updateCoordinations(e);
+    this.updateCoordination(e);
     this.managePlaceholderLists(e);
     this.dropIf(e);
   }
 
-  updateCoordinations(e) {
+  updateCoordination(e) {
     this.calcMouseCoords(e);
     this.calcMouseToTargetedElDist();
   }
