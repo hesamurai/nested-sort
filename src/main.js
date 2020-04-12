@@ -207,7 +207,6 @@ class nestedSort {
           this.cleanupPlaceholderLists();
           break;
         default:
-          return;
           break;
       }
     });
