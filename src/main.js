@@ -1,6 +1,7 @@
 class nestedSort {
 
   constructor({ droppingEdge, el } = {}) {
+    this.selector = el;
     this.sortableList = null;
     this.placeholderUl = null;
     this.placeholderInUse = null;
@@ -26,7 +27,6 @@ class nestedSort {
 
     this.dropEvent = new Event('drop');
 
-    this.selector = el;
     this.distances.droppingEdge = droppingEdge || 15;
     this.distances.droppingEdgeNegative = this.distances.droppingEdge * -1;
 
