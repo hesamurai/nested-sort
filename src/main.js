@@ -90,7 +90,7 @@ class nestedSort {
   dragListener(e) {
     this.updateCoordination(e);
     this.managePlaceholderLists(e);
-    this.dropIf(e);
+    this.maybeDrop();
   }
 
   updateCoordination(e) {
@@ -98,7 +98,7 @@ class nestedSort {
     this.calcMouseToTargetedElDist();
   }
 
-  dropIf(e) {
+  maybeDrop() {
     if (!this.canBeDropped()) {
       return;
     }
