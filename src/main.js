@@ -72,7 +72,7 @@ class nestedSort {
   onDragEnter(e) {
     e.preventDefault();
 
-    if (['LI', 'UL'].indexOf(e.target.nodeName) > -1) {
+    if (['LI', 'UL'].includes(e.target.nodeName)) {
       this.targetedNode = e.target;
     }
   }
