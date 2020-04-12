@@ -100,6 +100,10 @@ class nestedSort {
     this.cleanupPlaceholderLists();
   }
 
+  onDrop() {
+    this.cleanupPlaceholderLists();
+  }
+
   dragListener(e) {
     this.updateCoordination(e);
     this.managePlaceholderLists(e);
@@ -292,10 +296,6 @@ class nestedSort {
   getPlaceholderList() {
     this.placeholderInUse = this.placeholderUl.cloneNode(true);
     return this.placeholderInUse;
-  }
-
-  onDrop() {
-    this.cleanupPlaceholderLists();
   }
 }
 
