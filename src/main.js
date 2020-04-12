@@ -1,9 +1,6 @@
 class nestedSort {
 
-  constructor(opt) {
-    opt = opt || {};
-
-    // private data
+  constructor(opt = {}) {
     this.selector = opt.selector || '';
 
     this.sortableList = null;
