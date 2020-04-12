@@ -241,8 +241,10 @@ class nestedSort {
 
   addPlaceholderList() {
     const list = this.getPlaceholderList();
-    list.style.minHeight = `${this.draggedNode.offsetHeight}px`;
+    list.style.minHeight = '0';
     this.targetedNode.appendChild(list);
+    list.style.transition = 'min-height ease .2s';
+    list.style.minHeight = `${this.draggedNode.offsetHeight}px`;
   }
 
   targetNodeIsIdentified() {
