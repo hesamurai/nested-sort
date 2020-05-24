@@ -1,5 +1,9 @@
 class DataEngine {
-  constructor({ data = [] }) {
+  /**
+   * @constructor
+   * @param {array} data
+   */
+  constructor({ data }) {
     this.data = data
   }
 
