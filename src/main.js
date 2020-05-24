@@ -1,9 +1,16 @@
+import DataEngine from './data-engine'
+
 class nestedSort {
 
+  /**
+   * @param {array} data
+   */
   constructor({
+    data,
     droppingEdge = 15,
     el
   } = {}) {
+    this.data = data;
     this.selector = el;
     this.sortableList = null;
     this.placeholderUl = null;
@@ -41,7 +48,16 @@ class nestedSort {
       targeted: 'ns-targeted',
     }
 
+    this.maybeInitDataDom()
     this.initDragAndDrop();
+  }
+
+  maybeInitDataDom() {
+    if (!(Array.isArray(this.data) && this.data.length)) return;
+
+    const dataEngine = new DataEngine({data: this.data})
+    const list = dataEngine.render();
+    document.getElementById(this.selector).appendChild(list);
   }
 
   initDragAndDrop() {
@@ -50,7 +66,8 @@ class nestedSort {
 
     this.initPlaceholderList();
 
-    this.sortableList = document.getElementById(this.selector);
+    const list = document.getElementById(this.selector)
+    this.sortableList = list ? list : list.querySelector('ul')
 
     this.sortableList.querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', 'true');
