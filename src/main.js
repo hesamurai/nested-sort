@@ -7,11 +7,13 @@ class nestedSort {
    * @param {array} data
    * @param {number} droppingEdge
    * @param {string} el
+   * @param {array|string} listClassNames
    */
   constructor({
     data,
     droppingEdge = 15,
-    el
+    el,
+    listClassNames
   } = {}) {
     this.data = data;
     this.selector = el;
@@ -20,6 +22,7 @@ class nestedSort {
     this.placeholderInUse = null;
     this.draggedNode = null;
     this.targetedNode = null;
+    this.listClassNames = this.createListClassNamesArray(listClassNames)
 
     this.targetNode = {
       X: null,
@@ -55,11 +58,17 @@ class nestedSort {
     this.initDragAndDrop();
   }
 
+  createListClassNamesArray(listClassNames) {
+    if (!listClassNames) return []
+    return Array.isArray(listClassNames) ? listClassNames : listClassNames.split(' ')
+  }
+
   maybeInitDataDom() {
     if (!(Array.isArray(this.data) && this.data.length)) return;
 
     const dataEngine = new DataEngine({data: this.data})
     const list = dataEngine.render();
+    list.classList.add(...this.listClassNames)
     document.getElementById(this.selector).appendChild(list);
   }
 
