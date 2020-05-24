@@ -3,7 +3,10 @@ import DataEngine from './data-engine'
 class nestedSort {
 
   /**
+   * @constructor
    * @param {array} data
+   * @param {number} droppingEdge
+   * @param {string} el
    */
   constructor({
     data,
