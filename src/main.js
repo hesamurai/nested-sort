@@ -151,6 +151,7 @@ class nestedSort {
 
   onDrop(e) {
     e.preventDefault();
+    e.stopPropagation()
     this.maybeDrop();
     this.cleanupPlaceholderLists();
   }
