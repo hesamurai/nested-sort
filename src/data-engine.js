@@ -130,6 +130,22 @@ class DataEngine {
   }
 
   /**
+   * @param {HTMLUListElement} ul
+   * @returns {{parent, id: string}[]}
+   */
+  convertDomToData(ul) {
+    return Array.from(ul.querySelectorAll('li')).map(li => {
+      const parentListItem = li.parentNode
+      const parent = parentListItem.dataset.id
+
+      return {
+        id: li.dataset.id,
+        parent
+      }
+    })
+  }
+
+  /**
    * @returns {HTMLUListElement}
    */
   render() {

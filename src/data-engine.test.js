@@ -1,6 +1,46 @@
 import DataEngine from './data-engine'
 
 describe('DataEngine class', () => {
+  let list
+
+  beforeEach(() => {
+    list = document.createElement('ul')
+    list.innerHTML =
+      '<li data-id="1">One' +
+        '<ul data-id="1">' +
+          '<li data-id="11">One-One' +
+            '<ul data-id="11">' +
+              '<li data-id="111">One-One-One</li>' +
+              '<li data-id="112">One-One-Two' +
+                '<ul data-id="112">' +
+                  '<li data-id="1121">One-One-Two-One</li>' +
+                  '<li data-id="1122">One-One-Two-Two</li>' +
+                  '<li data-id="1123">One-One-Two-Three</li>' +
+                '</ul>' +
+              '</li>' +
+              '<li data-id="113">One-One-Three</li>' +
+            '</ul>' +
+          '</li>' +
+          '<li data-id="12">One-Two</li>' +
+        '</ul>' +
+      '</li>' +
+      '<li data-id="2">Two</li>' +
+      '<li data-id="3">Three</li>' +
+      '<li data-id="4">Four' +
+        '<ul data-id="4">' +
+          '<li data-id="41">Four-One</li>' +
+          '<li data-id="42">Four-Two' +
+            '<ul data-id="42">' +
+              '<li data-id="421">Four-Two-One</li>' +
+              '<li data-id="422">Four-Two-Two</li>' +
+              '<li data-id="423">Four-Two-Three</li>' +
+            '</ul>' +
+          '</li>' +
+        '</ul>' +
+      '</li>' +
+      '<li data-id="5">Five</li>'
+  })
+
   describe('constructor method', () => {
     it('should set the instance properties correctly', () => {
       const data = [
@@ -121,44 +161,36 @@ describe('DataEngine class', () => {
         data
       }
 
-      const list = document.createElement('ul')
-      list.innerHTML =
-        '<li data-id="1">One' +
-          '<ul data-id="1">' +
-            '<li data-id="11">One-One' +
-              '<ul data-id="11">' +
-                '<li data-id="111">One-One-One</li>' +
-                '<li data-id="112">One-One-Two' +
-                  '<ul data-id="112">' +
-                    '<li data-id="1121">One-One-Two-One</li>' +
-                    '<li data-id="1122">One-One-Two-Two</li>' +
-                    '<li data-id="1123">One-One-Two-Three</li>' +
-                  '</ul>' +
-                '</li>' +
-                '<li data-id="113">One-One-Three</li>' +
-              '</ul>' +
-            '</li>' +
-            '<li data-id="12">One-Two</li>' +
-          '</ul>' +
-        '</li>' +
-        '<li data-id="2">Two</li>' +
-        '<li data-id="3">Three</li>' +
-        '<li data-id="4">Four' +
-          '<ul data-id="4">' +
-            '<li data-id="41">Four-One</li>' +
-            '<li data-id="42">Four-Two' +
-              '<ul data-id="42">' +
-                '<li data-id="421">Four-Two-One</li>' +
-                '<li data-id="422">Four-Two-Two</li>' +
-                '<li data-id="423">Four-Two-Three</li>' +
-              '</ul>' +
-            '</li>' +
-          '</ul>' +
-        '</li>' +
-        '<li data-id="5">Five</li>'
-
       expect((new DataEngine(dataEngineConfig)).render()).toEqual(list)
       expect(list.querySelectorAll('li').length).toEqual(data.length)
+    })
+  })
+
+  describe('convertDomToData method', () => {
+    it('should correctly convert a nested list of elements to an array of objects', () => {
+      const data = [
+        { id: "1" },
+        { id: "11", parent: "1" },
+        { id: "111", parent: "11" },
+        { id: "112", parent: "11" },
+        { id: "1121", parent: "112" },
+        { id: "1122", parent: "112" },
+        { id: "1123", parent: "112" },
+        { id: "113", parent: "11" },
+        { id: "12", parent: "1" },
+        { id: "2" },
+        { id: "3" },
+        { id: "4" },
+        { id: "41", parent: "4" },
+        { id: "42", parent: "4" },
+        { id: "421", parent: "42" },
+        { id: "422", parent: "42" },
+        { id: "423", parent: "42" },
+        { id: "5" },
+      ]
+
+      const engine = new DataEngine({})
+      expect(engine.convertDomToData(list)).toEqual(data)
     })
   })
 })
