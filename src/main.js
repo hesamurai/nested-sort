@@ -79,7 +79,7 @@ class nestedSort {
     this.initPlaceholderList();
 
     const list = document.getElementById(this.selector)
-    this.sortableList = list ? list : list.querySelector('ul')
+    this.sortableList = list.nodeName === 'UL' ? list : list.querySelector('ul')
 
     this.sortableList.querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', 'true');
