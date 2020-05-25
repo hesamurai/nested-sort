@@ -94,6 +94,7 @@ class nestedSort {
       el.addEventListener('dragstart', this.onDragStart.bind(this), false);
       el.addEventListener('dragenter', this.onDragEnter.bind(this), false);
       el.addEventListener('dragend', this.onDragEnd.bind(this), false);
+      el.addEventListener('drop', this.onDrop.bind(this), false);
 
       this.addListItemStyles(el)
     });
@@ -130,7 +131,6 @@ class nestedSort {
       e.target.classList.add(this.classNames.targeted);
 
       e.target.addEventListener('dragover', this.onDragOver.bind(this), false);
-      e.target.addEventListener('drop', this.onDrop.bind(this), false);
       e.target.addEventListener('dragleave', this.onDragLeave.bind(this), false);
     }
   }
