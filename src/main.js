@@ -58,6 +58,14 @@ class nestedSort {
     this.initDragAndDrop();
   }
 
+  getDataEngine() {
+    if (this.dataEngine instanceof DataEngine) {
+      return this.dataEngine
+    }
+    this.dataEngine = new DataEngine({data: this.data})
+    return this.dataEngine
+  }
+
   createListClassNamesArray(listClassNames) {
     if (!listClassNames) return []
     return Array.isArray(listClassNames) ? listClassNames : listClassNames.split(' ')
@@ -66,8 +74,7 @@ class nestedSort {
   maybeInitDataDom() {
     if (!(Array.isArray(this.data) && this.data.length)) return;
 
-    const dataEngine = new DataEngine({data: this.data})
-    const list = dataEngine.render();
+    const list = this.getDataEngine().render()
     list.classList.add(...this.listClassNames)
     document.getElementById(this.selector).appendChild(list);
   }
