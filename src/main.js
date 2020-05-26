@@ -4,12 +4,14 @@ class nestedSort {
 
   /**
    * @constructor
+   * @param {{onDrop: function}} actions
    * @param {array} data
    * @param {number} droppingEdge
    * @param {string} el
    * @param {array|string} listClassNames
    */
   constructor({
+    actions: { onDrop } = {},
     data,
     droppingEdge = 15,
     el,
@@ -23,6 +25,9 @@ class nestedSort {
     this.draggedNode = null;
     this.targetedNode = null;
     this.listClassNames = this.createListClassNamesArray(listClassNames)
+    this.actions = {
+      onDrop
+    }
 
     this.targetNode = {
       X: null,
@@ -154,6 +159,10 @@ class nestedSort {
     e.stopPropagation()
     this.maybeDrop();
     this.cleanupPlaceholderLists();
+
+    if (typeof this.actions.onDrop === 'function') {
+      this.actions.onDrop(this.getDataEngine().convertDomToData(this.sortableList))
+    }
   }
 
   dragListener(e) {

@@ -44,6 +44,11 @@
     ]
 
     new nestedSort({
+      actions: {
+        onDrop: function (data) {
+          console.log(data)
+        }
+      },
       data: data,
       el: 'draggable2',
       droppingEdge: 5,

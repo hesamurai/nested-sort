@@ -38,6 +38,11 @@
 <script>
   (function() {
     new nestedSort({
+      actions: {
+        onDrop: function (data) {
+          console.log(data)
+        }
+      },
       el: 'draggable',
       droppingEdge: 5
     });
