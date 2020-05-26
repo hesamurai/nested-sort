@@ -2,6 +2,22 @@
 
 A JavaScript library to create a nested list of elements
 
+## Download
+
+ * [CDN copies](https://www.jsdelivr.com/package/npm/nested-sort) [![](https://data.jsdelivr.com/v1/package/npm/nested-sort/badge)](https://www.jsdelivr.com/package/npm/nested-sort)
+
+
+## Installation
+
+Using npm:
+```shell
+$ npm i nested-sort
+```
+
+## Demo
+
+There are some samples in the `dev` folder.
+
 ## Developer environment requirements
 
 To run this project, you will need:
@@ -15,6 +31,7 @@ To run this project, you will need:
 yarn
 yarn test
 yarn test --watch
+yarn test:coverage
 ```
 
 ## Dev mode
