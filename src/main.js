@@ -1,15 +1,33 @@
+import DataEngine from './data-engine'
+
 class nestedSort {
 
+  /**
+   * @constructor
+   * @param {{onDrop: function}} actions
+   * @param {array} data
+   * @param {number} droppingEdge
+   * @param {string} el
+   * @param {array|string} listClassNames
+   */
   constructor({
+    actions: { onDrop } = {},
+    data,
     droppingEdge = 15,
-    el
+    el,
+    listClassNames
   } = {}) {
+    this.data = data;
     this.selector = el;
     this.sortableList = null;
     this.placeholderUl = null;
     this.placeholderInUse = null;
     this.draggedNode = null;
     this.targetedNode = null;
+    this.listClassNames = this.createListClassNamesArray(listClassNames)
+    this.actions = {
+      onDrop
+    }
 
     this.targetNode = {
       X: null,
@@ -41,7 +59,29 @@ class nestedSort {
       targeted: 'ns-targeted',
     }
 
+    this.maybeInitDataDom()
     this.initDragAndDrop();
+  }
+
+  getDataEngine() {
+    if (this.dataEngine instanceof DataEngine) {
+      return this.dataEngine
+    }
+    this.dataEngine = new DataEngine({data: this.data})
+    return this.dataEngine
+  }
+
+  createListClassNamesArray(listClassNames) {
+    if (!listClassNames) return []
+    return Array.isArray(listClassNames) ? listClassNames : listClassNames.split(' ')
+  }
+
+  maybeInitDataDom() {
+    if (!(Array.isArray(this.data) && this.data.length)) return;
+
+    const list = this.getDataEngine().render()
+    list.classList.add(...this.listClassNames)
+    document.getElementById(this.selector).appendChild(list);
   }
 
   initDragAndDrop() {
@@ -50,7 +90,8 @@ class nestedSort {
 
     this.initPlaceholderList();
 
-    this.sortableList = document.getElementById(this.selector);
+    const list = document.getElementById(this.selector)
+    this.sortableList = list.nodeName === 'UL' ? list : list.querySelector('ul')
 
     this.sortableList.querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', 'true');
@@ -58,6 +99,7 @@ class nestedSort {
       el.addEventListener('dragstart', this.onDragStart.bind(this), false);
       el.addEventListener('dragenter', this.onDragEnter.bind(this), false);
       el.addEventListener('dragend', this.onDragEnd.bind(this), false);
+      el.addEventListener('drop', this.onDrop.bind(this), false);
 
       this.addListItemStyles(el)
     });
@@ -94,7 +136,6 @@ class nestedSort {
       e.target.classList.add(this.classNames.targeted);
 
       e.target.addEventListener('dragover', this.onDragOver.bind(this), false);
-      e.target.addEventListener('drop', this.onDrop.bind(this), false);
       e.target.addEventListener('dragleave', this.onDragLeave.bind(this), false);
     }
   }
@@ -115,8 +156,13 @@ class nestedSort {
 
   onDrop(e) {
     e.preventDefault();
+    e.stopPropagation()
     this.maybeDrop();
     this.cleanupPlaceholderLists();
+
+    if (typeof this.actions.onDrop === 'function') {
+      this.actions.onDrop(this.getDataEngine().convertDomToData(this.sortableList))
+    }
   }
 
   dragListener(e) {
@@ -273,6 +319,7 @@ class nestedSort {
         ul.remove();
       } else if (ul.classList.contains(this.classNames.placeholder)) {
         ul.classList.remove(this.classNames.placeholder);
+        ul.dataset.id = ul.parentNode.dataset.id
       }
     });
   }

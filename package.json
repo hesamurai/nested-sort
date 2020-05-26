@@ -1,6 +1,6 @@
 {
   "name": "nested-sort",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "author": "Hesam Bahrami (Genzo)",
   "description": "A JavaScript library to create a nested list of elements",
   "main": "dist/nested-sort.cjs.js",
@@ -29,6 +29,7 @@
     "build": "rollup -c",
     "build:watch": "rollup -c -w",
     "watch": "concurrently 'yarn build:watch' 'yarn serve -l tcp://127.0.0.1'",
+    "test:coverage": "jest --coverage",
     "test": "jest && yarn build"
   },
   "renovate": {
