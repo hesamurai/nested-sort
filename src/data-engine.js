@@ -1,7 +1,14 @@
+/**
+ * @typedef {object} dataEngineDataItem
+ * @property {number|string} id
+ * @property {string} text
+ * @property {number|string} [parent]
+ */
+
 class DataEngine {
   /**
    * @constructor
-   * @param {array} data
+   * @param {array.<dataEngineDataItem>} data
    */
   constructor({ data }) {
     this.data = data
@@ -10,7 +17,7 @@ class DataEngine {
   }
 
   /**
-   * @returns {array}
+   * @returns {array.<dataEngineDataItem>}
    */
   sortListItems() {
     this.sortedData = [...this.data].sort((item1, item2) => {
@@ -22,7 +29,7 @@ class DataEngine {
   }
 
   /**
-   * @param {object} item
+   * @param {dataEngineDataItem} item
    * @param {string} nodeName
    * @returns {HTMLElement}
    */
