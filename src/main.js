@@ -9,13 +9,15 @@ class nestedSort {
    * @param {number} droppingEdge
    * @param {string} el
    * @param {array|string} listClassNames
+   * @param {object} [propertyMap={}]
    */
   constructor({
     actions: { onDrop } = {},
     data,
     droppingEdge = 15,
     el,
-    listClassNames
+    listClassNames,
+    propertyMap = {}
   } = {}) {
     this.data = data;
     this.selector = el;
@@ -25,6 +27,7 @@ class nestedSort {
     this.draggedNode = null;
     this.targetedNode = null;
     this.listClassNames = this.createListClassNamesArray(listClassNames)
+    this.propertyMap = propertyMap
     this.actions = {
       onDrop
     }
@@ -67,7 +70,7 @@ class nestedSort {
     if (this.dataEngine instanceof DataEngine) {
       return this.dataEngine
     }
-    this.dataEngine = new DataEngine({data: this.data})
+    this.dataEngine = new DataEngine({data: this.data, propertyMap: this.propertyMap})
     return this.dataEngine
   }
 
