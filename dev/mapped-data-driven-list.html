@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Nested Sort Mapped Data-Driven List Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <h1>A mapped data-driven list</h1>
+
+  <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
+
+  <div id="draggable"></div>
+</div>
+
+<!-- Scripts -->
+<script src="../dist/nested-sort.umd.js"></script>
+<script>
+  (function() {
+    const data = [
+      { item_id: 1, item_title: 'One' },
+      { item_id: 11, item_title: 'One-One', item_parent: 1 },
+      { item_id: 2, item_title: 'Two' },
+      { item_id: 3, item_title: 'Three' },
+      { item_id: 1121, item_title: 'One-One-Two-One', item_parent: 112 },
+      { item_id: 1122, item_title: 'One-One-Two-Two', item_parent: 112 },
+      { item_id: 1123, item_title: 'One-One-Two-Three', item_parent: 112 },
+      { item_id: 12, item_title: 'One-Two', item_parent: 1 },
+      { item_id: 111, item_title: 'One-One-One', item_parent: 11 },
+      { item_id: 112, item_title: 'One-One-Two', item_parent: 11 },
+      { item_id: 113, item_title: 'One-One-Three', item_parent: 11 },
+    ]
+
+    new nestedSort({
+      actions: {
+        onDrop: function (data) {
+          console.log(data)
+        }
+      },
+      data: data,
+      propertyMap: {
+        id: 'item_id',
+        parent: 'item_parent',
+        text: 'item_title',
+      },
+      el: 'draggable',
+      droppingEdge: 5,
+      listClassNames: ['nested-sort']
+    });
+  })();
+</script>
+</body>
+</html>

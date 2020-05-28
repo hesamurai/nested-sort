@@ -1,23 +1,45 @@
-/**
- * @typedef {object} dataEngineDataItem
- * @property {number|string} id
- * @property {string} text
- * @property {number|string} [parent]
- */
-
 class DataEngine {
   /**
    * @constructor
-   * @param {array.<dataEngineDataItem>} data
+   * @param {object[]} data
+   * @param {object} [propertyMap={}]
    */
-  constructor({ data }) {
+  constructor({ data, propertyMap = {} }) {
     this.data = data
     this.sortedData = []
     this.sortedDataDomArray = []
+    this.propertyMap = propertyMap
+
+    this.maybeTransformData()
+  }
+
+  maybeTransformData() {
+    if (!Object.keys(this.propertyMap).length) return;
+
+    const getItemPropProxyName = this.getItemPropProxyName.bind(this)
+
+    this.data = this.data.map(item => {
+      return new Proxy(item, {
+        get(target, prop, receiver) {
+          return Reflect.get(target, getItemPropProxyName(prop), receiver)
+        }
+      })
+    })
   }
 
   /**
-   * @returns {array.<dataEngineDataItem>}
+   * @param {PropertyKey} prop
+   * @returns {PropertyKey}
+   */
+  getItemPropProxyName(prop) {
+    if (this.propertyMap.hasOwnProperty(prop)) {
+      return this.propertyMap[prop]
+    }
+    return prop
+  }
+
+  /**
+   * @returns {object[]}
    */
   sortListItems() {
     this.sortedData = [...this.data].sort((item1, item2) => {
@@ -29,7 +51,7 @@ class DataEngine {
   }
 
   /**
-   * @param {dataEngineDataItem} item
+   * @param {object[]} item
    * @param {string} nodeName
    * @returns {HTMLElement}
    */
@@ -138,7 +160,7 @@ class DataEngine {
 
   /**
    * @param {HTMLUListElement} ul
-   * @returns {{parent, id: string}[]}
+   * @returns {object[]}
    */
   convertDomToData(ul) {
     return Array.from(ul.querySelectorAll('li')).map(li => {
@@ -146,8 +168,8 @@ class DataEngine {
       const parent = parentListItem.dataset.id
 
       return {
-        id: li.dataset.id,
-        parent
+        [this.getItemPropProxyName('id')]: li.dataset.id,
+        [this.getItemPropProxyName('parent')]: parent,
       }
     })
   }
