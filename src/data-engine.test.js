@@ -87,14 +87,14 @@ describe('DataEngine class', () => {
     describe('when no nodeName argument is passed', () => {
       it('should return an LI node', () => {
         const item = { id: 1, text: 'Hi' }
-        const engine = new DataEngine({})
+        const engine = new DataEngine({data: [item]})
         expect(engine.createItemElement(item).nodeName).toBe('LI')
       })
 
       it('should set the innerHtml correctly', () => {
         const text = 'Hello world'
         const item = { id: 1, text }
-        const engine = new DataEngine({})
+        const engine = new DataEngine({data: [item]})
         expect(engine.createItemElement(item).innerHTML).toBe(text)
       })
     })
@@ -103,7 +103,7 @@ describe('DataEngine class', () => {
       it('should NOT set the innerHtml', () => {
         const text = 'Hello world'
         const item = { id: 1, text }
-        const engine = new DataEngine({})
+        const engine = new DataEngine({data: [item]})
         expect(engine.createItemElement(item, 'ul').innerHTML).toBe('')
       })
     })
@@ -111,7 +111,7 @@ describe('DataEngine class', () => {
     it('should set the data-id attribute with the correct value', () => {
       const id = 1
       const item = { id, text: 'Hi' }
-      const engine = new DataEngine({})
+      const engine = new DataEngine({data: [item]})
       expect(engine.createItemElement(item).dataset.id).toBe(`${id}`)
     })
   })
@@ -189,8 +189,87 @@ describe('DataEngine class', () => {
         { id: "5" },
       ]
 
-      const engine = new DataEngine({})
+      const engine = new DataEngine({data})
       expect(engine.convertDomToData(list)).toEqual(data)
+    })
+
+    it('should correctly convert a nested list of elements to an array of mapped objects', () => {
+      const list = document.createElement('ul')
+      list.innerHTML =
+        '<li data-id="1">One' +
+          '<ul data-id="1">' +
+            '<li data-id="11">One-One' +
+              '<ul data-id="11">' +
+                '<li data-id="111">One-One-One</li>' +
+                '<li data-id="112">One-One-Two' +
+                  '<ul data-id="112">' +
+                    '<li data-id="1121">One-One-Two-One</li>' +
+                    '<li data-id="1122">One-One-Two-Two</li>' +
+                  '</ul>' +
+                '</li>' +
+              '</ul>' +
+            '</li>' +
+            '<li data-id="12">One-Two</li>' +
+          '</ul>' +
+        '</li>' +
+        '<li data-id="2">Two</li>' +
+        '<li data-id="3">Three</li>' +
+        '<li data-id="4">Four</li>'
+
+      const data = [
+        { item_id: "1", item_parent: undefined },
+        { item_id: "11", item_parent: "1" },
+        { item_id: "111", item_parent: "11" },
+        { item_id: "112", item_parent: "11" },
+        { item_id: "1121", item_parent: "112" },
+        { item_id: "1122", item_parent: "112" },
+        { item_id: "12", item_parent: "1" },
+        { item_id: "2", item_parent: undefined },
+        { item_id: "3", item_parent: undefined },
+        { item_id: "4", item_parent: undefined },
+      ]
+      const propertyMap = {
+        id: 'item_id',
+        parent: 'item_parent',
+      }
+      const engine = new DataEngine({data, propertyMap})
+      expect(engine.convertDomToData(list)).toEqual(data)
+    })
+  })
+
+  describe('when we have property mapping', () => {
+    it('should map the properties correctly', () => {
+      const data = [
+        { item_id: 1, item_title: 'One' },
+        { item_id: 11, item_title: 'One-One', item_parent: 1 },
+        { item_id: 2, item_title: 'Two' },
+        { item_id: 3, item_title: 'Three' },
+        { item_id: 1121, item_title: 'One-One-Two-One', item_parent: 112 },
+        { item_id: 1122, item_title: 'One-One-Two-Two', item_parent: 112 },
+        { item_id: 1123, item_title: 'One-One-Two-Three', item_parent: 112 },
+        { item_id: 4, item_title: 'Four' },
+        { item_id: 41, item_title: 'Four-One', item_parent: 4 },
+        { item_id: 42, item_title: 'Four-Two', item_parent: 4 },
+        { item_id: 421, item_title: 'Four-Two-One', item_parent: 42 },
+        { item_id: 422, item_title: 'Four-Two-Two', item_parent: 42 },
+        { item_id: 423, item_title: 'Four-Two-Three', item_parent: 42 },
+        { item_id: 5, item_title: 'Five' },
+        { item_id: 12, item_title: 'One-Two', item_parent: 1 },
+        { item_id: 111, item_title: 'One-One-One', item_parent: 11 },
+        { item_id: 112, item_title: 'One-One-Two', item_parent: 11 },
+        { item_id: 113, item_title: 'One-One-Three', item_parent: 11 },
+      ]
+      const dataEngineConfig = {
+        data,
+        propertyMap: {
+          id: 'item_id',
+          parent: 'item_parent',
+          text: 'item_title',
+        }
+      }
+
+      expect((new DataEngine(dataEngineConfig)).render()).toEqual(list)
+      expect(list.querySelectorAll('li').length).toEqual(data.length)
     })
   })
 })
