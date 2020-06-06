@@ -63,6 +63,7 @@ class nestedSort {
     }
 
     this.maybeInitDataDom()
+    this.addListAttributes()
     this.initDragAndDrop();
   }
 
@@ -83,20 +84,26 @@ class nestedSort {
     if (!(Array.isArray(this.data) && this.data.length)) return;
 
     const list = this.getDataEngine().render()
-    list.classList.add(...this.listClassNames)
     document.getElementById(this.selector).appendChild(list);
   }
 
-  initDragAndDrop() {
+  getSortableList() {
+    if (this.sortableList instanceof HTMLUListElement) return this.sortableList
+    const list = document.getElementById(this.selector)
+    this.sortableList = list.nodeName === 'UL' ? list : list.querySelector('ul')
+    return this.sortableList
+  }
 
+  addListAttributes() {
+    this.getSortableList().classList.add(...this.listClassNames)
+  }
+
+  initDragAndDrop() {
     document.addEventListener('dragover', this.dragListener.bind(this), false);
 
     this.initPlaceholderList();
 
-    const list = document.getElementById(this.selector)
-    this.sortableList = list.nodeName === 'UL' ? list : list.querySelector('ul')
-
-    this.sortableList.querySelectorAll('li').forEach(el => {
+    this.getSortableList().querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', 'true');
 
       el.addEventListener('dragstart', this.onDragStart.bind(this), false);
@@ -164,7 +171,7 @@ class nestedSort {
     this.cleanupPlaceholderLists();
 
     if (typeof this.actions.onDrop === 'function') {
-      this.actions.onDrop(this.getDataEngine().convertDomToData(this.sortableList))
+      this.actions.onDrop(this.getDataEngine().convertDomToData(this.getSortableList()))
     }
   }
 
@@ -317,7 +324,7 @@ class nestedSort {
   }
 
   cleanupPlaceholderLists() {
-    this.sortableList.querySelectorAll('ul').forEach(ul => {
+    this.getSortableList().querySelectorAll('ul').forEach(ul => {
       if (!ul.querySelectorAll('li').length) {
         ul.remove();
       } else if (ul.classList.contains(this.classNames.placeholder)) {
