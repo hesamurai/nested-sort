@@ -2,13 +2,11 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-.nested-sort,
-#draggable {
+.nested-sort {
   padding: 0;
 }
 
-.nested-sort li,
-#draggable li {
+.nested-sort li {
   list-style: none;
   margin: 0 0 5px;
   padding: 10px;
@@ -16,19 +14,16 @@ body {
   border: 1px solid #ccc;
 }
 
-.nested-sort li ul,
-#draggable li ul {
+.nested-sort li ul {
   padding: 0;
   margin-top: 10px;
   margin-bottom: -5px;
 }
 
-.nested-sort .ns-dragged,
-#draggable .ns-dragged {
+.nested-sort .ns-dragged {
   outline: 2px solid red;
 }
 
-.nested-sort .ns-targeted,
-#draggable .ns-targeted {
+.nested-sort .ns-targeted {
   outline: 2px solid green;
 }
