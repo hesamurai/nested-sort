@@ -237,13 +237,7 @@ class nestedSort {
   }
 
   areNested(child, parent) {
-    let isChild = false;
-    parent.querySelectorAll('li').forEach(li => {
-      if (li === child) {
-        isChild = true;
-      }
-    });
-    return isChild;
+    return Array.from(parent.querySelectorAll('li')).some(li => li === child)
   }
 
   cursorIsIndentedEnough() {
