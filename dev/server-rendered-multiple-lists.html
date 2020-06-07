@@ -4,32 +4,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Nested Sort Server-Rendered List Demo</title>
+  <title>Nested Sort Server-Rendered Multiple Lists Demo</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container">
-  <h1>A server-rendered lists</h1>
+  <h1>Multiple server-rendered lists</h1>
 
   <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
 
-  <ul id="draggable">
+  <h2>List 1</h2>
+  <ul class="draggable">
     <li data-id="1">Topic 1</li>
     <li data-id="2">Topic 2</li>
     <li data-id="3">Topic 3
       <ul data-id="3">
-        <li data-id="31">Topic 3-1</li>
-        <li data-id="32">Topic 3-2</li>
-        <li data-id="33">Topic 3-3</li>
+        <li data-id="4">Topic 4</li>
+      </ul>
+    </li>
+    <li data-id="5">Topic 5</li>
+  </ul>
+
+  <h2>List 2</h2>
+  <ul class="draggable">
+    <li data-id="2">Topic 2
+      <ul data-id="2">
+        <li data-id="1">Topic 1</li>
+        <li data-id="3">Topic 3</li>
       </ul>
     </li>
     <li data-id="4">Topic 4</li>
     <li data-id="5">Topic 5</li>
-    <li data-id="6">Topic 6</li>
-    <li data-id="7">Topic 7</li>
-    <li data-id="8">Topic 8</li>
   </ul>
 </div>
 
@@ -37,16 +44,18 @@
 <script src="../dist/nested-sort.umd.js"></script>
 <script>
   (function() {
-    new nestedSort({
-      actions: {
-        onDrop: function (data) {
-          console.log(data)
-        }
-      },
-      el: '#draggable',
-      droppingEdge: 5,
-      listClassNames: ['nested-sort']
-    });
+    document.querySelectorAll('.draggable').forEach(function (list) {
+      new nestedSort({
+        actions: {
+          onDrop: function (data) {
+            console.log(data)
+          }
+        },
+        droppingEdge: 5,
+        el: list,
+        listClassNames: ['nested-sort']
+      });
+    })
   })();
 </script>
 </body>

@@ -84,13 +84,19 @@ class nestedSort {
     if (!(Array.isArray(this.data) && this.data.length)) return;
 
     const list = this.getDataEngine().render()
-    document.getElementById(this.selector).appendChild(list);
+    document.querySelector(this.selector).appendChild(list)
   }
 
   getSortableList() {
     if (this.sortableList instanceof HTMLUListElement) return this.sortableList
-    const list = document.getElementById(this.selector)
-    this.sortableList = list.nodeName === 'UL' ? list : list.querySelector('ul')
+
+    if (this.selector instanceof HTMLUListElement) {
+      this.sortableList = this.selector
+    } else {
+      const list = document.querySelector(this.selector)
+      this.sortableList = list.nodeName === 'UL' ? list : list.querySelector('ul')
+    }
+
     return this.sortableList
   }
 
