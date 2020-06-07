@@ -146,6 +146,8 @@ class nestedSort {
   }
 
   onDragEnter(e) {
+    if (!this.draggedNode) return
+
     if (['LI', 'UL'].includes(e.target.nodeName)) {
       e.preventDefault(); // prevent default to allow drop
 
@@ -164,9 +166,11 @@ class nestedSort {
 
   onDragEnd(e) {
     e.preventDefault();
+    e.stopPropagation()
     this.draggedNode.classList.remove(this.classNames.dragged);
     this.targetedNode.classList.remove(this.classNames.targeted)
     this.cleanupPlaceholderLists();
+    this.draggedNode = null
   }
 
   onDrop(e) {
