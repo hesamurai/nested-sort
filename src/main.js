@@ -114,6 +114,8 @@ class nestedSort {
 
       el.addEventListener('dragstart', this.onDragStart.bind(this), false);
       el.addEventListener('dragenter', this.onDragEnter.bind(this), false);
+      el.addEventListener('dragover', this.onDragOver.bind(this), false);
+      el.addEventListener('dragleave', this.onDragLeave.bind(this), false);
       el.addEventListener('dragend', this.onDragEnd.bind(this), false);
       el.addEventListener('drop', this.onDrop.bind(this), false);
 
@@ -150,9 +152,6 @@ class nestedSort {
       if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted);
       this.targetedNode = e.target;
       e.target.classList.add(this.classNames.targeted);
-
-      e.target.addEventListener('dragover', this.onDragOver.bind(this), false);
-      e.target.addEventListener('dragleave', this.onDragLeave.bind(this), false);
     }
   }
 
