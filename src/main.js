@@ -242,7 +242,7 @@ class nestedSort {
   }
 
   areNested(child, parent) {
-    return Array.from(parent.querySelectorAll('li')).some(li => li === child)
+    return parent && Array.from(parent.querySelectorAll('li')).some(li => li === child)
   }
 
   cursorIsIndentedEnough() {
