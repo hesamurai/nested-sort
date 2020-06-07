@@ -328,6 +328,7 @@ class nestedSort {
         ul.remove();
       } else if (ul.classList.contains(this.classNames.placeholder)) {
         ul.classList.remove(this.classNames.placeholder);
+        ul.style.minHeight = 'auto'
         ul.dataset.id = ul.parentNode.dataset.id
       }
     });
