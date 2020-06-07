@@ -84,13 +84,19 @@ class nestedSort {
     if (!(Array.isArray(this.data) && this.data.length)) return;
 
     const list = this.getDataEngine().render()
-    document.getElementById(this.selector).appendChild(list);
+    document.querySelector(this.selector).appendChild(list)
   }
 
   getSortableList() {
     if (this.sortableList instanceof HTMLUListElement) return this.sortableList
-    const list = document.getElementById(this.selector)
-    this.sortableList = list.nodeName === 'UL' ? list : list.querySelector('ul')
+
+    if (this.selector instanceof HTMLUListElement) {
+      this.sortableList = this.selector
+    } else {
+      const list = document.querySelector(this.selector)
+      this.sortableList = list.nodeName === 'UL' ? list : list.querySelector('ul')
+    }
+
     return this.sortableList
   }
 
@@ -108,6 +114,8 @@ class nestedSort {
 
       el.addEventListener('dragstart', this.onDragStart.bind(this), false);
       el.addEventListener('dragenter', this.onDragEnter.bind(this), false);
+      el.addEventListener('dragover', this.onDragOver.bind(this), false);
+      el.addEventListener('dragleave', this.onDragLeave.bind(this), false);
       el.addEventListener('dragend', this.onDragEnd.bind(this), false);
       el.addEventListener('drop', this.onDrop.bind(this), false);
 
@@ -138,15 +146,14 @@ class nestedSort {
   }
 
   onDragEnter(e) {
+    if (!this.draggedNode) return
+
     if (['LI', 'UL'].includes(e.target.nodeName)) {
       e.preventDefault(); // prevent default to allow drop
 
       if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted);
       this.targetedNode = e.target;
       e.target.classList.add(this.classNames.targeted);
-
-      e.target.addEventListener('dragover', this.onDragOver.bind(this), false);
-      e.target.addEventListener('dragleave', this.onDragLeave.bind(this), false);
     }
   }
 
@@ -159,9 +166,11 @@ class nestedSort {
 
   onDragEnd(e) {
     e.preventDefault();
+    e.stopPropagation()
     this.draggedNode.classList.remove(this.classNames.dragged);
     this.targetedNode.classList.remove(this.classNames.targeted)
     this.cleanupPlaceholderLists();
+    this.draggedNode = null
   }
 
   onDrop(e) {
@@ -237,13 +246,7 @@ class nestedSort {
   }
 
   areNested(child, parent) {
-    let isChild = false;
-    parent.querySelectorAll('li').forEach(li => {
-      if (li === child) {
-        isChild = true;
-      }
-    });
-    return isChild;
+    return parent && Array.from(parent.querySelectorAll('li')).some(li => li === child)
   }
 
   cursorIsIndentedEnough() {
