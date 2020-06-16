@@ -14,10 +14,6 @@ Using npm:
 $ npm i nested-sort
 ```
 
-## Demo
-
-There are some samples in the `dev` folder.
-
 ## Developer environment requirements
 
 To run this project, you will need:
@@ -48,8 +44,6 @@ This will regenerate the build files each time a source file is changed and serv
 
 If your package works in the browser, you can open `dev/index.html` to try it out.
 
-## Publishing
+## Demo
 
-```sh
-npm publish
-```
+There are some samples in the `dev` folder. In order to see them in action, first run `yarn watch` and then navigate to: `http://127.0.0.1:5000/dev/`

@@ -1,6 +1,6 @@
 import DataEngine from './data-engine'
 
-class nestedSort {
+class NestedSort {
 
   /**
    * @constructor
@@ -349,4 +349,4 @@ class nestedSort {
   }
 }
 
-export default nestedSort;
+export default NestedSort;
