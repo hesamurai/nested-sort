@@ -1,4 +1,4 @@
-import nestedSort from './main'
+import NestedSort from './main'
 
 describe('sample', () => {
   it('should work', () => {
