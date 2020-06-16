@@ -47,9 +47,3 @@ This will regenerate the build files each time a source file is changed and serv
 ### Previewing umd build in the browser
 
 If your package works in the browser, you can open `dev/index.html` to try it out.
-
-## Publishing
-
-```sh
-npm publish
-```
