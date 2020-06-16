@@ -8,7 +8,7 @@ export default [
   {
     input: 'src/main.js',
     output: {
-      name: 'nestedSort',
+      name: 'NestedSort',
       file: pkg.browser,
       format: 'umd',
     },
