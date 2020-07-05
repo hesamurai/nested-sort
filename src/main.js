@@ -101,7 +101,12 @@ class NestedSort {
   }
 
   addListAttributes() {
-    this.getSortableList().classList.add(...this.listClassNames)
+    const list = this.getSortableList()
+
+    list.classList.add(...this.listClassNames)
+    list.querySelectorAll('ul').forEach(ul => {
+      ul.classList.add(...this.listClassNames)
+    })
   }
 
   initDragAndDrop() {
@@ -339,8 +344,8 @@ class NestedSort {
   }
 
   initPlaceholderList() {
-    this.placeholderUl = document.createElement('ul');
-    this.placeholderUl.classList.add(this.classNames.placeholder);
+    this.placeholderUl = document.createElement('ul')
+    this.placeholderUl.classList.add(this.classNames.placeholder, ...this.listClassNames)
   }
 
   getPlaceholderList() {
