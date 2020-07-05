@@ -1,6 +1,6 @@
 # Nested Sort
 
-A JavaScript library to create a nested list of elements
+Nested Sort is a vanilla JavaScript library, without any dependencies, which helps you to sort a nested list of items via drag and drop. Unfortunately, it does not support touch screens yet.
 
 ## Download
 
