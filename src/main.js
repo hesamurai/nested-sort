@@ -9,6 +9,7 @@ class NestedSort {
    * @param {number} droppingEdge
    * @param {string} el
    * @param {array|string} listClassNames
+   * @param {array|string} listItemClassNames
    * @param {object} [propertyMap={}]
    */
   constructor({
@@ -17,6 +18,7 @@ class NestedSort {
     droppingEdge = 15,
     el,
     listClassNames,
+    listItemClassNames,
     propertyMap = {}
   } = {}) {
     this.data = data;
@@ -27,6 +29,7 @@ class NestedSort {
     this.draggedNode = null;
     this.targetedNode = null;
     this.listClassNames = this.createListClassNamesArray(listClassNames)
+    this.listItemClassNames = this.createListClassNamesArray(listItemClassNames)
     this.propertyMap = propertyMap
     this.actions = {
       onDrop
@@ -106,6 +109,10 @@ class NestedSort {
     list.classList.add(...this.listClassNames)
     list.querySelectorAll('ul').forEach(ul => {
       ul.classList.add(...this.listClassNames)
+    })
+
+    list.querySelectorAll('li').forEach(li => {
+      li.classList.add(...this.listItemClassNames)
     })
   }
 

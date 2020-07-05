@@ -71,4 +71,43 @@ describe('NestedSort', () => {
       expect(Object.values(ns.placeholderUl.classList)).toEqual(expect.arrayContaining(listClassNames))
     })
   })
+
+  describe('How it deals with List Item Class Names', () => {
+    it('should convert the listItemClassNames prop on the initialisation and assign it to this.listItemClassNames', () => {
+      [
+        'class1 class2',
+        ['class1', 'class2'],
+      ].forEach(listItemClassNames => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'Item 1' }
+          ],
+          el: `#${dynamicListWrapperId}`,
+          listItemClassNames,
+        })
+        expect(ns.listItemClassNames).toEqual([
+          'class1',
+          'class2',
+        ])
+      })
+    })
+
+    it('should assign the listItemClassNames to all the list items', () => {
+      const listItemClassNames = ['class1', 'class2']
+      const ns = new NestedSort({
+        data: [
+          { id: 1, text: 'Item 1' },
+          { id: 2, text: 'Item 2' },
+          { id: 3, text: 'Item 3' },
+        ],
+        el: `#${dynamicListWrapperId}`,
+        listItemClassNames,
+      })
+
+      const list = ns.getSortableList()
+      list.querySelectorAll('li').forEach(li => {
+        expect(Object.values(li.classList)).toEqual(listItemClassNames)
+      })
+    })
+  })
 })
