@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Nested Sort Styling</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <h1>Styling</h1>
+
+  <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
+
+  <p>
+    You can use the listClassNames and listItemClassNames props on the Config object to assign custom class names to
+    your list and list items. This helps with integrating your preferred front-end toolkit styling into your
+    Nested Sort lists. Below, you can see an example for Twitter Bootstrap v4 styling:
+  </p>
+
+  <h2>Twitter Bootstrap [Data-driven List]</h2>
+  <div id="bootstrap"></div>
+
+</div>
+
+<!-- Scripts -->
+<script src="../dist/nested-sort.umd.js"></script>
+<script>
+  (function() {
+    const data = [
+      { id: 1, text: 'One' },
+      { id: 11, text: 'One-One', parent: 1 },
+      { id: 2, text: 'Two' },
+      { id: 3, text: 'Three' },
+      { id: 12, text: 'One-Two', parent: 1 },
+      { id: 111, text: 'One-One-One', parent: 11 },
+      { id: 112, text: 'One-One-Two', parent: 11 },
+      { id: 113, text: 'One-One-Three', parent: 11 },
+    ]
+
+    new NestedSort({
+      actions: {
+        onDrop: function (data) {
+          console.log(data)
+        }
+      },
+      data: data,
+      el: '#bootstrap',
+      listClassNames: ['list-group'],
+      listItemClassNames: ['list-group-item']
+    });
+  })();
+</script>
+</body>
+</html>
