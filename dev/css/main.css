@@ -27,3 +27,11 @@ body {
 .nested-sort .ns-targeted {
   outline: 2px solid green;
 }
+
+.list-group .ns-dragged {
+  background-color: rgb(255, 255, 115);
+}
+
+.list-group .ns-targeted {
+  background-color: rgb(115, 255, 117);
+}
