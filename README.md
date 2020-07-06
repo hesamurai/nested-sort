@@ -12,6 +12,18 @@ Nested Sort is a vanilla JavaScript library, without any dependencies, which hel
 
  * [CDN copies](https://www.jsdelivr.com/package/npm/nested-sort) [![](https://data.jsdelivr.com/v1/package/npm/nested-sort/badge)](https://www.jsdelivr.com/package/npm/nested-sort)
 
+## Installation
+
+Using npm:
+```shell
+$ npm install nested-sort
+```
+
+Using yarn:
+```shell
+$ yarn add nested-sort
+```
+
 ## Contribution
 
 ### Developer environment requirements
