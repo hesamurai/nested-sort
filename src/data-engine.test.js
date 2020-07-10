@@ -169,24 +169,24 @@ describe('DataEngine class', () => {
   describe('convertDomToData method', () => {
     it('should correctly convert a nested list of elements to an array of objects', () => {
       const data = [
-        { id: "1" },
-        { id: "11", parent: "1" },
-        { id: "111", parent: "11" },
-        { id: "112", parent: "11" },
-        { id: "1121", parent: "112" },
-        { id: "1122", parent: "112" },
-        { id: "1123", parent: "112" },
-        { id: "113", parent: "11" },
-        { id: "12", parent: "1" },
-        { id: "2" },
-        { id: "3" },
-        { id: "4" },
-        { id: "41", parent: "4" },
-        { id: "42", parent: "4" },
-        { id: "421", parent: "42" },
-        { id: "422", parent: "42" },
-        { id: "423", parent: "42" },
-        { id: "5" },
+        { id: "1", parent: undefined, order: 1 },
+        { id: "11", parent: "1", order: 1 },
+        { id: "111", parent: "11", order: 1 },
+        { id: "112", parent: "11", order: 2 },
+        { id: "1121", parent: "112", order: 1 },
+        { id: "1122", parent: "112", order: 2 },
+        { id: "1123", parent: "112", order: 3 },
+        { id: "113", parent: "11", order: 3 },
+        { id: "12", parent: "1", order: 2 },
+        { id: "2", parent: undefined, order: 2 },
+        { id: "3", parent: undefined, order: 3 },
+        { id: "4", parent: undefined, order: 4 },
+        { id: "41", parent: "4", order: 1 },
+        { id: "42", parent: "4", order: 2 },
+        { id: "421", parent: "42", order: 1 },
+        { id: "422", parent: "42", order: 2 },
+        { id: "423", parent: "42", order: 3 },
+        { id: "5", parent: undefined, order: 5 },
       ]
 
       const engine = new DataEngine({data})
@@ -217,20 +217,21 @@ describe('DataEngine class', () => {
         '<li data-id="4">Four</li>'
 
       const data = [
-        { item_id: "1", item_parent: undefined },
-        { item_id: "11", item_parent: "1" },
-        { item_id: "111", item_parent: "11" },
-        { item_id: "112", item_parent: "11" },
-        { item_id: "1121", item_parent: "112" },
-        { item_id: "1122", item_parent: "112" },
-        { item_id: "12", item_parent: "1" },
-        { item_id: "2", item_parent: undefined },
-        { item_id: "3", item_parent: undefined },
-        { item_id: "4", item_parent: undefined },
+        { item_id: "1", item_parent: undefined, position: 1 },
+        { item_id: "11", item_parent: "1", position: 1 },
+        { item_id: "111", item_parent: "11", position: 1 },
+        { item_id: "112", item_parent: "11", position: 2 },
+        { item_id: "1121", item_parent: "112", position: 1 },
+        { item_id: "1122", item_parent: "112", position: 2 },
+        { item_id: "12", item_parent: "1", position: 2 },
+        { item_id: "2", item_parent: undefined, position: 2 },
+        { item_id: "3", item_parent: undefined, position: 3 },
+        { item_id: "4", item_parent: undefined, position: 4 },
       ]
       const propertyMap = {
         id: 'item_id',
         parent: 'item_parent',
+        order: 'position',
       }
       const engine = new DataEngine({data, propertyMap})
       expect(engine.convertDomToData(list)).toEqual(data)

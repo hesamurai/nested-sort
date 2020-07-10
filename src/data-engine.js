@@ -166,10 +166,12 @@ class DataEngine {
     return Array.from(ul.querySelectorAll('li')).map(li => {
       const parentListItem = li.parentNode
       const parent = parentListItem.dataset.id
+      const order = Array.from(parentListItem.children).findIndex(item => item === li) + 1
 
       return {
         [this.getItemPropProxyName('id')]: li.dataset.id,
         [this.getItemPropProxyName('parent')]: parent,
+        [this.getItemPropProxyName('order')]: order,
       }
     })
   }
