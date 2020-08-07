@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Nested Sort Mapped Data-Driven List Demo</title>
+  <title>Nested Sort Ordered Data-Driven List Demo</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container">
-  <h1>A mapped data-driven list</h1>
+  <h1>An ordered data-driven list</h1>
 
   <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
 
@@ -23,15 +23,16 @@
 <script>
   (function() {
     const data = [
-      { item_id: 1, item_title: 'One', position: 5 },
-      { item_id: 11, item_title: 'One-One', item_parent: 1, position: 1 },
-      { item_id: 2, item_title: 'Two', position: 1 },
-      { item_id: 3, item_title: 'Three', position: 2 },
-      { item_id: 1121, item_title: 'One-One-Two-One', item_parent: 112, position: 2 },
-      { item_id: 1123, item_title: 'One-One-Two-Three', item_parent: 112, position: 4 },
-      { item_id: 12, item_title: 'One-Two', item_parent: 1, position: 2 },
-      { item_id: 111, item_title: 'One-One-One', item_parent: 11, position: 1 },
-      { item_id: 112, item_title: 'One-One-Two', item_parent: 11, position: 2 },
+      { id: 1, text: 'One', order: 2 },
+      { id: 11, text: 'One-One', parent: 1, order: 3 },
+      { id: 2, text: 'Two', order: 1 },
+      { id: 3, text: 'Three', order: 3 },
+      { id: 4, text: 'Four', order: 5 },
+      { id: 5, text: 'Five', order: 4 },
+      { id: 12, text: 'One-Two', parent: 1, order: 1 },
+      { id: 111, text: 'One-One-One', parent: 11, order: 3 },
+      { id: 112, text: 'One-One-Two', parent: 11, order: 1 },
+      { id: 113, text: 'One-One-Three', parent: 11, order: 2 },
     ]
 
     new NestedSort({
@@ -41,12 +42,6 @@
         }
       },
       data: data,
-      propertyMap: {
-        id: 'item_id',
-        parent: 'item_parent',
-        text: 'item_title',
-        order: 'position',
-      },
       el: '#draggable',
       droppingEdge: 5,
       listClassNames: ['nested-sort']
