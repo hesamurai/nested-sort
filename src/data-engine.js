@@ -38,14 +38,39 @@ class DataEngine {
     return prop
   }
 
+  isTopLevelItem(item) {
+    return !item.parent
+  }
+
   /**
    * @returns {object[]}
    */
   sortListItems() {
-    this.sortedData = [...this.data].sort((item1, item2) => {
-      if (!item1.parent && item2.parent) return -1
-      return (!item2.parent && item1.parent) ? 1 : 0;
-    });
+    const items = [...this.data]
+
+    const topLevelItems = items
+      .filter(a => this.isTopLevelItem(a))
+      .sort((a, b) => a.order && b.order ? a.order - b.order : 0)
+
+    const childItems = items
+      .filter(a => !this.isTopLevelItem(a))
+      .reduce((groups, item) => {
+        if (groups.hasOwnProperty(item.parent)) {
+          groups[item.parent].push(item)
+        } else {
+          groups[item.parent] = [item]
+        }
+        return groups
+      }, {})
+
+    Object.keys(childItems).forEach(parentId => {
+      childItems[parentId].sort((a, b) => a.order && b.order ? a.order - b.order : 0)
+    })
+
+    this.sortedData = [
+      ...topLevelItems,
+      ...Object.values(childItems).flat()
+    ]
 
     return this.sortedData
   }
@@ -166,10 +191,12 @@ class DataEngine {
     return Array.from(ul.querySelectorAll('li')).map(li => {
       const parentListItem = li.parentNode
       const parent = parentListItem.dataset.id
+      const order = Array.from(parentListItem.children).findIndex(item => item === li) + 1
 
       return {
         [this.getItemPropProxyName('id')]: li.dataset.id,
         [this.getItemPropProxyName('parent')]: parent,
+        [this.getItemPropProxyName('order')]: order,
       }
     })
   }
