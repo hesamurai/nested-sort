@@ -1,4 +1,4 @@
-import NestedSort from './main'
+import NestedSort from '../src/main'
 
 describe('NestedSort', () => {
   const dynamicListWrapperId = 'dynamic-list-wrapper-id'
