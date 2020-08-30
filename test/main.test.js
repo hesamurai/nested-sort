@@ -1,7 +1,7 @@
 import NestedSort from '../src/main'
 import {
   createEvent,
-} from './utils/dom';
+} from './utils/dom'
 
 describe('NestedSort', () => {
   const dynamicListWrapperId = 'dynamic-list-wrapper-id'
@@ -124,7 +124,7 @@ describe('NestedSort', () => {
             { id: 3, text: 'Three' },
           ],
           el: `#${dynamicListWrapperId}`,
-        });
+        })
 
         const item = document.querySelector('[data-id="1"]')
         item.dispatchEvent(
@@ -142,7 +142,7 @@ describe('NestedSort', () => {
             { id: 3, text: 'Three' },
           ],
           el: `#${dynamicListWrapperId}`,
-        });
+        })
 
         const item = document.querySelector('[data-id="1"]')
         item.dispatchEvent(
@@ -160,7 +160,7 @@ describe('NestedSort', () => {
             { id: 3, text: 'Three' },
           ],
           el: `#${dynamicListWrapperId}`,
-        });
+        })
 
         const item = document.querySelector('[data-id="1"]')
         const setData = jest.fn()
