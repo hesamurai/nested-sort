@@ -133,6 +133,24 @@ describe('NestedSort', () => {
 
         expect(item.classList).toContain('ns-dragged')
       })
+
+      it('assigns the event target element to the draggedNode property of the instance', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+            { id: 3, text: 'Three' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        });
+
+        const item = document.querySelector('[data-id="1"]')
+        item.dispatchEvent(
+          createEvent('dragstart')
+        )
+
+        expect(ns.draggedNode).toEqual(item)
+      })
     })
   })
 })
