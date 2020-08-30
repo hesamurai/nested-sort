@@ -151,6 +151,27 @@ describe('NestedSort', () => {
 
         expect(ns.draggedNode).toEqual(item)
       })
+
+      it('runs the event dataTransfer.setDate method', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+            { id: 3, text: 'Three' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        });
+
+        const item = document.querySelector('[data-id="1"]')
+        const setData = jest.fn()
+        item.dispatchEvent(
+          createEvent('dragstart', {
+            dataTransfer: { setData }
+          })
+        )
+
+        expect(setData).toHaveBeenCalledTimes(1)
+      })
     })
   })
 })
