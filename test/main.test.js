@@ -1,4 +1,7 @@
 import NestedSort from '../src/main'
+import {
+  createEvent,
+} from './utils/dom';
 
 describe('NestedSort', () => {
   const dynamicListWrapperId = 'dynamic-list-wrapper-id'
@@ -107,6 +110,28 @@ describe('NestedSort', () => {
       const list = ns.getSortableList()
       list.querySelectorAll('li').forEach(li => {
         expect(Object.values(li.classList)).toEqual(listItemClassNames)
+      })
+    })
+  })
+
+  describe('Drag and Drop interactions', () => {
+    describe('dragstart event', () => {
+      it('adds the designated class name to the dragged item', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+            { id: 3, text: 'Three' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        });
+
+        const item = document.querySelector('[data-id="1"]')
+        item.dispatchEvent(
+          createEvent('dragstart')
+        )
+
+        expect(item.classList).toContain('ns-dragged')
       })
     })
   })
