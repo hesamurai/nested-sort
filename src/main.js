@@ -147,6 +147,12 @@ class NestedSort {
     }
   }
 
+  removeClassFromEl(el, className) {
+    if (el && el.classList.contains(className)) {
+      el.classList.remove(className)
+    }
+  }
+
   onDragStart(e) {
     this.draggedNode = e.target;
     this.draggedNode.classList.add(this.classNames.dragged);
@@ -179,8 +185,8 @@ class NestedSort {
   onDragEnd(e) {
     e.preventDefault();
     e.stopPropagation()
-    this.draggedNode.classList.remove(this.classNames.dragged);
-    this.targetedNode.classList.remove(this.classNames.targeted)
+    this.removeClassFromEl(this.draggedNode, this.classNames.dragged)
+    this.removeClassFromEl(this.targetedNode, this.classNames.targeted)
     this.cleanupPlaceholderLists();
     this.draggedNode = null
   }

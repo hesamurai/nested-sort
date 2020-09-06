@@ -306,5 +306,28 @@ describe('NestedSort', () => {
         expect(preventDefault).toHaveBeenCalledTimes(1)
       })
     })
+
+    describe('dragend event', () => {
+      it('should stop event propagation', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+
+        const item = document.querySelector('[data-id="1"]')
+
+        const stopPropagation = jest.fn()
+        item.dispatchEvent(
+          createEvent('dragend', {
+            stopPropagation,
+          })
+        )
+
+        expect(stopPropagation).toHaveBeenCalledTimes(1)
+      })
+    })
   })
 })
