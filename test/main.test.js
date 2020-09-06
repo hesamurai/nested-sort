@@ -283,5 +283,28 @@ describe('NestedSort', () => {
         })
       })
     })
+
+    describe('dragover event', () => {
+      it('should prevent the default behaviour to allow dropping', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+
+        const item = document.querySelector('[data-id="1"]')
+
+        const preventDefault = jest.fn()
+        item.dispatchEvent(
+          createEvent('dragover', {
+            preventDefault,
+          })
+        )
+
+        expect(preventDefault).toHaveBeenCalledTimes(1)
+      })
+    })
   })
 })
