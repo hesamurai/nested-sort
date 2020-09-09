@@ -392,5 +392,93 @@ describe('NestedSort', () => {
         expect(ns.draggedNode).toBeNull()
       })
     })
+
+    describe('drop event', () => {
+      it('should stop event propagation', () => {
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+
+        const item = document.querySelector('[data-id="1"]')
+        const stopPropagation = jest.fn()
+        item.dispatchEvent(
+          createEvent('drop', {
+            stopPropagation,
+          })
+        )
+
+        expect(stopPropagation).toHaveBeenCalledTimes(1)
+      })
+
+      it('should call the maybeDrop method', () => {
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+        ns.maybeDrop = jest.fn()
+
+        const item = document.querySelector('[data-id="1"]')
+        item.dispatchEvent(
+          createEvent('drop', {
+            stopPropagation: jest.fn(),
+          })
+        )
+
+        expect(ns.maybeDrop).toHaveBeenCalledTimes(1)
+      })
+
+      it('should call the cleanupPlaceholderLists method', () => {
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+        ns.cleanupPlaceholderLists = jest.fn()
+
+        const item = document.querySelector('[data-id="1"]')
+        item.dispatchEvent(
+          createEvent('drop', {
+            stopPropagation: jest.fn(),
+          })
+        )
+
+        expect(ns.cleanupPlaceholderLists).toHaveBeenCalledTimes(1)
+      })
+
+      it('should call the onDrop action', () => {
+        const onDrop = jest.fn();
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+          actions: {
+            onDrop,
+          },
+        })
+
+        const item = document.querySelector('[data-id="1"]')
+        item.dispatchEvent(
+          createEvent('drop', {
+            stopPropagation: jest.fn(),
+          })
+        )
+
+        expect(onDrop).toHaveBeenCalledWith([
+          { id: '1', order: 1 },
+          { id: '2', order: 2 },
+        ])
+      })
+    })
   })
 })
