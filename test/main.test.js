@@ -328,6 +328,69 @@ describe('NestedSort', () => {
 
         expect(stopPropagation).toHaveBeenCalledTimes(1)
       })
+
+      it('should call the removeClassFromEl method', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+        ns.removeClassFromEl = jest.fn()
+
+        const item = document.querySelector('[data-id="1"]')
+        const stopPropagation = jest.fn()
+        item.dispatchEvent(
+          createEvent('dragend', {
+            stopPropagation,
+          })
+        )
+
+        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(1, ns.draggedNode, 'ns-dragged')
+        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(2, ns.targetedNode, 'ns-targeted')
+      })
+
+      it('should call the cleanupPlaceholderLists method', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+        ns.cleanupPlaceholderLists = jest.fn()
+
+        const item = document.querySelector('[data-id="1"]')
+        const stopPropagation = jest.fn()
+        item.dispatchEvent(
+          createEvent('dragend', {
+            stopPropagation,
+          })
+        )
+
+        expect(ns.cleanupPlaceholderLists).toHaveBeenCalledTimes(1)
+      })
+
+      it('should set the draggedNode property to null', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+
+        const item = document.querySelector('[data-id="1"]')
+        const stopPropagation = jest.fn()
+        item.dispatchEvent(
+          createEvent('dragend', {
+            stopPropagation,
+          })
+        )
+
+        expect(ns.draggedNode).toBeNull()
+      })
     })
   })
 })
