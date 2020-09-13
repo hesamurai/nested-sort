@@ -456,7 +456,7 @@ describe('NestedSort', () => {
       })
 
       it('should call the onDrop action', () => {
-        const onDrop = jest.fn();
+        const onDrop = jest.fn()
         const ns = new NestedSort({
           data: [
             {id: 1, text: 'One'},
@@ -497,11 +497,11 @@ describe('NestedSort', () => {
     })
 
     afterEach(() => {
-      jest.restoreAllMocks();
-    });
+      jest.restoreAllMocks()
+    })
 
     it('should not call the getDataEngine method (upon instantiating) which resides inside the maybeInitDataDom method which goes through the early return', () => {
-      jest.spyOn(NestedSort.prototype, 'getDataEngine').mockImplementation(jest.fn);
+      jest.spyOn(NestedSort.prototype, 'getDataEngine').mockImplementation(jest.fn)
       const ns = new NestedSort({
         el: `#${staticListWrapperId}`,
       })
