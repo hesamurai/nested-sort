@@ -669,7 +669,7 @@ describe('NestedSort', () => {
     })
   })
 
-  describe('maybeDrop getDropLocation', () => {
+  describe('maybeDrop method', () => {
     it('should not call dropTheItem() if getDropLocation() returns undefined', () => {
       const ns = new NestedSort({
         data: [
