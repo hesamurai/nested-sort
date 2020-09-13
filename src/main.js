@@ -334,14 +334,22 @@ class NestedSort {
     return !!this.targetedNode;
   }
 
+  targetNodeIsBeingDragged() {
+    return this.targetNodeIsIdentified()
+      && this.targetedNode === this.draggedNode
+  }
+
+  targetNodeIsListWithItems() {
+    return this.targetNodeIsIdentified()
+      && this.targetedNode.nodeName === 'UL'
+      && this.targetedNode.querySelectorAll('li').length
+  }
+
   canBeDropped() {
-    let result = true;
-
-    result &= this.targetNodeIsIdentified() && this.targetedNode !== this.draggedNode;
-    result &= this.targetNodeIsIdentified() && !(this.targetedNode.nodeName === 'UL' && this.targetedNode.querySelectorAll('li').length);
-    result &= !this.areNested(this.targetedNode, this.draggedNode);
-
-    return result;
+    return this.targetNodeIsIdentified()
+      && !this.targetNodeIsBeingDragged()
+      && !this.targetNodeIsListWithItems()
+      && !this.areNested(this.targetedNode, this.draggedNode)
   }
 
   cleanupPlaceholderLists() {

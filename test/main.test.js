@@ -518,4 +518,86 @@ describe('NestedSort', () => {
       expect(ns.sortableList).toEqual(el)
     })
   })
+
+  describe('canBeDropped method', () => {
+    it('should return false if targetNodeIsIdentified() returns false', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.targetNodeIsIdentified = () => false
+      ns.targetNodeIsBeingDragged = () => false
+      ns.targetNodeIsListWithItems = () => false
+      ns.areNested = () => false
+
+      expect(ns.canBeDropped()).toBe(false)
+    })
+
+    it('should return false if targetNodeIsBeingDragged() returns true', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.targetNodeIsIdentified = () => true
+      ns.targetNodeIsBeingDragged = () => true
+      ns.targetNodeIsListWithItems = () => false
+      ns.areNested = () => false
+
+      expect(ns.canBeDropped()).toBe(false)
+    })
+
+    it('should return false if targetNodeIsListWithItems() returns true', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.targetNodeIsIdentified = () => true
+      ns.targetNodeIsBeingDragged = () => false
+      ns.targetNodeIsListWithItems = () => true
+      ns.areNested = () => false
+
+      expect(ns.canBeDropped()).toBe(false)
+    })
+
+    it('should return false if areNested() returns true', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.targetNodeIsIdentified = () => true
+      ns.targetNodeIsBeingDragged = () => false
+      ns.targetNodeIsListWithItems = () => false
+      ns.areNested = () => true
+
+      expect(ns.canBeDropped()).toBe(false)
+    })
+
+    it('should return true if all the conditions meet', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.targetNodeIsIdentified = () => true // condition 1
+      ns.targetNodeIsBeingDragged = () => false // condition 2
+      ns.targetNodeIsListWithItems = () => false // condition 3
+      ns.areNested = () => false // condition 4
+
+      expect(ns.canBeDropped()).toBe(true)
+    })
+  })
 })
