@@ -212,19 +212,16 @@ class NestedSort {
     this.calcMouseToTargetedElDist();
   }
 
+  getDropLocation() {
+    if (this.canBeDropped()) {
+      if (this.targetedNode.nodeName === 'LI' && !this.cursorIsIndentedEnough()) return 'before'
+      else if (this.targetedNode.nodeName === 'UL') return 'inside'
+    }
+  }
+
   maybeDrop(e) {
-    if (!this.canBeDropped()) {
-      return;
-    }
-
-    let dropLocation;
-    if (this.targetedNode.nodeName === 'LI' && !this.cursorIsIndentedEnough()) {
-      dropLocation = 'before';
-    } else if (this.targetedNode.nodeName === 'UL') {
-      dropLocation = 'inside';
-    }
-
-    if (dropLocation) this.dropTheItem(dropLocation, e);
+    const location = this.getDropLocation()
+    if (location) this.dropTheItem(location, e)
   }
 
   dropTheItem(place, e) {

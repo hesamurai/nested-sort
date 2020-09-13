@@ -600,4 +600,107 @@ describe('NestedSort', () => {
       expect(ns.canBeDropped()).toBe(true)
     })
   })
+
+  describe('getDropLocation method', () => {
+    describe('When canBeDropped() returns false', () => {
+      it('should return undefined', () => {
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+        ns.canBeDropped = () => false
+
+        expect(ns.getDropLocation()).toBeUndefined()
+      })
+    })
+
+    describe('When canBeDropped() returns true', () => {
+      it('should return undefined if targetedNode is LI and cursorIsIndentedEnough() returns true', () => {
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+        ns.canBeDropped = () => true
+        ns.cursorIsIndentedEnough = () => true
+        ns.targetedNode = document.querySelector('li[data-id="1"]')
+
+        expect(ns.targetedNode).toBeTruthy() // just to stay on the safe side
+        expect(ns.getDropLocation()).toBeUndefined()
+      })
+
+      it('should return `before` if targetedNode is LI and cursorIsIndentedEnough() returns false', () => {
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+        ns.canBeDropped = () => true
+        ns.cursorIsIndentedEnough = () => false
+        ns.targetedNode = document.querySelector('li[data-id="1"]')
+
+        expect(ns.targetedNode).toBeTruthy() // just to stay on the safe side
+        expect(ns.getDropLocation()).toBe('before')
+      })
+
+      it('should return `inside` if targetedNode is UL', () => {
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+        ns.canBeDropped = () => true
+        ns.cursorIsIndentedEnough = () => false
+
+        // let's fake the targetedNode to be a UL
+        ns.targetedNode = document.createElement('ul')
+
+        expect(ns.getDropLocation()).toBe('inside')
+      })
+    })
+  })
+
+  describe('maybeDrop getDropLocation', () => {
+    it('should not call dropTheItem() if getDropLocation() returns undefined', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.getDropLocation = () => undefined
+      ns.dropTheItem = jest.fn()
+      ns.maybeDrop()
+
+      expect(ns.dropTheItem).not.toHaveBeenCalled()
+    })
+
+    it('should call dropTheItem() with correct arguments if getDropLocation() returns a string', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      const location = 'before'
+      ns.getDropLocation = () => location
+      ns.dropTheItem = jest.fn()
+      const event = { foo: 'bar' }
+      ns.maybeDrop(event)
+
+      expect(ns.dropTheItem).toHaveBeenCalledTimes(1)
+      expect(ns.dropTheItem).toHaveBeenCalledWith(location, event)
+    })
+  })
 })
