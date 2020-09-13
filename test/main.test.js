@@ -5,6 +5,7 @@ import {
 
 describe('NestedSort', () => {
   const dynamicListWrapperId = 'dynamic-list-wrapper-id'
+  const staticListWrapperId = 'static-list-wrapper-id'
 
   beforeEach(() => {
     document.body.innerHTML = `<div id="${dynamicListWrapperId}"></div>`
@@ -479,6 +480,42 @@ describe('NestedSort', () => {
           { id: '2', order: 2 },
         ])
       })
+    })
+  })
+
+  describe('When the list is server rendered', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div>
+          <ul id="${staticListWrapperId}">
+            <li data-id="1">One</li>
+            <li data-id="2">Two</li>
+            <li data-id="3">Three</li>
+          </ul>
+        </div>
+      `
+    })
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('should not call the getDataEngine method (upon instantiating) which resides inside the maybeInitDataDom method which goes through the early return', () => {
+      jest.spyOn(NestedSort.prototype, 'getDataEngine').mockImplementation(jest.fn);
+      const ns = new NestedSort({
+        el: `#${staticListWrapperId}`,
+      })
+
+      expect(ns.getDataEngine).not.toHaveBeenCalled()
+    })
+
+    it('should assign the config el property value to this.sortableList if it is an instance of HTMLUListElement', () => {
+      const el = document.getElementById(staticListWrapperId)
+      const ns = new NestedSort({
+        el,
+      })
+
+      expect(ns.sortableList).toEqual(el)
     })
   })
 })
