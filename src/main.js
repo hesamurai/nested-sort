@@ -174,10 +174,6 @@ class NestedSort {
   }
 
   onDragLeave(e) {
-    e.preventDefault();
-    e.target.removeEventListener('dragover', this.onDrop);
-    e.target.removeEventListener('drop', this.onDrop);
-    e.target.removeEventListener('dragleave', this.onDragLeave);
   }
 
   onDragEnd(e) {
