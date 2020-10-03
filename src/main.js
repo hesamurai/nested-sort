@@ -229,9 +229,6 @@ class NestedSort {
       case 'before':
         this.targetedNode.parentNode.insertBefore(this.draggedNode, this.targetedNode);
         break;
-      case 'after':
-        this.insertAfter(this.draggedNode, this.targetedNode);
-        break;
       case 'inside':
         this.targetedNode.appendChild(this.draggedNode);
         break;
@@ -270,10 +267,6 @@ class NestedSort {
 
   mouseIsTooCloseToTop() {
     return this.cursor.Y - this.targetNode.Y < this.distances.droppingEdge;
-  }
-
-  insertAfter(newNode, referenceNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
   }
 
   managePlaceholderLists(e) {
