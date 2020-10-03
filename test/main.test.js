@@ -703,4 +703,40 @@ describe('NestedSort', () => {
       expect(ns.dropTheItem).toHaveBeenCalledWith(location, event)
     })
   })
+
+  describe('dropTheItem method', () => {
+    it('should insert the dragged node before the targeted node', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.draggedNode = document.querySelector('li[data-id="2"]')
+      ns.targetedNode = document.querySelector('li[data-id="1"]')
+      ns.targetedNode.parentNode.insertBefore = jest.fn()
+      ns.dropTheItem('before')
+
+      expect(ns.targetedNode.parentNode.insertBefore).toHaveBeenCalledTimes(1)
+      expect(ns.targetedNode.parentNode.insertBefore).toHaveBeenCalledWith(ns.draggedNode, ns.targetedNode)
+    })
+
+    it('should insert the dragged node inside the targeted node', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.draggedNode = document.querySelector('li[data-id="2"]')
+      ns.targetedNode = document.createElement('ul')
+      ns.targetedNode.appendChild = jest.fn()
+      ns.dropTheItem('inside')
+
+      expect(ns.targetedNode.appendChild).toHaveBeenCalledTimes(1)
+      expect(ns.targetedNode.appendChild).toHaveBeenCalledWith(ns.draggedNode)
+    })
+  })
 })
