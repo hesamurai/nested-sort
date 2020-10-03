@@ -167,8 +167,6 @@ class NestedSort {
     if (!this.draggedNode) return
 
     if (['LI', 'UL'].includes(e.target.nodeName)) {
-      e.preventDefault(); // prevent default to allow drop
-
       if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted);
       this.targetedNode = e.target;
       e.target.classList.add(this.classNames.targeted);
@@ -183,7 +181,6 @@ class NestedSort {
   }
 
   onDragEnd(e) {
-    e.preventDefault();
     e.stopPropagation()
     this.removeClassFromEl(this.draggedNode, this.classNames.dragged)
     this.removeClassFromEl(this.targetedNode, this.classNames.targeted)
@@ -192,7 +189,6 @@ class NestedSort {
   }
 
   onDrop(e) {
-    e.preventDefault();
     e.stopPropagation()
     this.maybeDrop();
     this.cleanupPlaceholderLists();

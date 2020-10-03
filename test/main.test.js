@@ -177,43 +177,6 @@ describe('NestedSort', () => {
 
     describe('dragenter event', () => {
       describe('when event target is either an LI or a UL element', () => {
-        it('should prevent the default behaviour to allow dropping', () => {
-          const ns = new NestedSort({
-            data: [
-              { id: 1, text: 'One' },
-              { id: 4, text: 'One-One', parent: 1 },
-              { id: 2, text: 'Two' },
-              { id: 3, text: 'Three' },
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
-
-          // let's pretend we're dragging the item Three
-          const item = document.querySelector('[data-id="3"]')
-          const setData = jest.fn()
-          item.dispatchEvent(
-            createEvent('dragstart', {
-              dataTransfer: { setData }
-            })
-          )
-
-          const items = [
-            document.querySelector('li[data-id="1"]'),
-            document.querySelector('ul[data-id="1"]'),
-          ]
-
-          items.forEach(item => {
-            const preventDefault = jest.fn()
-            item.dispatchEvent(
-              createEvent('dragenter', {
-                preventDefault,
-              })
-            )
-
-            expect(preventDefault).toHaveBeenCalledTimes(1)
-          })
-        })
-
         it('should remove the ns-targeted class name from the previous targeted item and add it to the newly targeted one', () => {
           const ns = new NestedSort({
             data: [
