@@ -924,4 +924,42 @@ describe('NestedSort', () => {
       })
     })
   })
+
+  describe('managePlaceholderLists method', () => {
+    it('should clean up current placeholder and add a new one when analysePlaceHolderSituation() contains `add`', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.analysePlaceHolderSituation = jest.fn().mockReturnValue(['add'])
+      ns.cleanupPlaceholderLists = jest.fn()
+      ns.addPlaceholderList = jest.fn()
+
+      ns.managePlaceholderLists()
+
+      expect(ns.cleanupPlaceholderLists).toHaveBeenCalledTimes(1)
+      expect(ns.addPlaceholderList).toHaveBeenCalledTimes(1)
+    })
+
+    it('should clean up current placeholder when analysePlaceHolderSituation() contains `cleanup`', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.analysePlaceHolderSituation = jest.fn().mockReturnValue(['cleanup'])
+      ns.cleanupPlaceholderLists = jest.fn()
+      ns.addPlaceholderList = jest.fn()
+
+      ns.managePlaceholderLists()
+
+      expect(ns.cleanupPlaceholderLists).toHaveBeenCalledTimes(1)
+      expect(ns.addPlaceholderList).not.toHaveBeenCalled()
+    })
+  })
 })
