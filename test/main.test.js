@@ -176,6 +176,27 @@ describe('NestedSort', () => {
     })
 
     describe('dragenter event', () => {
+      describe('when it goes through the early return', () => {
+        it('should return if draggedNode is falsy', () => {
+          const ns = new NestedSort({
+            data: [
+              { id: 1, text: 'One' },
+              { id: 2, text: 'Two' },
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+          ns.targetedNode = document.querySelector('[data-id="2"]')
+          ns.targetedNode.classList.remove = jest.fn()
+          const targetedNode = document.querySelector('[data-id="1"]')
+          const dragEnterEvent = createEvent('dragenter', {
+            preventDefault: jest.fn(),
+          })
+          targetedNode.dispatchEvent(dragEnterEvent)
+
+          expect(ns.targetedNode.classList.remove).not.toHaveBeenCalled()
+        })
+      })
+
       describe('when event target is either an LI or a UL element', () => {
         it('should remove the ns-targeted class name from the previous targeted item and add it to the newly targeted one', () => {
           const ns = new NestedSort({

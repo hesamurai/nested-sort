@@ -164,13 +164,11 @@ class NestedSort {
   }
 
   onDragEnter(e) {
-    if (!this.draggedNode) return
+    if (!(this.draggedNode && ['LI', 'UL'].includes(e.target.nodeName))) return
 
-    if (['LI', 'UL'].includes(e.target.nodeName)) {
-      if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted);
-      this.targetedNode = e.target;
-      e.target.classList.add(this.classNames.targeted);
-    }
+    if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted)
+    this.targetedNode = e.target
+    this.targetedNode.classList.add(this.classNames.targeted)
   }
 
   onDragLeave(e) {
