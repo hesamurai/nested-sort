@@ -702,4 +702,226 @@ describe('NestedSort', () => {
       expect(ns.targetedNode.appendChild).toHaveBeenCalledWith(ns.draggedNode)
     })
   })
+
+  describe('analysePlaceHolderSituation method', () => {
+    describe('when it goes through the early return', () => {
+      it('should return an empty array when targetedNode property is falsy', () => {
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+
+        ns.areNested = jest.fn()
+        ns.cursorIsIndentedEnough = jest.fn()
+        const actions = ns.analysePlaceHolderSituation()
+
+        expect(actions).toEqual([])
+        expect(ns.areNested).not.toHaveBeenCalled()
+        expect(ns.cursorIsIndentedEnough).not.toHaveBeenCalled()
+      })
+
+      it('should return an empty array when targetedNode property is truthy but areNested returns true', () => {
+        const ns = new NestedSort({
+          data: [
+            {id: 1, text: 'One'},
+            {id: 2, text: 'Two'},
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+
+        ns.areNested = jest.fn().mockReturnValue(true)
+        ns.cursorIsIndentedEnough = jest.fn()
+        ns.targetedNode = document.querySelector('li[data-id="1"]')
+        ns.draggedNode = document.querySelector('li[data-id="2"]')
+        const actions = ns.analysePlaceHolderSituation()
+
+        expect(actions).toEqual([])
+        expect(ns.areNested).toHaveBeenCalledTimes(1)
+        expect(ns.areNested).toHaveBeenCalledWith(ns.targetedNode, ns.draggedNode)
+        expect(ns.cursorIsIndentedEnough).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('when early return is bypassed', () => {
+      describe('when cursorIsIndentedEnough() returns false', () => {
+        it('should return an empty array when targetedNodeIsPlaceholder() returns true', () => {
+          const ns = new NestedSort({
+            data: [
+              {id: 1, text: 'One'},
+              {id: 2, text: 'Two'},
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+
+          // to bypass the early return
+          ns.targetedNode = document.querySelector('li[data-id="1"]')
+          ns.areNested = jest.fn().mockReturnValue(false)
+
+          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(false)
+          ns.targetedNodeIsPlaceholder = jest.fn().mockReturnValue(true)
+          const actions = ns.analysePlaceHolderSituation()
+
+          expect(actions).toEqual([])
+        })
+
+        it('should return an array with `cleanup` as the only item when targetedNodeIsPlaceholder() returns false', () => {
+          const ns = new NestedSort({
+            data: [
+              {id: 1, text: 'One'},
+              {id: 2, text: 'Two'},
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+
+          // to bypass the early return
+          ns.targetedNode = document.querySelector('li[data-id="1"]')
+          ns.areNested = jest.fn().mockReturnValue(false)
+
+          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(false)
+          ns.targetedNodeIsPlaceholder = jest.fn().mockReturnValue(false)
+          const actions = ns.analysePlaceHolderSituation()
+
+          expect(actions).toEqual(['cleanup'])
+        })
+      })
+
+      describe('when cursorIsIndentedEnough() and mouseIsTooCloseToTop() both return true', () => {
+        it('should return an empty array when targetedNodeIsPlaceholder() returns true', () => {
+          const ns = new NestedSort({
+            data: [
+              {id: 1, text: 'One'},
+              {id: 2, text: 'Two'},
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+
+          // to bypass the early return
+          ns.targetedNode = document.querySelector('li[data-id="1"]')
+          ns.areNested = jest.fn().mockReturnValue(false)
+
+          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
+          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(true)
+          ns.targetedNodeIsPlaceholder = jest.fn().mockReturnValue(true)
+          const actions = ns.analysePlaceHolderSituation()
+
+          expect(actions).toEqual([])
+        })
+
+        it('should return an array with `cleanup` as the only item when targetedNodeIsPlaceholder() returns false', () => {
+          const ns = new NestedSort({
+            data: [
+              {id: 1, text: 'One'},
+              {id: 2, text: 'Two'},
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+
+          // to bypass the early return
+          ns.targetedNode = document.querySelector('li[data-id="1"]')
+          ns.areNested = jest.fn().mockReturnValue(false)
+
+          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
+          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(true)
+          ns.targetedNodeIsPlaceholder = jest.fn().mockReturnValue(false)
+          const actions = ns.analysePlaceHolderSituation()
+
+          expect(actions).toEqual(['cleanup'])
+        })
+      })
+
+      describe('when cursorIsIndentedEnough() returns true and mouseIsTooCloseToTop() returns false', () => {
+        it('should return en empty array if targetedNode is the same as draggedNode', () => {
+          const ns = new NestedSort({
+            data: [
+              {id: 1, text: 'One'},
+              {id: 2, text: 'Two'},
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+
+          // to bypass the early return
+          ns.targetedNode = document.querySelector('li[data-id="1"]')
+          ns.areNested = jest.fn().mockReturnValue(false)
+
+          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
+          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(false)
+          ns.draggedNode = ns.targetedNode
+
+          const actions = ns.analysePlaceHolderSituation()
+
+          expect(actions).toEqual([])
+        })
+
+        it('should return en empty array if targetedNode name is not LI', () => {
+          const ns = new NestedSort({
+            data: [
+              {id: 1, text: 'One'},
+              {id: 2, text: 'Two'},
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+
+          // to bypass the early return
+          ns.targetedNode = document.createElement('ul')
+          ns.areNested = jest.fn().mockReturnValue(false)
+
+          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
+          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(false)
+          ns.draggedNode = document.querySelector('li[data-id="2"]')
+
+          const actions = ns.analysePlaceHolderSituation()
+
+          expect(actions).toEqual([])
+        })
+
+        it('should return en empty array if targetedNode contains a ul element', () => {
+          const ns = new NestedSort({
+            data: [
+              {id: 1, text: 'One'},
+              {id: 2, text: 'Two'},
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+
+          // to bypass the early return
+          ns.targetedNode = document.querySelector('li[data-id="1"]')
+          ns.areNested = jest.fn().mockReturnValue(false)
+
+          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
+          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(false)
+          ns.draggedNode = document.querySelector('li[data-id="2"]')
+          ns.targetedNode.appendChild(document.createElement('ul'))
+
+          const actions = ns.analysePlaceHolderSituation()
+
+          expect(actions).toEqual([])
+        })
+
+        it('should return en array with `add` as its only item when all conditions meet', () => {
+          const ns = new NestedSort({
+            data: [
+              {id: 1, text: 'One'},
+              {id: 2, text: 'Two'},
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+
+          // to bypass the early return
+          ns.targetedNode = document.querySelector('li[data-id="1"]')
+          ns.areNested = jest.fn().mockReturnValue(false)
+
+          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
+          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(false)
+          ns.draggedNode = document.querySelector('li[data-id="2"]')
+
+          const actions = ns.analysePlaceHolderSituation()
+
+          expect(actions).toEqual(['add'])
+        })
+      })
+    })
+  })
 })
