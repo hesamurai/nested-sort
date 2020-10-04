@@ -983,4 +983,48 @@ describe('NestedSort', () => {
       expect(ns.animatePlaceholderList).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('cleanupPlaceholderLists method', () => {
+    it('should remove any ul list which does not have any list items', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 11, text: 'One-One', parent: 1},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      const ul = document.createElement('ul')
+      document.querySelector('li[data-id="11"]').appendChild(ul.cloneNode(true))
+      document.querySelector('li[data-id="2"]').appendChild(ul.cloneNode(true))
+
+      ns.cleanupPlaceholderLists()
+      const lists = ns.getSortableList().querySelectorAll('ul')
+
+      expect(lists.length).toBe(1)
+    })
+
+    it('should treat a legit placeholder list correctly', () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      const placeholderList = document.createElement('ul')
+      placeholderList.classList.add(ns.classNames.placeholder)
+      placeholderList.classList.add('test-placeholder')
+      placeholderList.style.minHeight = '100px'
+      document.querySelector('li[data-id="1"]').appendChild(placeholderList)
+      placeholderList.appendChild(document.querySelector('li[data-id="2"]'))
+
+      ns.cleanupPlaceholderLists()
+      const list = ns.getSortableList().querySelector('ul.test-placeholder')
+
+      expect(list.classList).not.toContain(ns.classNames.placeholder)
+      expect(list.style.minHeight).toBe('auto')
+      expect(list.dataset.id).toBe('1')
+    })
+  })
 })
