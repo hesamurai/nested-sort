@@ -302,12 +302,16 @@ class NestedSort {
     return actions;
   }
 
-  addPlaceholderList() {
-    const list = this.getPlaceholderList();
-    list.style.minHeight = '0';
-    this.targetedNode.appendChild(list);
-    list.style.transition = 'min-height ease .2s';
-    list.style.minHeight = `${this.draggedNode.offsetHeight}px`;
+  animatePlaceholderList() {
+    this.placeholderInUse.style.minHeight = '0'
+    this.placeholderInUse.style.transition = 'min-height ease .2s'
+    this.placeholderInUse.style.minHeight = `${this.draggedNode.offsetHeight}px`
+  }
+
+  async addPlaceholderList() {
+    this.getPlaceholderList()
+    await this.targetedNode.appendChild(this.placeholderInUse)
+    this.animatePlaceholderList()
   }
 
   targetNodeIsIdentified() {

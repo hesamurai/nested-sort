@@ -962,4 +962,25 @@ describe('NestedSort', () => {
       expect(ns.addPlaceholderList).not.toHaveBeenCalled()
     })
   })
+
+  describe('addPlaceholderList method', () => {
+    it('should append the placeholderInUse property to the targetedNode and call the animatePlaceholderList method', async () => {
+      const ns = new NestedSort({
+        data: [
+          {id: 1, text: 'One'},
+          {id: 2, text: 'Two'},
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.targetedNode = document.querySelector('li[data-id="1"]')
+      ns.targetedNode.appendChild = jest.fn()
+      ns.animatePlaceholderList = jest.fn()
+
+      await ns.addPlaceholderList()
+
+      expect(ns.targetedNode.appendChild).toHaveBeenCalledTimes(1)
+      expect(ns.targetedNode.appendChild).toHaveBeenCalledWith(ns.placeholderInUse)
+      expect(ns.animatePlaceholderList).toHaveBeenCalledTimes(1)
+    })
+  })
 })
