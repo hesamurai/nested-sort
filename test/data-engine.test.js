@@ -1,4 +1,4 @@
-import DataEngine from './data-engine'
+import DataEngine from '../src/data-engine'
 
 describe('DataEngine class', () => {
   let list

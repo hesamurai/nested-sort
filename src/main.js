@@ -147,6 +147,12 @@ class NestedSort {
     }
   }
 
+  removeClassFromEl(el, className) {
+    if (el && el.classList.contains(className)) {
+      el.classList.remove(className)
+    }
+  }
+
   onDragStart(e) {
     this.draggedNode = e.target;
     this.draggedNode.classList.add(this.classNames.dragged);
@@ -158,35 +164,25 @@ class NestedSort {
   }
 
   onDragEnter(e) {
-    if (!this.draggedNode) return
+    if (!(this.draggedNode && ['LI', 'UL'].includes(e.target.nodeName))) return
 
-    if (['LI', 'UL'].includes(e.target.nodeName)) {
-      e.preventDefault(); // prevent default to allow drop
-
-      if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted);
-      this.targetedNode = e.target;
-      e.target.classList.add(this.classNames.targeted);
-    }
+    if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted)
+    this.targetedNode = e.target
+    this.targetedNode.classList.add(this.classNames.targeted)
   }
 
   onDragLeave(e) {
-    e.preventDefault();
-    e.target.removeEventListener('dragover', this.onDrop);
-    e.target.removeEventListener('drop', this.onDrop);
-    e.target.removeEventListener('dragleave', this.onDragLeave);
   }
 
   onDragEnd(e) {
-    e.preventDefault();
     e.stopPropagation()
-    this.draggedNode.classList.remove(this.classNames.dragged);
-    this.targetedNode.classList.remove(this.classNames.targeted)
+    this.removeClassFromEl(this.draggedNode, this.classNames.dragged)
+    this.removeClassFromEl(this.targetedNode, this.classNames.targeted)
     this.cleanupPlaceholderLists();
     this.draggedNode = null
   }
 
   onDrop(e) {
-    e.preventDefault();
     e.stopPropagation()
     this.maybeDrop();
     this.cleanupPlaceholderLists();
@@ -206,28 +202,22 @@ class NestedSort {
     this.calcMouseToTargetedElDist();
   }
 
+  getDropLocation() {
+    if (this.canBeDropped()) {
+      if (this.targetedNode.nodeName === 'LI' && !this.cursorIsIndentedEnough()) return 'before'
+      else if (this.targetedNode.nodeName === 'UL') return 'inside'
+    }
+  }
+
   maybeDrop(e) {
-    if (!this.canBeDropped()) {
-      return;
-    }
-
-    let dropLocation;
-    if (this.targetedNode.nodeName === 'LI' && !this.cursorIsIndentedEnough()) {
-      dropLocation = 'before';
-    } else if (this.targetedNode.nodeName === 'UL') {
-      dropLocation = 'inside';
-    }
-
-    if (dropLocation) this.dropTheItem(dropLocation, e);
+    const location = this.getDropLocation()
+    if (location) this.dropTheItem(location, e)
   }
 
   dropTheItem(place, e) {
     switch (place) {
       case 'before':
         this.targetedNode.parentNode.insertBefore(this.draggedNode, this.targetedNode);
-        break;
-      case 'after':
-        this.insertAfter(this.draggedNode, this.targetedNode);
         break;
       case 'inside':
         this.targetedNode.appendChild(this.draggedNode);
@@ -269,10 +259,6 @@ class NestedSort {
     return this.cursor.Y - this.targetNode.Y < this.distances.droppingEdge;
   }
 
-  insertAfter(newNode, referenceNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-  }
-
   managePlaceholderLists(e) {
 
     let actions = this.analysePlaceHolderSituation(e);
@@ -285,8 +271,6 @@ class NestedSort {
           break;
         case 'cleanup':
           this.cleanupPlaceholderLists();
-          break;
-        default:
           break;
       }
     });
@@ -316,26 +300,38 @@ class NestedSort {
     return actions;
   }
 
-  addPlaceholderList() {
-    const list = this.getPlaceholderList();
-    list.style.minHeight = '0';
-    this.targetedNode.appendChild(list);
-    list.style.transition = 'min-height ease .2s';
-    list.style.minHeight = `${this.draggedNode.offsetHeight}px`;
+  animatePlaceholderList() {
+    this.placeholderInUse.style.minHeight = '0'
+    this.placeholderInUse.style.transition = 'min-height ease .2s'
+    this.placeholderInUse.style.minHeight = `${this.draggedNode.offsetHeight}px`
+  }
+
+  async addPlaceholderList() {
+    this.getPlaceholderList()
+    await this.targetedNode.appendChild(this.placeholderInUse)
+    this.animatePlaceholderList()
   }
 
   targetNodeIsIdentified() {
     return !!this.targetedNode;
   }
 
+  targetNodeIsBeingDragged() {
+    return this.targetNodeIsIdentified()
+      && this.targetedNode === this.draggedNode
+  }
+
+  targetNodeIsListWithItems() {
+    return this.targetNodeIsIdentified()
+      && this.targetedNode.nodeName === 'UL'
+      && this.targetedNode.querySelectorAll('li').length
+  }
+
   canBeDropped() {
-    let result = true;
-
-    result &= this.targetNodeIsIdentified() && this.targetedNode !== this.draggedNode;
-    result &= this.targetNodeIsIdentified() && !(this.targetedNode.nodeName === 'UL' && this.targetedNode.querySelectorAll('li').length);
-    result &= !this.areNested(this.targetedNode, this.draggedNode);
-
-    return result;
+    return this.targetNodeIsIdentified()
+      && !this.targetNodeIsBeingDragged()
+      && !this.targetNodeIsListWithItems()
+      && !this.areNested(this.targetedNode, this.draggedNode)
   }
 
   cleanupPlaceholderLists() {
