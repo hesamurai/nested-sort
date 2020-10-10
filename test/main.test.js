@@ -366,9 +366,10 @@ describe('NestedSort', () => {
           el: `#${dynamicListWrapperId}`,
         })
 
-        const item = document.querySelector('[data-id="1"]')
+        ns.draggedNode = document.querySelector('[data-id="1"]')
         const stopPropagation = jest.fn()
-        item.dispatchEvent(
+
+        ns.draggedNode.dispatchEvent(
           createEvent('dragend', {
             stopPropagation,
           })
