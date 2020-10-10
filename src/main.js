@@ -180,6 +180,7 @@ class NestedSort {
     this.removeClassFromEl(this.targetedNode, this.classNames.targeted)
     this.cleanupPlaceholderLists();
     this.draggedNode = null
+    this.targetedNode = null
   }
 
   onDrop(e) {

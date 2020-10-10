@@ -377,6 +377,28 @@ describe('NestedSort', () => {
 
         expect(ns.draggedNode).toBeNull()
       })
+
+      it('should set the targetedNode property to null', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+
+        ns.draggedNode = document.querySelector('[data-id="1"]')
+        ns.targetedNode = document.querySelector('[data-id="2"]')
+        const stopPropagation = jest.fn()
+
+        ns.draggedNode.dispatchEvent(
+          createEvent('dragend', {
+            stopPropagation,
+          })
+        )
+
+        expect(ns.targetedNode).toBeNull()
+      })
     })
 
     describe('drop event', () => {
