@@ -19,45 +19,45 @@ class NestedSort {
     el,
     listClassNames,
     listItemClassNames,
-    propertyMap = {}
+    propertyMap = {},
   } = {}) {
-    this.data = data;
-    this.selector = el;
-    this.sortableList = null;
-    this.placeholderUl = null;
-    this.placeholderInUse = null;
-    this.draggedNode = null;
-    this.targetedNode = null;
+    this.data = data
+    this.selector = el
+    this.sortableList = null
+    this.placeholderUl = null
+    this.placeholderInUse = null
+    this.draggedNode = null
+    this.targetedNode = null
     this.listClassNames = this.createListClassNamesArray(listClassNames)
     this.listItemClassNames = this.createListClassNamesArray(listItemClassNames)
     this.propertyMap = propertyMap
     this.actions = {
-      onDrop
+      onDrop,
     }
 
     this.targetNode = {
       X: null,
-      Y: null
-    };
+      Y: null,
+    }
 
     this.distances = {
       droppingEdge,
       droppingEdgeNegative: droppingEdge * -1,
       mouseTo: {
-        targetedElTop: undefined
-      }
-    };
+        targetedElTop: undefined,
+      },
+    }
 
     this.dimensions = {
       targetedEl: {
-        H: undefined
-      }
-    };
+        H: undefined,
+      },
+    }
 
     this.cursor = {
       X: null,
-      Y: null
-    };
+      Y: null,
+    }
 
     this.classNames = {
       dragged: 'ns-dragged',
@@ -67,7 +67,7 @@ class NestedSort {
 
     this.maybeInitDataDom()
     this.addListAttributes()
-    this.initDragAndDrop();
+    this.initDragAndDrop()
   }
 
   getDataEngine() {
@@ -84,7 +84,7 @@ class NestedSort {
   }
 
   maybeInitDataDom() {
-    if (!(Array.isArray(this.data) && this.data.length)) return;
+    if (!(Array.isArray(this.data) && this.data.length)) return
 
     const list = this.getDataEngine().render()
     document.querySelector(this.selector).appendChild(list)
@@ -117,33 +117,33 @@ class NestedSort {
   }
 
   initDragAndDrop() {
-    document.addEventListener('dragover', this.dragListener.bind(this), false);
+    document.addEventListener('dragover', this.dragListener.bind(this), false)
 
-    this.initPlaceholderList();
+    this.initPlaceholderList()
 
     this.getSortableList().querySelectorAll('li').forEach(el => {
-      el.setAttribute('draggable', 'true');
+      el.setAttribute('draggable', 'true')
 
-      el.addEventListener('dragstart', this.onDragStart.bind(this), false);
-      el.addEventListener('dragenter', this.onDragEnter.bind(this), false);
-      el.addEventListener('dragover', this.onDragOver.bind(this), false);
-      el.addEventListener('dragleave', this.onDragLeave.bind(this), false);
-      el.addEventListener('dragend', this.onDragEnd.bind(this), false);
-      el.addEventListener('drop', this.onDrop.bind(this), false);
+      el.addEventListener('dragstart', this.onDragStart.bind(this), false)
+      el.addEventListener('dragenter', this.onDragEnter.bind(this), false)
+      el.addEventListener('dragover', this.onDragOver.bind(this), false)
+      el.addEventListener('dragleave', this.onDragLeave.bind(this), false)
+      el.addEventListener('dragend', this.onDragEnd.bind(this), false)
+      el.addEventListener('drop', this.onDrop.bind(this), false)
 
       this.addListItemStyles(el)
-    });
+    })
   }
 
   getComputedStyleValue(el, prop) {
-    return window.getComputedStyle(el, null).getPropertyValue(prop);
+    return window.getComputedStyle(el, null).getPropertyValue(prop)
   }
 
   addListItemStyles(li) {
     // let's add a move cursor icon if it does not already have a cursor css property
-    const cursor = this.getComputedStyleValue(li, 'cursor');
+    const cursor = this.getComputedStyleValue(li, 'cursor')
     if (!cursor || cursor === 'auto') {
-      li.style.cursor = 'move';
+      li.style.cursor = 'move'
     }
   }
 
@@ -154,13 +154,13 @@ class NestedSort {
   }
 
   onDragStart(e) {
-    this.draggedNode = e.target;
-    this.draggedNode.classList.add(this.classNames.dragged);
-    e.dataTransfer.setData('text', 'Drag started!'); // Hack for Firefox!
+    this.draggedNode = e.target
+    this.draggedNode.classList.add(this.classNames.dragged)
+    e.dataTransfer.setData('text', 'Drag started!') // Hack for Firefox!
   }
 
   onDragOver(e) {
-    e.preventDefault(); // prevent default to allow drop
+    e.preventDefault() // prevent default to allow drop
   }
 
   onDragEnter(e) {
@@ -171,22 +171,22 @@ class NestedSort {
     this.targetedNode.classList.add(this.classNames.targeted)
   }
 
-  onDragLeave(e) {
+  onDragLeave() {
   }
 
   onDragEnd(e) {
     e.stopPropagation()
     this.removeClassFromEl(this.draggedNode, this.classNames.dragged)
     this.removeClassFromEl(this.targetedNode, this.classNames.targeted)
-    this.cleanupPlaceholderLists();
+    this.cleanupPlaceholderLists()
     this.draggedNode = null
     this.targetedNode = null
   }
 
   onDrop(e) {
     e.stopPropagation()
-    this.maybeDrop();
-    this.cleanupPlaceholderLists();
+    this.maybeDrop()
+    this.cleanupPlaceholderLists()
 
     if (typeof this.actions.onDrop === 'function') {
       this.actions.onDrop(this.getDataEngine().convertDomToData(this.getSortableList()))
@@ -194,13 +194,13 @@ class NestedSort {
   }
 
   dragListener(e) {
-    this.updateCoordination(e);
-    this.managePlaceholderLists(e);
+    this.updateCoordination(e)
+    this.managePlaceholderLists(e)
   }
 
   updateCoordination(e) {
-    this.calcMouseCoords(e);
-    this.calcMouseToTargetedElDist();
+    this.calcMouseCoords(e)
+    this.calcMouseToTargetedElDist()
   }
 
   getDropLocation() {
@@ -215,37 +215,37 @@ class NestedSort {
     if (location) this.dropTheItem(location, e)
   }
 
-  dropTheItem(place, e) {
+  dropTheItem(place) {
     switch (place) {
       case 'before':
-        this.targetedNode.parentNode.insertBefore(this.draggedNode, this.targetedNode);
-        break;
+        this.targetedNode.parentNode.insertBefore(this.draggedNode, this.targetedNode)
+        break
       case 'inside':
-        this.targetedNode.appendChild(this.draggedNode);
-        break;
+        this.targetedNode.appendChild(this.draggedNode)
+        break
     }
   }
 
   calcMouseCoords(e) {
     // we're having the client coords because on the next lines, we use getBoundingClientRect which behaves in the same way
-    this.cursor.X = e.clientX;
-    this.cursor.Y = e.clientY;
+    this.cursor.X = e.clientX
+    this.cursor.Y = e.clientY
   }
 
   calcMouseToTargetedElDist() {
     if (!this.targetedNode) {
-      return;
+      return
     }
 
-    let offset = this.targetedNode.getBoundingClientRect();
-    this.targetNode.X = offset.left;
-    this.targetNode.Y = offset.top;
+    let offset = this.targetedNode.getBoundingClientRect()
+    this.targetNode.X = offset.left
+    this.targetNode.Y = offset.top
 
-    let result = this.targetNode.Y - this.cursor.Y;
-    this.distances.mouseTo.targetedElTop = result;
-    this.distances.mouseTo.targetedElTopAbs = Math.abs(result);
-    this.dimensions.targetedEl.H = this.targetedNode.clientHeight;
-    this.distances.mouseTo.targetedElBot = this.distances.mouseTo.targetedElTopAbs - this.dimensions.targetedEl.H;
+    let result = this.targetNode.Y - this.cursor.Y
+    this.distances.mouseTo.targetedElTop = result
+    this.distances.mouseTo.targetedElTopAbs = Math.abs(result)
+    this.dimensions.targetedEl.H = this.targetedNode.clientHeight
+    this.distances.mouseTo.targetedElBot = this.distances.mouseTo.targetedElTopAbs - this.dimensions.targetedEl.H
   }
 
   areNested(child, parent) {
@@ -253,52 +253,52 @@ class NestedSort {
   }
 
   cursorIsIndentedEnough() {
-    return this.cursor.X - this.targetNode.X > 50;
+    return this.cursor.X - this.targetNode.X > 50
   }
 
   mouseIsTooCloseToTop() {
-    return this.cursor.Y - this.targetNode.Y < this.distances.droppingEdge;
+    return this.cursor.Y - this.targetNode.Y < this.distances.droppingEdge
   }
 
   managePlaceholderLists(e) {
 
-    let actions = this.analysePlaceHolderSituation(e);
+    let actions = this.analysePlaceHolderSituation(e)
 
     actions.forEach(action => {
       switch (action) {
         case 'add':
-          this.cleanupPlaceholderLists();
-          this.addPlaceholderList();
-          break;
+          this.cleanupPlaceholderLists()
+          this.addPlaceholderList()
+          break
         case 'cleanup':
-          this.cleanupPlaceholderLists();
-          break;
+          this.cleanupPlaceholderLists()
+          break
       }
-    });
+    })
   }
 
   targetedNodeIsPlaceholder() {
-    return this.targetedNode.nodeName === 'UL' && this.targetedNode.classList.contains(this.classNames.placeholder);
+    return this.targetedNode.nodeName === 'UL' && this.targetedNode.classList.contains(this.classNames.placeholder)
   }
 
-  analysePlaceHolderSituation(e) {
+  analysePlaceHolderSituation() {
     if (!this.targetedNode || this.areNested(this.targetedNode, this.draggedNode)) {
-      return [];
+      return []
     }
 
-    let actions = [];
+    let actions = []
 
     if (!this.cursorIsIndentedEnough() || this.mouseIsTooCloseToTop()) {
       if (!this.targetedNodeIsPlaceholder()) {
-        actions.push('cleanup');
+        actions.push('cleanup')
       }
     } else if (this.targetedNode !== this.draggedNode
       && this.targetedNode.nodeName === 'LI'
       && !this.targetedNode.querySelectorAll('ul').length) {
-      actions.push('add');
+      actions.push('add')
     }
 
-    return actions;
+    return actions
   }
 
   animatePlaceholderList() {
@@ -314,7 +314,7 @@ class NestedSort {
   }
 
   targetNodeIsIdentified() {
-    return !!this.targetedNode;
+    return !!this.targetedNode
   }
 
   targetNodeIsBeingDragged() {
@@ -338,13 +338,13 @@ class NestedSort {
   cleanupPlaceholderLists() {
     this.getSortableList().querySelectorAll('ul').forEach(ul => {
       if (!ul.querySelectorAll('li').length) {
-        ul.remove();
+        ul.remove()
       } else if (ul.classList.contains(this.classNames.placeholder)) {
-        ul.classList.remove(this.classNames.placeholder);
+        ul.classList.remove(this.classNames.placeholder)
         ul.style.minHeight = 'auto'
         ul.dataset.id = ul.parentNode.dataset.id
       }
-    });
+    })
   }
 
   initPlaceholderList() {
@@ -353,9 +353,9 @@ class NestedSort {
   }
 
   getPlaceholderList() {
-    this.placeholderInUse = this.placeholderUl.cloneNode(true);
-    return this.placeholderInUse;
+    this.placeholderInUse = this.placeholderUl.cloneNode(true)
+    return this.placeholderInUse
   }
 }
 
-export default NestedSort;
+export default NestedSort

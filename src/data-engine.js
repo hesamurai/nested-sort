@@ -14,7 +14,7 @@ class DataEngine {
   }
 
   maybeTransformData() {
-    if (!Object.keys(this.propertyMap).length) return;
+    if (!Object.keys(this.propertyMap).length) return
 
     const getItemPropProxyName = this.getItemPropProxyName.bind(this)
 
@@ -22,7 +22,7 @@ class DataEngine {
       return new Proxy(item, {
         get(target, prop, receiver) {
           return Reflect.get(target, getItemPropProxyName(prop), receiver)
-        }
+        },
       })
     })
   }
@@ -32,7 +32,7 @@ class DataEngine {
    * @returns {PropertyKey}
    */
   getItemPropProxyName(prop) {
-    if (this.propertyMap.hasOwnProperty(prop)) {
+    if (Object.prototype.hasOwnProperty.call(this.propertyMap, prop)) {
       return this.propertyMap[prop]
     }
     return prop
@@ -55,7 +55,7 @@ class DataEngine {
     const childItems = items
       .filter(a => !this.isTopLevelItem(a))
       .reduce((groups, item) => {
-        if (groups.hasOwnProperty(item.parent)) {
+        if (Object.prototype.hasOwnProperty.call(groups, item.parent)) {
           groups[item.parent].push(item)
         } else {
           groups[item.parent] = [item]
@@ -69,7 +69,7 @@ class DataEngine {
 
     this.sortedData = [
       ...topLevelItems,
-      ...Object.values(childItems).flat()
+      ...Object.values(childItems).flat(),
     ]
 
     return this.sortedData
@@ -136,7 +136,7 @@ class DataEngine {
       return this.elementIsParentOfItem(topLevelListItem, item) || this.elementIsAncestorOfItem(topLevelListItem, item)
     })
 
-    if (!topParent) return false;
+    if (!topParent) return false
 
     const listItem = this.createItemElement(item)
     let directParentList = this.getDirectListParentOfItem(topParent, item)
