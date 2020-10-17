@@ -2,6 +2,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import pkg from './package.json';
 import babel from 'rollup-plugin-babel';
+import { eslint } from "rollup-plugin-eslint";
 
 export default [
   // browser-friendly UMD build
@@ -15,6 +16,10 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
+      eslint({
+        throwOnError: true,
+        throwOnWarning: true,
+      }),
       babel({
         exclude: 'node_modules/**',
         runtimeHelpers: true,
