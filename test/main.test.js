@@ -198,7 +198,7 @@ describe('NestedSort', () => {
       })
 
       describe('when event target is either an LI or a UL element', () => {
-        it('should remove the ns-targeted class name from the previous targeted item and add it to the newly targeted one', () => {
+        it('should add the ns-targeted class name to the newly targeted item', () => {
           const ns = new NestedSort({
             data: [
               { id: 1, text: 'One' },
@@ -229,7 +229,6 @@ describe('NestedSort', () => {
           expect(item1.classList).toContain('ns-targeted')
 
           item2.dispatchEvent(dragEnterEvent)
-          expect(item1.classList).not.toContain('ns-targeted')
           expect(item2.classList).toContain('ns-targeted')
         })
 
@@ -266,6 +265,28 @@ describe('NestedSort', () => {
           item2.dispatchEvent(dragEnterEvent)
           expect(ns.targetedNode).toEqual(item2)
         })
+      })
+    })
+
+    describe('dragleave event', () => {
+      it('should remove the ns-targeted class name from the event target element', () => {
+        const ns = new NestedSort({
+          data: [
+            { id: 1, text: 'One' },
+            { id: 2, text: 'Two' },
+            { id: 3, text: 'Three' },
+          ],
+          el: `#${dynamicListWrapperId}`,
+        })
+
+        const item = document.querySelector('li[data-id="1"]')
+        item.classList.add('ns-targeted')
+        const dragEnterEvent = createEvent('dragleave', {
+          preventDefault: jest.fn(),
+        })
+        item.dispatchEvent(dragEnterEvent)
+
+        expect(item.classList).not.toContain('ns-targeted')
       })
     })
 

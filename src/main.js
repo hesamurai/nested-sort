@@ -166,12 +166,12 @@ class NestedSort {
   onDragEnter(e) {
     if (!(this.draggedNode && ['LI', 'UL'].includes(e.target.nodeName))) return
 
-    if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted)
     this.targetedNode = e.target
     this.targetedNode.classList.add(this.classNames.targeted)
   }
 
-  onDragLeave() {
+  onDragLeave(e) {
+    this.removeClassFromEl(e.target, this.classNames.targeted)
   }
 
   onDragEnd(e) {
