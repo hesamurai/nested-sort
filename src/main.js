@@ -117,7 +117,8 @@ class NestedSort {
   }
 
   initDragAndDrop() {
-    document.addEventListener('dragover', this.dragListener.bind(this), false)
+    const list = this.getSortableList()
+    list.addEventListener('dragover', this.dragListener.bind(this), false)
 
     this.initPlaceholderList()
 

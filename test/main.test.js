@@ -291,6 +291,28 @@ describe('NestedSort', () => {
     })
 
     describe('dragover event', () => {
+      describe('on the sortable list', () => {
+        it('should prevent the default behaviour to allow dropping', () => {
+          const spy = jest.spyOn(NestedSort.prototype, 'dragListener')
+          const ns = new NestedSort({
+            data: [
+              { id: 1, text: 'One' },
+              { id: 2, text: 'Two' },
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+          const list = ns.getSortableList()
+          const event = createEvent('dragover', { bubbles: false })
+
+          list.dispatchEvent(event)
+
+          expect(spy).toHaveBeenCalledTimes(1)
+          expect(spy).toHaveBeenCalledWith(event)
+
+          spy.mockRestore();
+        })
+      })
+
       it('should prevent the default behaviour to allow dropping', () => {
         const ns = new NestedSort({
           data: [
