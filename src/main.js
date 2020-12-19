@@ -154,6 +154,11 @@ class NestedSort {
     }
   }
 
+  canBeTargeted(el) {
+    if (!this.draggedNode) return false
+    return el.nodeName === 'LI' || (el.nodeName === 'UL' && el.classList.contains(this.classNames.placeholder))
+  }
+
   onDragStart(e) {
     this.draggedNode = e.target
     this.draggedNode.classList.add(this.classNames.dragged)
@@ -165,7 +170,7 @@ class NestedSort {
   }
 
   onDragEnter(e) {
-    if (!(this.draggedNode && ['LI', 'UL'].includes(e.target.nodeName))) return
+    if (!this.canBeTargeted(e.target)) return
 
     this.targetedNode = e.target
     this.targetedNode.classList.add(this.classNames.targeted)
