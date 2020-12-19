@@ -1,5 +1,6 @@
 export const createEvent = (type, props = {}) => {
-  const event = new Event(type, { bubbles: true })
+  const event = new Event(type, { bubbles: props.bubbles || true })
+  delete props.bubbles // this property cannot be set on the event object
   Object.assign(
     event,
     {
