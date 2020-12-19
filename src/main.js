@@ -122,7 +122,7 @@ class NestedSort {
 
     this.initPlaceholderList()
 
-    this.getSortableList().querySelectorAll('li').forEach(el => {
+    list.querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', 'true')
 
       el.addEventListener('dragstart', this.onDragStart.bind(this), false)
