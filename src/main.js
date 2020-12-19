@@ -155,7 +155,7 @@ class NestedSort {
   }
 
   canBeTargeted(el) {
-    if (!this.draggedNode) return false
+    if (!this.draggedNode || this.draggedNode === el) return false
     return el.nodeName === 'LI' || (el.nodeName === 'UL' && el.classList.contains(this.classNames.placeholder))
   }
 

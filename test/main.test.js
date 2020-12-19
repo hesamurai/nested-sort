@@ -1122,6 +1122,19 @@ describe('NestedSort', () => {
       expect(result).toBe(false)
     })
 
+    it('should return false if draggedNode equals the passed element', () => {
+      const ns = new NestedSort({
+        data: [
+          { id: 1, text: 'One' },
+        ],
+        el: `#${dynamicListWrapperId}`,
+      })
+      ns.draggedNode = document.querySelector('li[data-id="1"]')
+      const result = ns.canBeTargeted(ns.draggedNode)
+
+      expect(result).toBe(false)
+    })
+
     it('should return true if the passed element is a list item', () => {
       const ns = new NestedSort({
         data: [
