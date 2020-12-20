@@ -119,6 +119,7 @@ class NestedSort {
   initDragAndDrop() {
     const list = this.getSortableList()
     list.addEventListener('dragover', this.dragListener.bind(this), false)
+    list.addEventListener('dragstart', this.onDragStart.bind(this), false)
     list.addEventListener('dragenter', this.onDragEnter.bind(this), false)
 
     this.initPlaceholderList()
@@ -126,7 +127,6 @@ class NestedSort {
     list.querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', 'true')
 
-      el.addEventListener('dragstart', this.onDragStart.bind(this), false)
       el.addEventListener('dragover', this.onDragOver.bind(this), false)
       el.addEventListener('dragleave', this.onDragLeave.bind(this), false)
       el.addEventListener('dragend', this.onDragEnd.bind(this), false)
