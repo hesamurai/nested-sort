@@ -118,7 +118,7 @@ class NestedSort {
 
   initDragAndDrop() {
     const list = this.getSortableList()
-    list.addEventListener('dragover', this.dragListener.bind(this), false)
+    list.addEventListener('dragover', this.onDragOver.bind(this), false)
     list.addEventListener('dragstart', this.onDragStart.bind(this), false)
     list.addEventListener('dragenter', this.onDragEnter.bind(this), false)
 
@@ -127,7 +127,6 @@ class NestedSort {
     list.querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', 'true')
 
-      el.addEventListener('dragover', this.onDragOver.bind(this), false)
       el.addEventListener('dragleave', this.onDragLeave.bind(this), false)
       el.addEventListener('dragend', this.onDragEnd.bind(this), false)
       el.addEventListener('drop', this.onDrop.bind(this), false)
@@ -167,6 +166,8 @@ class NestedSort {
 
   onDragOver(e) {
     e.preventDefault() // prevent default to allow drop
+    this.updateCoordination(e)
+    this.managePlaceholderLists(e)
   }
 
   onDragEnter(e) {
@@ -197,11 +198,6 @@ class NestedSort {
     if (typeof this.actions.onDrop === 'function') {
       this.actions.onDrop(this.getDataEngine().convertDomToData(this.getSortableList()))
     }
-  }
-
-  dragListener(e) {
-    this.updateCoordination(e)
-    this.managePlaceholderLists(e)
   }
 
   updateCoordination(e) {
