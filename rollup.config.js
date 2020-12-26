@@ -3,6 +3,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import pkg from './package.json';
 import babel from 'rollup-plugin-babel';
 import { eslint } from "rollup-plugin-eslint";
+import { terser } from 'rollup-plugin-terser';
 
 export default [
   // browser-friendly UMD build
@@ -24,6 +25,23 @@ export default [
         exclude: 'node_modules/**',
         runtimeHelpers: true,
       }),
+    ],
+  },
+  {
+    input: 'src/main.js',
+    output: {
+      name: 'NestedSort',
+      file: pkg.browserMin,
+      format: 'umd',
+    },
+    plugins: [
+      resolve(),
+      commonjs(),
+      babel({
+        exclude: 'node_modules/**',
+        runtimeHelpers: true
+      }),
+      terser(),
     ],
   },
 
