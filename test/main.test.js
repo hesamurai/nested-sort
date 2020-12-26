@@ -202,7 +202,7 @@ describe('NestedSort', () => {
         })
       })
 
-      describe('when event target is either an LI or a UL element', () => {
+      describe('when event target element can be targeted', () => {
         beforeEach(() => {
           jest.spyOn(NestedSort.prototype, 'canBeTargeted').mockReturnValueOnce(true);
         });
@@ -233,25 +233,12 @@ describe('NestedSort', () => {
             data: [
               { id: 1, text: 'One' },
               { id: 2, text: 'Two' },
-              { id: 3, text: 'Three' },
             ],
             el: `#${dynamicListWrapperId}`,
           })
 
-          // let's pretend we're dragging the item Three
-          const item = document.querySelector('[data-id="3"]')
-          const setData = jest.fn()
-          item.dispatchEvent(
-            createEvent('dragstart', {
-              dataTransfer: { setData }
-            })
-          )
-
           const item1 = document.querySelector('li[data-id="1"]')
-
-          const dragEnterEvent = createEvent('dragenter', {
-            preventDefault: jest.fn(),
-          })
+          const dragEnterEvent = createEvent('dragenter')
 
           item1.dispatchEvent(dragEnterEvent)
           expect(item1.classList).toContain('ns-targeted')
@@ -262,24 +249,12 @@ describe('NestedSort', () => {
             data: [
               { id: 1, text: 'One' },
               { id: 2, text: 'Two' },
-              { id: 3, text: 'Three' },
             ],
             el: `#${dynamicListWrapperId}`,
           })
 
-          // let's pretend we're dragging the item Three
-          const item = document.querySelector('[data-id="3"]')
-          const setData = jest.fn()
-          item.dispatchEvent(
-            createEvent('dragstart', {
-              dataTransfer: { setData }
-            })
-          )
-
           const item1 = document.querySelector('li[data-id="1"]')
-          const dragEnterEvent = createEvent('dragenter', {
-            preventDefault: jest.fn(),
-          })
+          const dragEnterEvent = createEvent('dragenter')
 
           item1.dispatchEvent(dragEnterEvent)
           expect(ns.targetedNode).toEqual(item1)
