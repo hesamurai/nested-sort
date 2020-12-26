@@ -203,6 +203,31 @@ describe('NestedSort', () => {
       })
 
       describe('when event target is either an LI or a UL element', () => {
+        beforeEach(() => {
+          jest.spyOn(NestedSort.prototype, 'canBeTargeted').mockReturnValueOnce(true);
+        });
+
+        it('should remove the ns-targeted class from the current targeted item', () => {
+          const ns = new NestedSort({
+            data: [
+              { id: 1, text: 'One' },
+              { id: 2, text: 'Two' },
+            ],
+            el: `#${dynamicListWrapperId}`,
+          })
+
+          const oldTargetedItem = document.querySelector('li[data-id="1"]')
+          oldTargetedItem.classList.add(ns.classNames.targeted)
+          ns.targetedNode = oldTargetedItem
+
+          const newTargetedItem = document.querySelector('li[data-id="2"]')
+          const dragEnterEvent = createEvent('dragenter')
+
+          newTargetedItem.dispatchEvent(dragEnterEvent)
+
+          expect(oldTargetedItem.classList).not.toContain(ns.classNames.targeted)
+        })
+
         it('should add the ns-targeted class name to the newly targeted item', () => {
           const ns = new NestedSort({
             data: [
@@ -259,28 +284,6 @@ describe('NestedSort', () => {
           item1.dispatchEvent(dragEnterEvent)
           expect(ns.targetedNode).toEqual(item1)
         })
-      })
-    })
-
-    describe('dragleave event', () => {
-      it('should remove the ns-targeted class name from the event target element', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-            { id: 3, text: 'Three' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
-        const item = document.querySelector('li[data-id="1"]')
-        item.classList.add('ns-targeted')
-        const dragEnterEvent = createEvent('dragleave', {
-          preventDefault: jest.fn(),
-        })
-        item.dispatchEvent(dragEnterEvent)
-
-        expect(item.classList).not.toContain('ns-targeted')
       })
     })
 

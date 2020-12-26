@@ -121,7 +121,6 @@ class NestedSort {
     list.addEventListener('dragover', this.onDragOver.bind(this), false)
     list.addEventListener('dragstart', this.onDragStart.bind(this), false)
     list.addEventListener('dragenter', this.onDragEnter.bind(this), false)
-    list.addEventListener('dragleave', this.onDragLeave.bind(this), false)
     list.addEventListener('dragend', this.onDragEnd.bind(this), false)
     list.addEventListener('drop', this.onDrop.bind(this), false)
 
@@ -171,12 +170,9 @@ class NestedSort {
   onDragEnter(e) {
     if (!this.canBeTargeted(e.target)) return
 
+    this.removeClassFromEl(this.targetedNode, this.classNames.targeted)
     this.targetedNode = e.target
     this.targetedNode.classList.add(this.classNames.targeted)
-  }
-
-  onDragLeave(e) {
-    this.removeClassFromEl(e.target, this.classNames.targeted)
   }
 
   onDragEnd(e) {
