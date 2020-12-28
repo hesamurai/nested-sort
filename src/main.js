@@ -145,7 +145,7 @@ class NestedSort {
   }
 
   removeClassFromEl(el, className) {
-    if (el && el.classList && el.classList.contains(className)) {
+    if (el && el.classList.contains(className)) {
       el.classList.remove(className)
     }
   }
