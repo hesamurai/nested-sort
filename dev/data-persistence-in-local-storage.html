@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Persisting Data in Local Storage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <h1>Persisting Data in Local Storage</h1>
+
+  <p>Try to re-order the item and refresh the page. You'll see that your new order is persisting unless you clear your
+    browser local storage.</p>
+
+  <div id="draggable"></div>
+</div>
+
+<!-- Scripts -->
+<script src="../dist/nested-sort.umd.js"></script>
+<script>
+  (function() {
+    const originalData = [
+      { item_id: 1, item_title: 'One', position: 5 },
+      { item_id: 2, item_title: 'Two', position: 4 },
+      { item_id: 3, item_title: 'Three', position: 3 },
+      { item_id: 4, item_title: 'Four', position: 2 },
+      { item_id: 5, item_title: 'Five', position: 1 },
+    ]
+    const dataKey = 'nestedSortData'
+    const data = JSON.parse(localStorage.getItem(dataKey)) || originalData
+    function onDrop (data) {
+      console.log(data)
+      const newData = originalData.map(origItem => {
+        const newItem = data.find(item => parseInt(item.item_id) === origItem.item_id)
+        return Object.assign({}, origItem, {
+          position: newItem.position,
+          item_parent: newItem.item_parent
+        })
+      })
+      localStorage.setItem(dataKey, JSON.stringify(newData))
+    }
+
+    new NestedSort({
+      actions: {
+        onDrop
+      },
+      data: data,
+      propertyMap: {
+        id: 'item_id',
+        parent: 'item_parent',
+        text: 'item_title',
+        order: 'position',
+      },
+      el: '#draggable',
+      droppingEdge: 5,
+      listClassNames: ['nested-sort']
+    })
+  })()
+</script>
+</body>
+</html>
