@@ -117,20 +117,17 @@ class NestedSort {
   }
 
   initDragAndDrop() {
-    document.addEventListener('dragover', this.dragListener.bind(this), false)
+    const list = this.getSortableList()
+    list.addEventListener('dragover', this.onDragOver.bind(this), false)
+    list.addEventListener('dragstart', this.onDragStart.bind(this), false)
+    list.addEventListener('dragenter', this.onDragEnter.bind(this), false)
+    list.addEventListener('dragend', this.onDragEnd.bind(this), false)
+    list.addEventListener('drop', this.onDrop.bind(this), false)
 
     this.initPlaceholderList()
 
-    this.getSortableList().querySelectorAll('li').forEach(el => {
+    list.querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', 'true')
-
-      el.addEventListener('dragstart', this.onDragStart.bind(this), false)
-      el.addEventListener('dragenter', this.onDragEnter.bind(this), false)
-      el.addEventListener('dragover', this.onDragOver.bind(this), false)
-      el.addEventListener('dragleave', this.onDragLeave.bind(this), false)
-      el.addEventListener('dragend', this.onDragEnd.bind(this), false)
-      el.addEventListener('drop', this.onDrop.bind(this), false)
-
       this.addListItemStyles(el)
     })
   }
@@ -153,6 +150,11 @@ class NestedSort {
     }
   }
 
+  canBeTargeted(el) {
+    if (!this.draggedNode || this.draggedNode === el) return false
+    return el.nodeName === 'LI' || (el.nodeName === 'UL' && el.classList.contains(this.classNames.placeholder))
+  }
+
   onDragStart(e) {
     this.draggedNode = e.target
     this.draggedNode.classList.add(this.classNames.dragged)
@@ -161,17 +163,16 @@ class NestedSort {
 
   onDragOver(e) {
     e.preventDefault() // prevent default to allow drop
+    this.updateCoordination(e)
+    this.managePlaceholderLists(e)
   }
 
   onDragEnter(e) {
-    if (!(this.draggedNode && ['LI', 'UL'].includes(e.target.nodeName))) return
+    if (!this.canBeTargeted(e.target)) return
 
-    if (this.targetedNode) this.targetedNode.classList.remove(this.classNames.targeted)
+    this.removeClassFromEl(this.targetedNode, this.classNames.targeted)
     this.targetedNode = e.target
     this.targetedNode.classList.add(this.classNames.targeted)
-  }
-
-  onDragLeave() {
   }
 
   onDragEnd(e) {
@@ -191,11 +192,6 @@ class NestedSort {
     if (typeof this.actions.onDrop === 'function') {
       this.actions.onDrop(this.getDataEngine().convertDomToData(this.getSortableList()))
     }
-  }
-
-  dragListener(e) {
-    this.updateCoordination(e)
-    this.managePlaceholderLists(e)
   }
 
   updateCoordination(e) {
