@@ -554,6 +554,47 @@ describe('NestedSort', () => {
     })
   })
 
+  describe('toggleListEventListeners method', () => {
+    beforeEach(() => {
+      initServerRenderedList()
+    })
+
+    it('should add all the event listeners upon initiation', () => {
+      const el = document.getElementById(STATIC_LIST_WRAPPER_ID)
+      el.addEventListener = jest.fn()
+      const ns = new NestedSort({ el })
+      const eventsNames = Object.keys(ns.listEventListeners)
+
+      expect(el.addEventListener).toHaveBeenCalledTimes(eventsNames.length)
+      eventsNames.forEach((event, i) => {
+        expect(el.addEventListener).toHaveBeenNthCalledWith(
+          i + 1,
+          event,
+          ns.listEventListeners[event],
+          false
+        )
+      })
+    })
+
+    it('should remove all the event listeners when the remove arg equals true', () => {
+      const el = document.getElementById(STATIC_LIST_WRAPPER_ID)
+      el.removeEventListener = jest.fn()
+      const ns = new NestedSort({ el })
+      const eventsNames = Object.keys(ns.listEventListeners)
+
+      ns.toggleListEventListeners(true)
+
+      expect(el.removeEventListener).toHaveBeenCalledTimes(eventsNames.length)
+      eventsNames.forEach((event, i) => {
+        expect(el.removeEventListener).toHaveBeenNthCalledWith(
+          i + 1,
+          event,
+          ns.listEventListeners[event]
+        )
+      })
+    })
+  })
+
   describe('canBeDropped method', () => {
     it('should return false if targetNodeIsIdentified() returns false', () => {
       const ns = new NestedSort({

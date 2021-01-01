@@ -64,6 +64,13 @@ class NestedSort {
       placeholder: 'ns-placeholder',
       targeted: 'ns-targeted',
     }
+    this.listEventListeners = {
+      dragover: this.onDragOver.bind(this),
+      dragstart: this.onDragStart.bind(this),
+      dragenter: this.onDragEnter.bind(this),
+      dragend: this.onDragEnd.bind(this),
+      drop: this.onDrop.bind(this),
+    }
 
     this.maybeInitDataDom()
     this.addListAttributes()
@@ -116,14 +123,20 @@ class NestedSort {
     })
   }
 
+  toggleListEventListeners(remove = false) {
+    const list = this.getSortableList()
+    Object.keys(this.listEventListeners).forEach(event => {
+      if (remove) {
+        list.removeEventListener(event, this.listEventListeners[event])
+      } else {
+        list.addEventListener(event, this.listEventListeners[event], false)
+      }
+    })
+  }
+
   initDragAndDrop() {
     const list = this.getSortableList()
-    list.addEventListener('dragover', this.onDragOver.bind(this), false)
-    list.addEventListener('dragstart', this.onDragStart.bind(this), false)
-    list.addEventListener('dragenter', this.onDragEnter.bind(this), false)
-    list.addEventListener('dragend', this.onDragEnd.bind(this), false)
-    list.addEventListener('drop', this.onDrop.bind(this), false)
-
+    this.toggleListEventListeners()
     this.initPlaceholderList()
 
     list.querySelectorAll('li').forEach(el => {
