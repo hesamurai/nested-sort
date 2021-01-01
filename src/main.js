@@ -93,8 +93,10 @@ class NestedSort {
   maybeInitDataDom() {
     if (!(Array.isArray(this.data) && this.data.length)) return
 
+    const wrapper = document.querySelector(this.selector)
     const list = this.getDataEngine().render()
-    document.querySelector(this.selector).appendChild(list)
+    wrapper.innerHTML = ''
+    wrapper.appendChild(list)
   }
 
   getSortableList() {

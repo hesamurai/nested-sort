@@ -409,6 +409,18 @@ describe('NestedSort', () => {
     })
   })
 
+  describe('When the list is data-driven', () => {
+    describe('maybeInitDataDom method', () => {
+      it('should not create multiple lists inside the list wrapper if Nested Sort is initialised more than once', () => {
+        initDataDrivenList()
+        initDataDrivenList()
+        const wrapper = document.getElementById(DYNAMIC_LIST_WRAPPER_ID)
+
+        expect(wrapper.getElementsByTagName('ul').length).toBe(1)
+      })
+    })
+  })
+
   describe('toggleListEventListeners method', () => {
     beforeEach(() => {
       initServerRenderedList()
