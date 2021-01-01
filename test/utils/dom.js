@@ -1,6 +1,8 @@
 import {
-  STATIC_LIST_WRAPPER_ID
+  DYNAMIC_LIST_WRAPPER_ID,
+  STATIC_LIST_WRAPPER_ID,
 } from './constants'
+import NestedSort from '../../src/main'
 
 export const createEvent = (type, props = {}) => {
   const event = new Event(type, { bubbles: props.bubbles || true })
@@ -30,4 +32,15 @@ export const initServerRenderedList = () => {
       </ul>
     </div>
   `
+}
+
+export const initDataDrivenList = (options = {}) => {
+  return new NestedSort({
+    data: [
+      {id: 1, text: 'One'},
+      {id: 2, text: 'Two'},
+    ],
+    el: `#${DYNAMIC_LIST_WRAPPER_ID}`,
+    ...options
+  })
 }
