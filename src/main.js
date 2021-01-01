@@ -135,11 +135,10 @@ class NestedSort {
   }
 
   initDragAndDrop() {
-    const list = this.getSortableList()
     this.toggleListEventListeners()
     this.initPlaceholderList()
 
-    list.querySelectorAll('li').forEach(el => {
+    this.getSortableList().querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', 'true')
       this.addListItemStyles(el)
     })
