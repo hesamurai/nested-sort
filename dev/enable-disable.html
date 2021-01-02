@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Enable / Disable</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <h1>Enable / Disable</h1>
+  <p>Use the buttons on each section to enable (initialise) or disable (destroy) the sorting functionality.</p>
+
+  <h2>Server rendered list</h2>
+  <button type="button" onclick="initServerRenderedList()">Init / Enable</button>
+  <button type="button" onclick="destroyServerRenderedList()">Destroy / Disable</button>
+
+  <ul id="server-rendered">
+    <li data-id="1">Topic 1</li>
+    <li data-id="2">Topic 2</li>
+    <li data-id="3">Topic 3
+      <ul data-id="3">
+        <li data-id="31">Topic 3-1</li>
+        <li data-id="32">Topic 3-2</li>
+      </ul>
+    </li>
+    <li data-id="4">Topic 4</li>
+    <li data-id="5">Topic 5</li>
+  </ul>
+
+  <hr>
+
+  <h2>Data-driven list</h2>
+
+  <button type="button" onclick="initDataDrivenList()">Init / Enable</button>
+  <button type="button" onclick="destroyDataDrivenList()">Destroy / Disable</button>
+
+  <div id="data-driven"></div>
+</div>
+
+<!-- Scripts -->
+<script src="../dist/nested-sort.umd.js"></script>
+<script>
+  // Server rendered list
+  const initServerRenderedList = () => {
+    if (window.serverRenderedList) {
+      window.serverRenderedList.destroy()
+    }
+    window.serverRenderedList = new NestedSort({
+      actions: {
+        onDrop: function (data) {
+          console.log(data)
+        }
+      },
+      el: '#server-rendered',
+      droppingEdge: 5,
+      listClassNames: ['nested-sort']
+    })
+  }
+
+  const destroyServerRenderedList = () => {
+    if (window.serverRenderedList) {
+      window.serverRenderedList.destroy()
+      delete window.serverRenderedList
+    }
+  }
+
+  // Local storage persistent data-driven list
+  const originalData = [
+    { item_id: 1, item_title: 'One', position: 5 },
+    { item_id: 2, item_title: 'Two', position: 4 },
+    { item_id: 3, item_title: 'Three', position: 3 },
+    { item_id: 4, item_title: 'Four', position: 2 },
+    { item_id: 5, item_title: 'Five', position: 1 },
+  ]
+  const dataKey = 'nestedSortData'
+  let data = JSON.parse(localStorage.getItem(dataKey)) || originalData
+  function onDrop (orderedItems) {
+    console.log(orderedItems)
+    const newData = originalData.map(origItem => {
+      const newItem = orderedItems.find(item => parseInt(item.item_id) === origItem.item_id)
+      return Object.assign({}, origItem, {
+        position: newItem.position,
+        item_parent: newItem.item_parent
+      })
+    })
+    data = newData
+    localStorage.setItem(dataKey, JSON.stringify(newData))
+  }
+
+  const initDataDrivenList = () => {
+    if (window.dataDrivenList) {
+      window.dataDrivenList.destroy()
+    }
+    window.dataDrivenList = new NestedSort({
+      actions: {
+        onDrop
+      },
+      data: data,
+      propertyMap: {
+        id: 'item_id',
+        parent: 'item_parent',
+        text: 'item_title',
+        order: 'position',
+      },
+      el: '#data-driven',
+      droppingEdge: 5,
+      listClassNames: ['nested-sort']
+    })
+  }
+
+  const destroyDataDrivenList = () => {
+    if (window.dataDrivenList) {
+      window.dataDrivenList.destroy()
+      delete window.dataDrivenList
+    }
+  }
+</script>
+</body>
+</html>
