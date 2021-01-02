@@ -125,6 +125,12 @@ class NestedSort {
     })
   }
 
+  toggleListItemAttributes(enable = true) {
+    this.getSortableList().querySelectorAll('li').forEach(el => {
+      el.setAttribute('draggable', enable)
+    })
+  }
+
   toggleListEventListeners(remove = false) {
     const list = this.getSortableList()
     Object.keys(this.listEventListeners).forEach(event => {
@@ -139,11 +145,13 @@ class NestedSort {
   initDragAndDrop() {
     this.toggleListEventListeners()
     this.initPlaceholderList()
+    this.toggleListItemAttributes()
+    this.getSortableList().querySelectorAll('li').forEach(this.addListItemStyles.bind(this))
+  }
 
-    this.getSortableList().querySelectorAll('li').forEach(el => {
-      el.setAttribute('draggable', 'true')
-      this.addListItemStyles(el)
-    })
+  destroy() {
+    this.toggleListEventListeners(true)
+    this.toggleListItemAttributes(false)
   }
 
   getComputedStyleValue(el, prop) {

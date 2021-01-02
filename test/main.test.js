@@ -14,6 +14,17 @@ describe('NestedSort', () => {
     document.body.innerHTML = `<div id="${DYNAMIC_LIST_WRAPPER_ID}"></div>`
   })
 
+  describe('upon initiation', () => {
+    describe('list items attributes', () => {
+      it('should add the draggable attribute to all the list items', () => {
+        const ns = initDataDrivenList()
+        Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+          expect(li.getAttribute('draggable')).toBe('true')
+        })
+      })
+    })
+  })
+
   describe('How it deals with List Class Names', () => {
     it('should convert the listClassNames prop on the initialisation and assign it to this.listClassNames', () => {
       [
@@ -891,6 +902,28 @@ describe('NestedSort', () => {
       placeholderList.classList.add(ns.classNames.placeholder)
 
       expect(ns.canBeTargeted(placeholderList)).toBe(false)
+    })
+  })
+
+  describe('destroy method', () => {
+    it('should invoke the toggleListEventListeners method with correct arguments', () => {
+      const ns = initDataDrivenList()
+      const spy = jest.spyOn(ns, 'toggleListEventListeners')
+
+      ns.destroy()
+
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith(true)
+    })
+
+    it('should invoke the toggleListItemAttributes method with correct arguments', () => {
+      const ns = initDataDrivenList()
+      const spy = jest.spyOn(ns, 'toggleListItemAttributes')
+
+      ns.destroy()
+
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith(false)
     })
   })
 })
