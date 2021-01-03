@@ -920,6 +920,61 @@ describe('NestedSort', () => {
     })
   })
 
+  describe('initDragAndDrop method', () => {
+    describe('when drag and drop is already initialised', () => {
+      let ns
+      beforeEach(() => {
+        ns = initDataDrivenList({ init: true })
+      })
+
+      it('should go through the early return', () => {
+        const spy1 = jest.spyOn(ns, 'toggleListEventListeners')
+        const spy2 = jest.spyOn(ns, 'initPlaceholderList')
+        const spy3 = jest.spyOn(ns, 'toggleListItemAttributes')
+
+        ns.initDragAndDrop()
+
+        expect(spy1).not.toHaveBeenCalled()
+        expect(spy2).not.toHaveBeenCalled()
+        expect(spy3).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('when drag and drop is NOT initialised', () => {
+      let ns
+      beforeEach(() => {
+        ns = initDataDrivenList({ init: false })
+      })
+
+      it('should invoke the toggleListEventListeners method with no arguments', () => {
+        const spy = jest.spyOn(ns, 'toggleListEventListeners')
+        ns.initDragAndDrop()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith()
+      })
+
+      it('should invoke the initPlaceholderList method with no arguments', () => {
+        const spy = jest.spyOn(ns, 'initPlaceholderList')
+        ns.initDragAndDrop()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith()
+      })
+
+      it('should invoke the toggleListItemAttributes method with no arguments', () => {
+        const spy = jest.spyOn(ns, 'toggleListItemAttributes')
+        ns.initDragAndDrop()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith()
+      })
+
+      it('should set the initialised property value to true', () => {
+        expect(ns.initialised).toBe(false)
+        ns.initDragAndDrop()
+        expect(ns.initialised).toBe(true)
+      })
+    })
+  })
+
   describe('destroy method', () => {
     it('should invoke the toggleListEventListeners method with correct arguments', () => {
       const ns = initDataDrivenList()

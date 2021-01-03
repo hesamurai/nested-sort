@@ -35,7 +35,7 @@ class NestedSort {
     this.actions = {
       onDrop,
     }
-
+    this.initialised = false
     this.targetNode = {
       X: null,
       Y: null,
@@ -144,10 +144,13 @@ class NestedSort {
   }
 
   initDragAndDrop() {
+    if (this.initialised) return
+
     this.toggleListEventListeners()
     this.initPlaceholderList()
     this.toggleListItemAttributes()
     this.getSortableList().querySelectorAll('li').forEach(this.addListItemStyles.bind(this))
+    this.initialised = true
   }
 
   destroy() {
