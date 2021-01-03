@@ -29,15 +29,6 @@ describe('NestedSort', () => {
         spy.mockRestore()
       })
     })
-
-    describe('list items attributes', () => {
-      it('should add the draggable attribute to all the list items', () => {
-        const ns = initDataDrivenList()
-        Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
-          expect(li.getAttribute('draggable')).toBe('true')
-        })
-      })
-    })
   })
 
   describe('How it deals with List Class Names', () => {
@@ -1011,6 +1002,34 @@ describe('NestedSort', () => {
       const ns = initDataDrivenList({ init: true })
       ns.destroy()
       expect(ns.initialised).toBe(false)
+    })
+  })
+
+  describe('toggleListItemAttributes method', () => {
+    it('should set the draggable attribute value to true on all the list items when no argument is passed to it', () => {
+      const ns = initDataDrivenList({ init: false })
+      Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+        expect(li.getAttribute('draggable')).toBe(null)
+      }) // to make sure instantiation has not set the attribute value
+
+      ns.toggleListItemAttributes()
+
+      Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+        expect(li.getAttribute('draggable')).toBe('true')
+      })
+    })
+
+    it('should set the draggable attribute value to false on all the list items when the passed argument equals false', () => {
+      const ns = initDataDrivenList({ init: true })
+      Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+        expect(li.getAttribute('draggable')).toBe('true')
+      }) // to make sure instantiation has set the attribute value to true
+
+      ns.toggleListItemAttributes(false)
+
+      Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+        expect(li.getAttribute('draggable')).toBe('false')
+      })
     })
   })
 })
