@@ -153,6 +153,10 @@ class NestedSort {
     this.initialised = true
   }
 
+  init() {
+    this.initDragAndDrop()
+  }
+
   destroy() {
     this.toggleListEventListeners(true)
     this.toggleListItemAttributes(false)

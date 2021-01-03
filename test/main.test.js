@@ -975,6 +975,17 @@ describe('NestedSort', () => {
     })
   })
 
+  describe('init method', () => {
+    it('should invoke the initDragAndDrop', () => {
+      const spy = jest.spyOn(NestedSort.prototype, 'initDragAndDrop')
+      const ns = initDataDrivenList({ init: false })
+
+      expect(spy).not.toHaveBeenCalled()
+      ns.init()
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('destroy method', () => {
     it('should invoke the toggleListEventListeners method with correct arguments', () => {
       const ns = initDataDrivenList()
