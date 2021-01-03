@@ -14,13 +14,19 @@ describe('NestedSort', () => {
     document.body.innerHTML = `<div id="${DYNAMIC_LIST_WRAPPER_ID}"></div>`
   })
 
-  describe('upon initiation', () => {
-    describe('list items attributes', () => {
-      it('should add the draggable attribute to all the list items', () => {
-        const ns = initDataDrivenList()
-        Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
-          expect(li.getAttribute('draggable')).toBe('true')
-        })
+  describe('upon instantiation', () => {
+    it('should not invoke the initDragAndDrop method when the init option is falsy', () => {
+      const spy = jest.spyOn(NestedSort.prototype, 'initDragAndDrop')
+      initDataDrivenList({ init: false })
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('should invoke the initDragAndDrop method when the init option is true or undefined', () => {
+      [undefined, true].forEach(init => {
+        const spy = jest.spyOn(NestedSort.prototype, 'initDragAndDrop')
+        initDataDrivenList({ init })
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
       })
     })
   })
@@ -905,6 +911,72 @@ describe('NestedSort', () => {
     })
   })
 
+  describe('initDragAndDrop method', () => {
+    describe('when drag and drop is already initialised', () => {
+      let ns
+      beforeEach(() => {
+        ns = initDataDrivenList({ init: true })
+      })
+
+      it('should go through the early return', () => {
+        const spy1 = jest.spyOn(ns, 'toggleListEventListeners')
+        const spy2 = jest.spyOn(ns, 'initPlaceholderList')
+        const spy3 = jest.spyOn(ns, 'toggleListItemAttributes')
+
+        ns.initDragAndDrop()
+
+        expect(spy1).not.toHaveBeenCalled()
+        expect(spy2).not.toHaveBeenCalled()
+        expect(spy3).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('when drag and drop is NOT initialised', () => {
+      let ns
+      beforeEach(() => {
+        ns = initDataDrivenList({ init: false })
+      })
+
+      it('should invoke the toggleListEventListeners method with no arguments', () => {
+        const spy = jest.spyOn(ns, 'toggleListEventListeners')
+        ns.initDragAndDrop()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith()
+      })
+
+      it('should invoke the initPlaceholderList method with no arguments', () => {
+        const spy = jest.spyOn(ns, 'initPlaceholderList')
+        ns.initDragAndDrop()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith()
+      })
+
+      it('should invoke the toggleListItemAttributes method with no arguments', () => {
+        const spy = jest.spyOn(ns, 'toggleListItemAttributes')
+        ns.initDragAndDrop()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith()
+      })
+
+      it('should set the initialised property value to true', () => {
+        expect(ns.initialised).toBe(false)
+        ns.initDragAndDrop()
+        expect(ns.initialised).toBe(true)
+      })
+    })
+  })
+
+  describe('init method', () => {
+    it('should invoke the initDragAndDrop', () => {
+      const spy = jest.spyOn(NestedSort.prototype, 'initDragAndDrop')
+      const ns = initDataDrivenList({ init: false })
+
+      expect(spy).not.toHaveBeenCalled()
+      ns.init()
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('destroy method', () => {
     it('should invoke the toggleListEventListeners method with correct arguments', () => {
       const ns = initDataDrivenList()
@@ -924,6 +996,40 @@ describe('NestedSort', () => {
 
       expect(spy).toHaveBeenCalledTimes(1)
       expect(spy).toHaveBeenCalledWith(false)
+    })
+
+    it('should set the initialised property value to false', () => {
+      const ns = initDataDrivenList({ init: true })
+      ns.destroy()
+      expect(ns.initialised).toBe(false)
+    })
+  })
+
+  describe('toggleListItemAttributes method', () => {
+    it('should set the draggable attribute value to true on all the list items when no argument is passed to it', () => {
+      const ns = initDataDrivenList({ init: false })
+      Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+        expect(li.getAttribute('draggable')).toBe(null)
+      }) // to make sure instantiation has not set the attribute value
+
+      ns.toggleListItemAttributes()
+
+      Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+        expect(li.getAttribute('draggable')).toBe('true')
+      })
+    })
+
+    it('should set the draggable attribute value to false on all the list items when the passed argument equals false', () => {
+      const ns = initDataDrivenList({ init: true })
+      Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+        expect(li.getAttribute('draggable')).toBe('true')
+      }) // to make sure instantiation has set the attribute value to true
+
+      ns.toggleListItemAttributes(false)
+
+      Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+        expect(li.getAttribute('draggable')).toBe('false')
+      })
     })
   })
 })

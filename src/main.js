@@ -17,6 +17,7 @@ class NestedSort {
     data,
     droppingEdge = 15,
     el,
+    init = true,
     listClassNames,
     listItemClassNames,
     propertyMap = {},
@@ -34,7 +35,7 @@ class NestedSort {
     this.actions = {
       onDrop,
     }
-
+    this.initialised = false
     this.targetNode = {
       X: null,
       Y: null,
@@ -74,7 +75,7 @@ class NestedSort {
 
     this.maybeInitDataDom()
     this.addListAttributes()
-    this.initDragAndDrop()
+    if (init) this.initDragAndDrop()
   }
 
   getDataEngine() {
@@ -143,15 +144,23 @@ class NestedSort {
   }
 
   initDragAndDrop() {
+    if (this.initialised) return
+
     this.toggleListEventListeners()
     this.initPlaceholderList()
     this.toggleListItemAttributes()
     this.getSortableList().querySelectorAll('li').forEach(this.addListItemStyles.bind(this))
+    this.initialised = true
+  }
+
+  init() {
+    this.initDragAndDrop()
   }
 
   destroy() {
     this.toggleListEventListeners(true)
     this.toggleListItemAttributes(false)
+    this.initialised = false
   }
 
   getComputedStyleValue(el, prop) {

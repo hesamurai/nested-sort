@@ -33,8 +33,7 @@
 
   <hr>
 
-  <h2>Data-driven list</h2>
-
+  <h2>Local storage persistent data-driven list</h2>
   <button type="button" onclick="initDataDrivenList()">Init / Enable</button>
   <button type="button" onclick="destroyDataDrivenList()">Destroy / Disable</button>
 
@@ -45,16 +44,14 @@
 <script src="../dist/nested-sort.umd.js"></script>
 <script>
   // Server rendered list
-  const initServerRenderedList = () => {
-    if (window.serverRenderedList) {
-      window.serverRenderedList.destroy()
-    }
+  const startServerRenderedList = () => {
     window.serverRenderedList = new NestedSort({
       actions: {
         onDrop: function (data) {
           console.log(data)
         }
       },
+      init: false,
       el: '#server-rendered',
       droppingEdge: 5,
       listClassNames: ['nested-sort']
@@ -64,9 +61,14 @@
   const destroyServerRenderedList = () => {
     if (window.serverRenderedList) {
       window.serverRenderedList.destroy()
-      delete window.serverRenderedList
     }
   }
+
+  const initServerRenderedList = () => {
+    window.serverRenderedList.init()
+  }
+
+  startServerRenderedList()
 
   // Local storage persistent data-driven list
   const originalData = [
@@ -91,15 +93,13 @@
     localStorage.setItem(dataKey, JSON.stringify(newData))
   }
 
-  const initDataDrivenList = () => {
-    if (window.dataDrivenList) {
-      window.dataDrivenList.destroy()
-    }
+  const startDataDrivenList = () => {
     window.dataDrivenList = new NestedSort({
       actions: {
         onDrop
       },
       data: data,
+      init: false,
       propertyMap: {
         id: 'item_id',
         parent: 'item_parent',
@@ -115,9 +115,14 @@
   const destroyDataDrivenList = () => {
     if (window.dataDrivenList) {
       window.dataDrivenList.destroy()
-      delete window.dataDrivenList
     }
   }
+
+  const initDataDrivenList = () => {
+    window.dataDrivenList.init()
+  }
+
+  startDataDrivenList()
 </script>
 </body>
 </html>
