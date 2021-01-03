@@ -17,6 +17,7 @@ class NestedSort {
     data,
     droppingEdge = 15,
     el,
+    init = true,
     listClassNames,
     listItemClassNames,
     propertyMap = {},
@@ -74,7 +75,7 @@ class NestedSort {
 
     this.maybeInitDataDom()
     this.addListAttributes()
-    this.initDragAndDrop()
+    if (init) this.initDragAndDrop()
   }
 
   getDataEngine() {

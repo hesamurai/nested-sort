@@ -14,7 +14,22 @@ describe('NestedSort', () => {
     document.body.innerHTML = `<div id="${DYNAMIC_LIST_WRAPPER_ID}"></div>`
   })
 
-  describe('upon initiation', () => {
+  describe('upon instantiation', () => {
+    it('should not invoke the initDragAndDrop method when the init option is falsy', () => {
+      const spy = jest.spyOn(NestedSort.prototype, 'initDragAndDrop')
+      initDataDrivenList({ init: false })
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('should invoke the initDragAndDrop method when the init option is true or undefined', () => {
+      [undefined, true].forEach(init => {
+        const spy = jest.spyOn(NestedSort.prototype, 'initDragAndDrop')
+        initDataDrivenList({ init })
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
+    })
+
     describe('list items attributes', () => {
       it('should add the draggable attribute to all the list items', () => {
         const ns = initDataDrivenList()
