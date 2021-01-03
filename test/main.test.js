@@ -1,14 +1,28 @@
 import NestedSort from '../src/main'
 import {
   createEvent,
+  initDataDrivenList,
+  initServerRenderedList,
 } from './utils/dom'
+import {
+  DYNAMIC_LIST_WRAPPER_ID,
+  STATIC_LIST_WRAPPER_ID,
+} from './utils/constants'
 
 describe('NestedSort', () => {
-  const dynamicListWrapperId = 'dynamic-list-wrapper-id'
-  const staticListWrapperId = 'static-list-wrapper-id'
-
   beforeEach(() => {
-    document.body.innerHTML = `<div id="${dynamicListWrapperId}"></div>`
+    document.body.innerHTML = `<div id="${DYNAMIC_LIST_WRAPPER_ID}"></div>`
+  })
+
+  describe('upon initiation', () => {
+    describe('list items attributes', () => {
+      it('should add the draggable attribute to all the list items', () => {
+        const ns = initDataDrivenList()
+        Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
+          expect(li.getAttribute('draggable')).toBe('true')
+        })
+      })
+    })
   })
 
   describe('How it deals with List Class Names', () => {
@@ -17,11 +31,7 @@ describe('NestedSort', () => {
         'class1 class2',
         ['class1', 'class2'],
       ].forEach(listClassNames => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'Item 1' }
-          ],
-          el: `#${dynamicListWrapperId}`,
+        const ns = initDataDrivenList({
           listClassNames,
         })
 
@@ -34,7 +44,7 @@ describe('NestedSort', () => {
 
     it('should assign the class names to the main list and all the nested ones', () => {
       const listClassNames = ['class1', 'class2']
-      const ns = new NestedSort({
+      const ns = initDataDrivenList({
         data: [
           { id: 1, text: 'Item 1' },
           { id: 11, text: 'Item 1-1', parent: 1 },
@@ -42,7 +52,6 @@ describe('NestedSort', () => {
           { id: 21, text: 'Item 2-1', parent: 2 },
           { id: 3, text: 'Item 3' },
         ],
-        el: `#${dynamicListWrapperId}`,
         listClassNames,
       })
 
@@ -61,11 +70,7 @@ describe('NestedSort', () => {
 
     it('should assign the class names to the placeholder list when initialising it', () => {
       const listClassNames = ['class1', 'class2']
-      const ns = new NestedSort({
-        data: [
-          { id: 1, text: 'Item 1' }
-        ],
-        el: `#${dynamicListWrapperId}`,
+      const ns = initDataDrivenList({
         listClassNames,
       })
 
@@ -82,13 +87,10 @@ describe('NestedSort', () => {
         'class1 class2',
         ['class1', 'class2'],
       ].forEach(listItemClassNames => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'Item 1' }
-          ],
-          el: `#${dynamicListWrapperId}`,
+        const ns = initDataDrivenList({
           listItemClassNames,
         })
+
         expect(ns.listItemClassNames).toEqual([
           'class1',
           'class2',
@@ -98,13 +100,7 @@ describe('NestedSort', () => {
 
     it('should assign the listItemClassNames to all the list items', () => {
       const listItemClassNames = ['class1', 'class2']
-      const ns = new NestedSort({
-        data: [
-          { id: 1, text: 'Item 1' },
-          { id: 2, text: 'Item 2' },
-          { id: 3, text: 'Item 3' },
-        ],
-        el: `#${dynamicListWrapperId}`,
+      const ns = initDataDrivenList({
         listItemClassNames,
       })
 
@@ -118,15 +114,7 @@ describe('NestedSort', () => {
   describe('Drag and Drop interactions', () => {
     describe('dragstart event', () => {
       it('adds the designated class name to the dragged item', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-            { id: 3, text: 'Three' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        initDataDrivenList()
         const item = document.querySelector('[data-id="1"]')
         item.dispatchEvent(
           createEvent('dragstart')
@@ -136,15 +124,7 @@ describe('NestedSort', () => {
       })
 
       it('assigns the event target element to the draggedNode property of the instance', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-            { id: 3, text: 'Three' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        const ns = initDataDrivenList()
         const item = document.querySelector('[data-id="1"]')
         item.dispatchEvent(
           createEvent('dragstart')
@@ -154,15 +134,7 @@ describe('NestedSort', () => {
       })
 
       it('runs the event dataTransfer.setDate method', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-            { id: 3, text: 'Three' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        initDataDrivenList()
         const item = document.querySelector('[data-id="1"]')
         const setData = jest.fn()
         item.dispatchEvent(
@@ -178,15 +150,8 @@ describe('NestedSort', () => {
     describe('dragenter event', () => {
       describe('when it goes through the early return', () => {
         it('should return if canBeTargeted method returns false', () => {
-          const spy = jest.spyOn(NestedSort.prototype, 'canBeTargeted').mockReturnValue(false);
-          const ns = new NestedSort({
-            data: [
-              { id: 1, text: 'One' },
-              { id: 2, text: 'Two' },
-              { id: 3, text: 'Three' },
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const spy = jest.spyOn(NestedSort.prototype, 'canBeTargeted').mockReturnValue(false)
+          const ns = initDataDrivenList()
           ns.targetedNode = document.querySelector('[data-id="2"]')
           const newTargetedNode = document.querySelector('[data-id="1"]')
           newTargetedNode.classList.add = jest.fn()
@@ -204,17 +169,11 @@ describe('NestedSort', () => {
 
       describe('when event target element can be targeted', () => {
         beforeEach(() => {
-          jest.spyOn(NestedSort.prototype, 'canBeTargeted').mockReturnValueOnce(true);
-        });
+          jest.spyOn(NestedSort.prototype, 'canBeTargeted').mockReturnValueOnce(true)
+        })
 
         it('should remove the ns-targeted class from the current targeted item', () => {
-          const ns = new NestedSort({
-            data: [
-              { id: 1, text: 'One' },
-              { id: 2, text: 'Two' },
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const ns = initDataDrivenList()
 
           const oldTargetedItem = document.querySelector('li[data-id="1"]')
           oldTargetedItem.classList.add(ns.classNames.targeted)
@@ -229,14 +188,7 @@ describe('NestedSort', () => {
         })
 
         it('should add the ns-targeted class name to the newly targeted item', () => {
-          const ns = new NestedSort({
-            data: [
-              { id: 1, text: 'One' },
-              { id: 2, text: 'Two' },
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
-
+          initDataDrivenList()
           const item1 = document.querySelector('li[data-id="1"]')
           const dragEnterEvent = createEvent('dragenter')
 
@@ -245,14 +197,7 @@ describe('NestedSort', () => {
         })
 
         it('should set this.targetedNode to the event target element', () => {
-          const ns = new NestedSort({
-            data: [
-              { id: 1, text: 'One' },
-              { id: 2, text: 'Two' },
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
-
+          const ns = initDataDrivenList()
           const item1 = document.querySelector('li[data-id="1"]')
           const dragEnterEvent = createEvent('dragenter')
 
@@ -264,17 +209,10 @@ describe('NestedSort', () => {
 
     describe('dragover event', () => {
       it('should prevent the default behaviour to allow dropping', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        initDataDrivenList()
         const item = document.querySelector('[data-id="1"]')
-
         const preventDefault = jest.fn()
+
         item.dispatchEvent(
           createEvent('dragover', {
             preventDefault,
@@ -286,13 +224,7 @@ describe('NestedSort', () => {
 
       it('should fire the updateCoordination method with the event as its argument', () => {
         const spy = jest.spyOn(NestedSort.prototype, 'updateCoordination')
-        new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        initDataDrivenList()
         const item = document.querySelector('li[data-id="1"]')
         const event = createEvent('dragover', { bubbles: false })
 
@@ -301,18 +233,12 @@ describe('NestedSort', () => {
         expect(spy).toHaveBeenCalledTimes(1)
         expect(spy).toHaveBeenCalledWith(event)
 
-        spy.mockRestore();
+        spy.mockRestore()
       })
 
       it('should fire the managePlaceholderLists method with the event as its argument', () => {
         const spy = jest.spyOn(NestedSort.prototype, 'managePlaceholderLists')
-        new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        initDataDrivenList()
         const item = document.querySelector('li[data-id="1"]')
         const event = createEvent('dragover', { bubbles: false })
 
@@ -321,20 +247,13 @@ describe('NestedSort', () => {
         expect(spy).toHaveBeenCalledTimes(1)
         expect(spy).toHaveBeenCalledWith(event)
 
-        spy.mockRestore();
+        spy.mockRestore()
       })
     })
 
     describe('dragend event', () => {
       it('should stop event propagation', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        initDataDrivenList()
         const item = document.querySelector('[data-id="1"]')
 
         const stopPropagation = jest.fn()
@@ -348,13 +267,7 @@ describe('NestedSort', () => {
       })
 
       it('should call the removeClassFromEl method', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        const ns = initDataDrivenList()
         ns.removeClassFromEl = jest.fn()
 
         const item = document.querySelector('[data-id="1"]')
@@ -370,13 +283,7 @@ describe('NestedSort', () => {
       })
 
       it('should call the cleanupPlaceholderLists method', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        const ns = initDataDrivenList()
         ns.cleanupPlaceholderLists = jest.fn()
 
         const item = document.querySelector('[data-id="1"]')
@@ -391,14 +298,7 @@ describe('NestedSort', () => {
       })
 
       it('should set the draggedNode property to null', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        const ns = initDataDrivenList()
         ns.draggedNode = document.querySelector('[data-id="1"]')
         const stopPropagation = jest.fn()
 
@@ -412,14 +312,7 @@ describe('NestedSort', () => {
       })
 
       it('should set the targetedNode property to null', () => {
-        const ns = new NestedSort({
-          data: [
-            { id: 1, text: 'One' },
-            { id: 2, text: 'Two' },
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        const ns = initDataDrivenList()
         ns.draggedNode = document.querySelector('[data-id="1"]')
         ns.targetedNode = document.querySelector('[data-id="2"]')
         const stopPropagation = jest.fn()
@@ -436,14 +329,7 @@ describe('NestedSort', () => {
 
     describe('drop event', () => {
       it('should stop event propagation', () => {
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        initDataDrivenList()
         const item = document.querySelector('[data-id="1"]')
         const stopPropagation = jest.fn()
         item.dispatchEvent(
@@ -456,13 +342,7 @@ describe('NestedSort', () => {
       })
 
       it('should call the maybeDrop method', () => {
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        const ns = initDataDrivenList()
         ns.maybeDrop = jest.fn()
 
         const item = document.querySelector('[data-id="1"]')
@@ -476,13 +356,7 @@ describe('NestedSort', () => {
       })
 
       it('should call the cleanupPlaceholderLists method', () => {
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        const ns = initDataDrivenList()
         ns.cleanupPlaceholderLists = jest.fn()
 
         const item = document.querySelector('[data-id="1"]')
@@ -497,12 +371,7 @@ describe('NestedSort', () => {
 
       it('should call the onDrop action', () => {
         const onDrop = jest.fn()
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
+        initDataDrivenList({
           actions: {
             onDrop,
           },
@@ -525,15 +394,7 @@ describe('NestedSort', () => {
 
   describe('When the list is server rendered', () => {
     beforeEach(() => {
-      document.body.innerHTML = `
-        <div>
-          <ul id="${staticListWrapperId}">
-            <li data-id="1">One</li>
-            <li data-id="2">Two</li>
-            <li data-id="3">Three</li>
-          </ul>
-        </div>
-      `
+      initServerRenderedList()
     })
 
     afterEach(() => {
@@ -543,14 +404,14 @@ describe('NestedSort', () => {
     it('should not call the getDataEngine method (upon instantiating) which resides inside the maybeInitDataDom method which goes through the early return', () => {
       jest.spyOn(NestedSort.prototype, 'getDataEngine').mockImplementation(jest.fn)
       const ns = new NestedSort({
-        el: `#${staticListWrapperId}`,
+        el: `#${STATIC_LIST_WRAPPER_ID}`,
       })
 
       expect(ns.getDataEngine).not.toHaveBeenCalled()
     })
 
     it('should assign the config el property value to this.sortableList if it is an instance of HTMLUListElement', () => {
-      const el = document.getElementById(staticListWrapperId)
+      const el = document.getElementById(STATIC_LIST_WRAPPER_ID)
       const ns = new NestedSort({
         el,
       })
@@ -559,15 +420,62 @@ describe('NestedSort', () => {
     })
   })
 
+  describe('When the list is data-driven', () => {
+    describe('maybeInitDataDom method', () => {
+      it('should not create multiple lists inside the list wrapper if Nested Sort is initialised more than once', () => {
+        initDataDrivenList()
+        initDataDrivenList()
+        const wrapper = document.getElementById(DYNAMIC_LIST_WRAPPER_ID)
+
+        expect(wrapper.getElementsByTagName('ul').length).toBe(1)
+      })
+    })
+  })
+
+  describe('toggleListEventListeners method', () => {
+    beforeEach(() => {
+      initServerRenderedList()
+    })
+
+    it('should add all the event listeners upon initiation', () => {
+      const el = document.getElementById(STATIC_LIST_WRAPPER_ID)
+      el.addEventListener = jest.fn()
+      const ns = new NestedSort({ el })
+      const eventsNames = Object.keys(ns.listEventListeners)
+
+      expect(el.addEventListener).toHaveBeenCalledTimes(eventsNames.length)
+      eventsNames.forEach((event, i) => {
+        expect(el.addEventListener).toHaveBeenNthCalledWith(
+          i + 1,
+          event,
+          ns.listEventListeners[event],
+          false
+        )
+      })
+    })
+
+    it('should remove all the event listeners when the remove arg equals true', () => {
+      const el = document.getElementById(STATIC_LIST_WRAPPER_ID)
+      el.removeEventListener = jest.fn()
+      const ns = new NestedSort({ el })
+      const eventsNames = Object.keys(ns.listEventListeners)
+
+      ns.toggleListEventListeners(true)
+
+      expect(el.removeEventListener).toHaveBeenCalledTimes(eventsNames.length)
+      eventsNames.forEach((event, i) => {
+        expect(el.removeEventListener).toHaveBeenNthCalledWith(
+          i + 1,
+          event,
+          ns.listEventListeners[event]
+        )
+      })
+    })
+  })
+
   describe('canBeDropped method', () => {
     it('should return false if targetNodeIsIdentified() returns false', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.targetNodeIsIdentified = () => false
       ns.targetNodeIsBeingDragged = () => false
       ns.targetNodeIsListWithItems = () => false
@@ -577,13 +485,7 @@ describe('NestedSort', () => {
     })
 
     it('should return false if targetNodeIsBeingDragged() returns true', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.targetNodeIsIdentified = () => true
       ns.targetNodeIsBeingDragged = () => true
       ns.targetNodeIsListWithItems = () => false
@@ -593,13 +495,7 @@ describe('NestedSort', () => {
     })
 
     it('should return false if targetNodeIsListWithItems() returns true', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.targetNodeIsIdentified = () => true
       ns.targetNodeIsBeingDragged = () => false
       ns.targetNodeIsListWithItems = () => true
@@ -609,13 +505,7 @@ describe('NestedSort', () => {
     })
 
     it('should return false if areNested() returns true', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.targetNodeIsIdentified = () => true
       ns.targetNodeIsBeingDragged = () => false
       ns.targetNodeIsListWithItems = () => false
@@ -625,13 +515,7 @@ describe('NestedSort', () => {
     })
 
     it('should return true if all the conditions meet', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.targetNodeIsIdentified = () => true // condition 1
       ns.targetNodeIsBeingDragged = () => false // condition 2
       ns.targetNodeIsListWithItems = () => false // condition 3
@@ -644,13 +528,7 @@ describe('NestedSort', () => {
   describe('getDropLocation method', () => {
     describe('When canBeDropped() returns false', () => {
       it('should return undefined', () => {
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        const ns = initDataDrivenList()
         ns.canBeDropped = () => false
 
         expect(ns.getDropLocation()).toBeUndefined()
@@ -659,13 +537,7 @@ describe('NestedSort', () => {
 
     describe('When canBeDropped() returns true', () => {
       it('should return undefined if targetedNode is LI and cursorIsIndentedEnough() returns true', () => {
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        const ns = initDataDrivenList()
         ns.canBeDropped = () => true
         ns.cursorIsIndentedEnough = () => true
         ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -675,13 +547,7 @@ describe('NestedSort', () => {
       })
 
       it('should return `before` if targetedNode is LI and cursorIsIndentedEnough() returns false', () => {
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        const ns = initDataDrivenList()
         ns.canBeDropped = () => true
         ns.cursorIsIndentedEnough = () => false
         ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -691,13 +557,7 @@ describe('NestedSort', () => {
       })
 
       it('should return `inside` if targetedNode is UL', () => {
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
+        const ns = initDataDrivenList()
         ns.canBeDropped = () => true
         ns.cursorIsIndentedEnough = () => false
 
@@ -711,13 +571,7 @@ describe('NestedSort', () => {
 
   describe('maybeDrop method', () => {
     it('should not call dropTheItem() if getDropLocation() returns undefined', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.getDropLocation = () => undefined
       ns.dropTheItem = jest.fn()
       ns.maybeDrop()
@@ -726,13 +580,7 @@ describe('NestedSort', () => {
     })
 
     it('should call dropTheItem() with correct arguments if getDropLocation() returns a string', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       const location = 'before'
       ns.getDropLocation = () => location
       ns.dropTheItem = jest.fn()
@@ -746,13 +594,7 @@ describe('NestedSort', () => {
 
   describe('dropTheItem method', () => {
     it('should insert the dragged node before the targeted node', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="2"]')
       ns.targetedNode = document.querySelector('li[data-id="1"]')
       ns.targetedNode.parentNode.insertBefore = jest.fn()
@@ -763,13 +605,7 @@ describe('NestedSort', () => {
     })
 
     it('should insert the dragged node inside the targeted node', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="2"]')
       ns.targetedNode = document.createElement('ul')
       ns.targetedNode.appendChild = jest.fn()
@@ -783,14 +619,7 @@ describe('NestedSort', () => {
   describe('analysePlaceHolderSituation method', () => {
     describe('when it goes through the early return', () => {
       it('should return an empty array when targetedNode property is falsy', () => {
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        const ns = initDataDrivenList()
         ns.areNested = jest.fn()
         ns.cursorIsIndentedEnough = jest.fn()
         const actions = ns.analysePlaceHolderSituation()
@@ -801,14 +630,7 @@ describe('NestedSort', () => {
       })
 
       it('should return an empty array when targetedNode property is truthy but areNested returns true', () => {
-        const ns = new NestedSort({
-          data: [
-            {id: 1, text: 'One'},
-            {id: 2, text: 'Two'},
-          ],
-          el: `#${dynamicListWrapperId}`,
-        })
-
+        const ns = initDataDrivenList()
         ns.areNested = jest.fn().mockReturnValue(true)
         ns.cursorIsIndentedEnough = jest.fn()
         ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -825,13 +647,7 @@ describe('NestedSort', () => {
     describe('when early return is bypassed', () => {
       describe('when cursorIsIndentedEnough() returns false', () => {
         it('should return an empty array when targetedNodeIsPlaceholder() returns true', () => {
-          const ns = new NestedSort({
-            data: [
-              {id: 1, text: 'One'},
-              {id: 2, text: 'Two'},
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -845,13 +661,7 @@ describe('NestedSort', () => {
         })
 
         it('should return an array with `cleanup` as the only item when targetedNodeIsPlaceholder() returns false', () => {
-          const ns = new NestedSort({
-            data: [
-              {id: 1, text: 'One'},
-              {id: 2, text: 'Two'},
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -867,13 +677,7 @@ describe('NestedSort', () => {
 
       describe('when cursorIsIndentedEnough() and mouseIsTooCloseToTop() both return true', () => {
         it('should return an empty array when targetedNodeIsPlaceholder() returns true', () => {
-          const ns = new NestedSort({
-            data: [
-              {id: 1, text: 'One'},
-              {id: 2, text: 'Two'},
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -888,13 +692,7 @@ describe('NestedSort', () => {
         })
 
         it('should return an array with `cleanup` as the only item when targetedNodeIsPlaceholder() returns false', () => {
-          const ns = new NestedSort({
-            data: [
-              {id: 1, text: 'One'},
-              {id: 2, text: 'Two'},
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -911,13 +709,7 @@ describe('NestedSort', () => {
 
       describe('when cursorIsIndentedEnough() returns true and mouseIsTooCloseToTop() returns false', () => {
         it('should return en empty array if targetedNode is the same as draggedNode', () => {
-          const ns = new NestedSort({
-            data: [
-              {id: 1, text: 'One'},
-              {id: 2, text: 'Two'},
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -933,13 +725,7 @@ describe('NestedSort', () => {
         })
 
         it('should return en empty array if targetedNode name is not LI', () => {
-          const ns = new NestedSort({
-            data: [
-              {id: 1, text: 'One'},
-              {id: 2, text: 'Two'},
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.createElement('ul')
@@ -955,13 +741,7 @@ describe('NestedSort', () => {
         })
 
         it('should return en empty array if targetedNode contains a ul element', () => {
-          const ns = new NestedSort({
-            data: [
-              {id: 1, text: 'One'},
-              {id: 2, text: 'Two'},
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -978,13 +758,7 @@ describe('NestedSort', () => {
         })
 
         it('should return en array with `add` as its only item when all conditions meet', () => {
-          const ns = new NestedSort({
-            data: [
-              {id: 1, text: 'One'},
-              {id: 2, text: 'Two'},
-            ],
-            el: `#${dynamicListWrapperId}`,
-          })
+          const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
@@ -1004,13 +778,7 @@ describe('NestedSort', () => {
 
   describe('managePlaceholderLists method', () => {
     it('should clean up current placeholder and add a new one when analysePlaceHolderSituation() contains `add`', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.analysePlaceHolderSituation = jest.fn().mockReturnValue(['add'])
       ns.cleanupPlaceholderLists = jest.fn()
       ns.addPlaceholderList = jest.fn()
@@ -1022,13 +790,7 @@ describe('NestedSort', () => {
     })
 
     it('should clean up current placeholder when analysePlaceHolderSituation() contains `cleanup`', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.analysePlaceHolderSituation = jest.fn().mockReturnValue(['cleanup'])
       ns.cleanupPlaceholderLists = jest.fn()
       ns.addPlaceholderList = jest.fn()
@@ -1042,13 +804,7 @@ describe('NestedSort', () => {
 
   describe('addPlaceholderList method', () => {
     it('should append the placeholderInUse property to the targetedNode and call the animatePlaceholderList method', async () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.targetedNode = document.querySelector('li[data-id="1"]')
       ns.targetedNode.appendChild = jest.fn()
       ns.animatePlaceholderList = jest.fn()
@@ -1063,13 +819,12 @@ describe('NestedSort', () => {
 
   describe('cleanupPlaceholderLists method', () => {
     it('should remove any ul list which does not have any list items', () => {
-      const ns = new NestedSort({
+      const ns = initDataDrivenList({
         data: [
           {id: 1, text: 'One'},
           {id: 11, text: 'One-One', parent: 1},
           {id: 2, text: 'Two'},
         ],
-        el: `#${dynamicListWrapperId}`,
       })
       const ul = document.createElement('ul')
       document.querySelector('li[data-id="11"]').appendChild(ul.cloneNode(true))
@@ -1082,13 +837,7 @@ describe('NestedSort', () => {
     })
 
     it('should treat a legit placeholder list correctly', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       const placeholderList = document.createElement('ul')
       placeholderList.classList.add(ns.classNames.placeholder)
       placeholderList.classList.add('test-placeholder')
@@ -1107,24 +856,14 @@ describe('NestedSort', () => {
 
   describe('canBeTargeted method', () => {
     it('should return false if draggedNode is falsy', () => {
-      const ns = new NestedSort({
-        data: [
-          { id: 1, text: 'One' },
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       const result = ns.canBeTargeted(document.querySelector('li[data-id="1"]'))
 
       expect(result).toBe(false)
     })
 
     it('should return false if draggedNode equals the passed element', () => {
-      const ns = new NestedSort({
-        data: [
-          { id: 1, text: 'One' },
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="1"]')
       const result = ns.canBeTargeted(ns.draggedNode)
 
@@ -1132,13 +871,7 @@ describe('NestedSort', () => {
     })
 
     it('should return true if the passed element is a list item', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="1"]')
       const li = document.querySelector('li[data-id="2"]')
 
@@ -1146,13 +879,7 @@ describe('NestedSort', () => {
     })
 
     it('should return true if the passed element is a placeholder list', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="1"]')
       const placeholderList = document.createElement('ul')
       placeholderList.classList.add(ns.classNames.placeholder)
@@ -1161,13 +888,7 @@ describe('NestedSort', () => {
     })
 
     it('should return false if the passed element is list but not a placeholder one', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="1"]')
       const placeholderList = document.createElement('ul')
 
@@ -1175,18 +896,34 @@ describe('NestedSort', () => {
     })
 
     it('should return false if the passed element is neither a list item nor a placeholder list', () => {
-      const ns = new NestedSort({
-        data: [
-          {id: 1, text: 'One'},
-          {id: 2, text: 'Two'},
-        ],
-        el: `#${dynamicListWrapperId}`,
-      })
+      const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="1"]')
       const placeholderList = document.createElement('p')
       placeholderList.classList.add(ns.classNames.placeholder)
 
       expect(ns.canBeTargeted(placeholderList)).toBe(false)
+    })
+  })
+
+  describe('destroy method', () => {
+    it('should invoke the toggleListEventListeners method with correct arguments', () => {
+      const ns = initDataDrivenList()
+      const spy = jest.spyOn(ns, 'toggleListEventListeners')
+
+      ns.destroy()
+
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith(true)
+    })
+
+    it('should invoke the toggleListItemAttributes method with correct arguments', () => {
+      const ns = initDataDrivenList()
+      const spy = jest.spyOn(ns, 'toggleListItemAttributes')
+
+      ns.destroy()
+
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith(false)
     })
   })
 })

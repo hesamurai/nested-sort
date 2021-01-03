@@ -64,6 +64,13 @@ class NestedSort {
       placeholder: 'ns-placeholder',
       targeted: 'ns-targeted',
     }
+    this.listEventListeners = {
+      dragover: this.onDragOver.bind(this),
+      dragstart: this.onDragStart.bind(this),
+      dragenter: this.onDragEnter.bind(this),
+      dragend: this.onDragEnd.bind(this),
+      drop: this.onDrop.bind(this),
+    }
 
     this.maybeInitDataDom()
     this.addListAttributes()
@@ -86,8 +93,10 @@ class NestedSort {
   maybeInitDataDom() {
     if (!(Array.isArray(this.data) && this.data.length)) return
 
+    const wrapper = document.querySelector(this.selector)
     const list = this.getDataEngine().render()
-    document.querySelector(this.selector).appendChild(list)
+    wrapper.innerHTML = ''
+    wrapper.appendChild(list)
   }
 
   getSortableList() {
@@ -116,20 +125,33 @@ class NestedSort {
     })
   }
 
-  initDragAndDrop() {
-    const list = this.getSortableList()
-    list.addEventListener('dragover', this.onDragOver.bind(this), false)
-    list.addEventListener('dragstart', this.onDragStart.bind(this), false)
-    list.addEventListener('dragenter', this.onDragEnter.bind(this), false)
-    list.addEventListener('dragend', this.onDragEnd.bind(this), false)
-    list.addEventListener('drop', this.onDrop.bind(this), false)
-
-    this.initPlaceholderList()
-
-    list.querySelectorAll('li').forEach(el => {
-      el.setAttribute('draggable', 'true')
-      this.addListItemStyles(el)
+  toggleListItemAttributes(enable = true) {
+    this.getSortableList().querySelectorAll('li').forEach(el => {
+      el.setAttribute('draggable', enable)
     })
+  }
+
+  toggleListEventListeners(remove = false) {
+    const list = this.getSortableList()
+    Object.keys(this.listEventListeners).forEach(event => {
+      if (remove) {
+        list.removeEventListener(event, this.listEventListeners[event])
+      } else {
+        list.addEventListener(event, this.listEventListeners[event], false)
+      }
+    })
+  }
+
+  initDragAndDrop() {
+    this.toggleListEventListeners()
+    this.initPlaceholderList()
+    this.toggleListItemAttributes()
+    this.getSortableList().querySelectorAll('li').forEach(this.addListItemStyles.bind(this))
+  }
+
+  destroy() {
+    this.toggleListEventListeners(true)
+    this.toggleListItemAttributes(false)
   }
 
   getComputedStyleValue(el, prop) {
