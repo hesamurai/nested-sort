@@ -1006,5 +1006,11 @@ describe('NestedSort', () => {
       expect(spy).toHaveBeenCalledTimes(1)
       expect(spy).toHaveBeenCalledWith(false)
     })
+
+    it('should set the initialised property value to false', () => {
+      const ns = initDataDrivenList({ init: true })
+      ns.destroy()
+      expect(ns.initialised).toBe(false)
+    })
   })
 })

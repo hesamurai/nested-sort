@@ -160,6 +160,7 @@ class NestedSort {
   destroy() {
     this.toggleListEventListeners(true)
     this.toggleListItemAttributes(false)
+    this.initialised = false
   }
 
   getComputedStyleValue(el, prop) {
