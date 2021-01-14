@@ -149,7 +149,6 @@ class NestedSort {
     this.toggleListEventListeners()
     this.initPlaceholderList()
     this.toggleListItemAttributes()
-    this.getSortableList().querySelectorAll('li').forEach(this.addListItemStyles.bind(this))
     this.initialised = true
   }
 
@@ -161,18 +160,6 @@ class NestedSort {
     this.toggleListEventListeners(true)
     this.toggleListItemAttributes(false)
     this.initialised = false
-  }
-
-  getComputedStyleValue(el, prop) {
-    return window.getComputedStyle(el, null).getPropertyValue(prop)
-  }
-
-  addListItemStyles(li) {
-    // let's add a move cursor icon if it does not already have a cursor css property
-    const cursor = this.getComputedStyleValue(li, 'cursor')
-    if (!cursor || cursor === 'auto') {
-      li.style.cursor = 'move'
-    }
   }
 
   removeClassFromEl(el, className) {
