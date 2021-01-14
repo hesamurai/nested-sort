@@ -1043,6 +1043,16 @@ describe('NestedSort', () => {
       expect(spy).toHaveBeenCalledWith(false)
     })
 
+    it('should invoke the toggleMainListLifeCycleClassName method with correct arguments', () => {
+      const ns = initDataDrivenList()
+      const spy = jest.spyOn(ns, 'toggleMainListLifeCycleClassName')
+
+      ns.destroy()
+
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith(false)
+    })
+
     it('should set the initialised property value to false', () => {
       const ns = initDataDrivenList({ init: true })
       ns.destroy()
