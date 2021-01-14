@@ -127,6 +127,14 @@ class NestedSort {
     })
   }
 
+  toggleMainListLifeCycleClassName(enabled = true) {
+    const className = `${this.mainListClassName}--enabled`
+    const classList = this.getSortableList().classList
+    return enabled
+      ? classList.add(className)
+      : classList.remove(className)
+  }
+
   toggleListItemAttributes(enable = true) {
     this.getSortableList().querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', enable)

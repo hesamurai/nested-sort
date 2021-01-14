@@ -1068,4 +1068,30 @@ describe('NestedSort', () => {
       })
     })
   })
+
+  describe('toggleMainListLifeCycleClassName method', () => {
+    it('should add the modifier class name to the main list if invoked without argument', () => {
+      const ns = initDataDrivenList({ init: false })
+      const mainList = ns.getSortableList()
+      expect(Object.values(mainList.classList)).not.toContain('nested-sort--enabled')
+      ns.toggleMainListLifeCycleClassName()
+      expect(Object.values(mainList.classList)).toContain('nested-sort--enabled')
+    })
+
+    it('should add the modifier class name to the main list if argument equals true', () => {
+      const ns = initDataDrivenList({ init: false })
+      const mainList = ns.getSortableList()
+      expect(Object.values(mainList.classList)).not.toContain('nested-sort--enabled')
+      ns.toggleMainListLifeCycleClassName()
+      expect(Object.values(mainList.classList)).toContain('nested-sort--enabled')
+    })
+
+    it('should remove the modifier class name from the main list if argument equals false', () => {
+      const ns = initDataDrivenList({ init: true })
+      const mainList = ns.getSortableList()
+      expect(Object.values(mainList.classList)).toContain('nested-sort--enabled')
+      ns.toggleMainListLifeCycleClassName(false)
+      expect(Object.values(mainList.classList)).not.toContain('nested-sort--enabled')
+    })
+  })
 })
