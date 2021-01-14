@@ -158,6 +158,7 @@ class NestedSort {
     this.toggleListEventListeners()
     this.initPlaceholderList()
     this.toggleListItemAttributes()
+    this.toggleMainListLifeCycleClassName()
     this.initialised = true
   }
 

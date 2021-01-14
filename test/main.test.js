@@ -51,6 +51,7 @@ describe('NestedSort', () => {
               { id: 11, text: 'Item 1-1', parent: 1 },
               { id: 111, text: 'Item 1-1-1', parent: 11 },
             ],
+            init: false,
             listClassNames,
           })
 
@@ -93,6 +94,7 @@ describe('NestedSort', () => {
             { id: 21, text: 'Item 2-1', parent: 2 },
             { id: 3, text: 'Item 3' },
           ],
+          init: false,
           listClassNames,
         })
 
@@ -989,6 +991,13 @@ describe('NestedSort', () => {
 
       it('should invoke the toggleListItemAttributes method with no arguments', () => {
         const spy = jest.spyOn(ns, 'toggleListItemAttributes')
+        ns.initDragAndDrop()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith()
+      })
+
+      it('should invoke the toggleMainListLifeCycleClassName method with no arguments', () => {
+        const spy = jest.spyOn(ns, 'toggleMainListLifeCycleClassName')
         ns.initDragAndDrop()
         expect(spy).toHaveBeenCalledTimes(1)
         expect(spy).toHaveBeenCalledWith()
