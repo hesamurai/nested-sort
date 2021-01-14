@@ -30,6 +30,7 @@ class NestedSort {
     this.draggedNode = null
     this.targetedNode = null
     this.listClassNames = this.createListClassNamesArray(listClassNames)
+    this.mainListClassName = this.listClassNames[0] || 'nested-sort'
     this.listItemClassNames = this.createListClassNamesArray(listItemClassNames)
     this.propertyMap = propertyMap
     this.actions = {

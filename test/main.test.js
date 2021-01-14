@@ -15,6 +15,16 @@ describe('NestedSort', () => {
   })
 
   describe('upon instantiation', () => {
+    it('should set default value for mainListClassName property if listClassNames option does not include valid class names', () => {
+      const ns = initDataDrivenList({ listClassNames: '' })
+      expect(ns.mainListClassName).toBe('nested-sort')
+    })
+
+    it('should set the value of mainListClassName property to the first class name passed via listClassNames option', () => {
+      const ns = initDataDrivenList({ listClassNames: 'main-class subsidiary-class' })
+      expect(ns.mainListClassName).toBe('main-class')
+    })
+
     it('should not invoke the initDragAndDrop method when the init option is falsy', () => {
       const spy = jest.spyOn(NestedSort.prototype, 'initDragAndDrop')
       initDataDrivenList({ init: false })
