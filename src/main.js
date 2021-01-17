@@ -30,6 +30,7 @@ class NestedSort {
     this.draggedNode = null
     this.targetedNode = null
     this.listClassNames = this.createListClassNamesArray(listClassNames)
+    this.mainListClassName = this.listClassNames[0] || 'nested-sort'
     this.listItemClassNames = this.createListClassNamesArray(listItemClassNames)
     this.propertyMap = propertyMap
     this.actions = {
@@ -116,7 +117,7 @@ class NestedSort {
   addListAttributes() {
     const list = this.getSortableList()
 
-    list.classList.add(...this.listClassNames)
+    list.classList.add(...this.listClassNames.concat(this.mainListClassName))
     list.querySelectorAll('ul').forEach(ul => {
       ul.classList.add(...this.listClassNames)
     })
@@ -124,6 +125,14 @@ class NestedSort {
     list.querySelectorAll('li').forEach(li => {
       li.classList.add(...this.listItemClassNames)
     })
+  }
+
+  toggleMainListLifeCycleClassName(enabled = true) {
+    const className = `${this.mainListClassName}--enabled`
+    const classList = this.getSortableList().classList
+    return enabled
+      ? classList.add(className)
+      : classList.remove(className)
   }
 
   toggleListItemAttributes(enable = true) {
@@ -149,7 +158,7 @@ class NestedSort {
     this.toggleListEventListeners()
     this.initPlaceholderList()
     this.toggleListItemAttributes()
-    this.getSortableList().querySelectorAll('li').forEach(this.addListItemStyles.bind(this))
+    this.toggleMainListLifeCycleClassName()
     this.initialised = true
   }
 
@@ -160,19 +169,8 @@ class NestedSort {
   destroy() {
     this.toggleListEventListeners(true)
     this.toggleListItemAttributes(false)
+    this.toggleMainListLifeCycleClassName(false)
     this.initialised = false
-  }
-
-  getComputedStyleValue(el, prop) {
-    return window.getComputedStyle(el, null).getPropertyValue(prop)
-  }
-
-  addListItemStyles(li) {
-    // let's add a move cursor icon if it does not already have a cursor css property
-    const cursor = this.getComputedStyleValue(li, 'cursor')
-    if (!cursor || cursor === 'auto') {
-      li.style.cursor = 'move'
-    }
   }
 
   removeClassFromEl(el, className) {

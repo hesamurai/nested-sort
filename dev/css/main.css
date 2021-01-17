@@ -6,6 +6,10 @@ body {
   padding: 0;
 }
 
+.nested-sort--enabled li {
+  cursor: move;
+}
+
 .nested-sort li {
   list-style: none;
   margin: 0 0 5px;
@@ -28,10 +32,21 @@ body {
   outline: 2px solid green;
 }
 
+
+/* Bootstrap v4 */
+
+.list-group--enabled li {
+  cursor: move;
+}
+
 .list-group .ns-dragged {
   background-color: rgb(255, 255, 115);
 }
 
 .list-group .ns-targeted {
   background-color: rgb(115, 255, 117);
+}
+
+.list-group li ul {
+  margin-top: 10px;
 }

@@ -15,6 +15,16 @@ describe('NestedSort', () => {
   })
 
   describe('upon instantiation', () => {
+    it('should set default value for mainListClassName property if listClassNames option does not include valid class names', () => {
+      const ns = initDataDrivenList({ listClassNames: '' })
+      expect(ns.mainListClassName).toBe('nested-sort')
+    })
+
+    it('should set the value of mainListClassName property to the first class name passed via listClassNames option', () => {
+      const ns = initDataDrivenList({ listClassNames: 'main-class subsidiary-class' })
+      expect(ns.mainListClassName).toBe('main-class')
+    })
+
     it('should not invoke the initDragAndDrop method when the init option is falsy', () => {
       const spy = jest.spyOn(NestedSort.prototype, 'initDragAndDrop')
       initDataDrivenList({ init: false })
@@ -32,58 +42,86 @@ describe('NestedSort', () => {
   })
 
   describe('How it deals with List Class Names', () => {
-    it('should convert the listClassNames prop on the initialisation and assign it to this.listClassNames', () => {
-      [
-        'class1 class2',
-        ['class1', 'class2'],
-      ].forEach(listClassNames => {
+    describe('when listClassNames option does not include valid class names', () => {
+      it('should add the default class name to the main list but not the nested ones', () => {
+        [undefined, null, '', []].forEach(listClassNames => {
+          const ns = initDataDrivenList({
+            data: [
+              { id: 1, text: 'Item 1' },
+              { id: 11, text: 'Item 1-1', parent: 1 },
+              { id: 111, text: 'Item 1-1-1', parent: 11 },
+            ],
+            init: false,
+            listClassNames,
+          })
+
+          const list = ns.getSortableList()
+          const nestedLists = list.querySelectorAll('ul')
+
+          expect(nestedLists.length).toBe(2)
+          expect(Object.values(list.classList)).toEqual(['nested-sort'])
+          nestedLists.forEach(ul => {
+            expect(Object.values(ul.classList)).toEqual([])
+          })
+        })
+      })
+    })
+
+    describe('when listClassNames option includes valid class names', () => {
+      it('should convert the listClassNames prop on the initialisation and assign it to this.listClassNames', () => {
+        [
+          'class1 class2',
+          ['class1', 'class2'],
+        ].forEach(listClassNames => {
+          const ns = initDataDrivenList({
+            listClassNames,
+          })
+
+          expect(ns.listClassNames).toEqual([
+            'class1',
+            'class2',
+          ])
+        })
+      })
+
+      it('should assign the class names to the main list and all the nested ones', () => {
+        const listClassNames = ['class1', 'class2']
+        const ns = initDataDrivenList({
+          data: [
+            { id: 1, text: 'Item 1' },
+            { id: 11, text: 'Item 1-1', parent: 1 },
+            { id: 2, text: 'Item 2' },
+            { id: 21, text: 'Item 2-1', parent: 2 },
+            { id: 3, text: 'Item 3' },
+          ],
+          init: false,
+          listClassNames,
+        })
+
+        const list = ns.getSortableList()
+        const nestedLists = list.querySelectorAll('ul')
+        const lists = [
+          list,
+          ...nestedLists
+        ]
+
+        expect(nestedLists.length).toBe(2)
+        lists.forEach(ul => {
+          expect(Object.values(ul.classList)).toEqual(listClassNames)
+        })
+      })
+
+      it('should assign the class names to the placeholder list when initialising it', () => {
+        const listClassNames = ['class1', 'class2']
         const ns = initDataDrivenList({
           listClassNames,
         })
 
-        expect(ns.listClassNames).toEqual([
-          'class1',
-          'class2',
-        ])
+        ns.initPlaceholderList()
+
+        expect(ns.placeholderUl.nodeName).toBe('UL')
+        expect(Object.values(ns.placeholderUl.classList)).toEqual(expect.arrayContaining(listClassNames))
       })
-    })
-
-    it('should assign the class names to the main list and all the nested ones', () => {
-      const listClassNames = ['class1', 'class2']
-      const ns = initDataDrivenList({
-        data: [
-          { id: 1, text: 'Item 1' },
-          { id: 11, text: 'Item 1-1', parent: 1 },
-          { id: 2, text: 'Item 2' },
-          { id: 21, text: 'Item 2-1', parent: 2 },
-          { id: 3, text: 'Item 3' },
-        ],
-        listClassNames,
-      })
-
-      const list = ns.getSortableList()
-      const nestedLists = list.querySelectorAll('ul')
-      const lists = [
-        list,
-        ...nestedLists
-      ]
-
-      expect(nestedLists.length).toBe(2)
-      lists.forEach(ul => {
-        expect(Object.values(ul.classList)).toEqual(listClassNames)
-      })
-    })
-
-    it('should assign the class names to the placeholder list when initialising it', () => {
-      const listClassNames = ['class1', 'class2']
-      const ns = initDataDrivenList({
-        listClassNames,
-      })
-
-      ns.initPlaceholderList()
-
-      expect(ns.placeholderUl.nodeName).toBe('UL')
-      expect(Object.values(ns.placeholderUl.classList)).toEqual(expect.arrayContaining(listClassNames))
     })
   })
 
@@ -958,6 +996,13 @@ describe('NestedSort', () => {
         expect(spy).toHaveBeenCalledWith()
       })
 
+      it('should invoke the toggleMainListLifeCycleClassName method with no arguments', () => {
+        const spy = jest.spyOn(ns, 'toggleMainListLifeCycleClassName')
+        ns.initDragAndDrop()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith()
+      })
+
       it('should set the initialised property value to true', () => {
         expect(ns.initialised).toBe(false)
         ns.initDragAndDrop()
@@ -998,6 +1043,16 @@ describe('NestedSort', () => {
       expect(spy).toHaveBeenCalledWith(false)
     })
 
+    it('should invoke the toggleMainListLifeCycleClassName method with correct arguments', () => {
+      const ns = initDataDrivenList()
+      const spy = jest.spyOn(ns, 'toggleMainListLifeCycleClassName')
+
+      ns.destroy()
+
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith(false)
+    })
+
     it('should set the initialised property value to false', () => {
       const ns = initDataDrivenList({ init: true })
       ns.destroy()
@@ -1030,6 +1085,32 @@ describe('NestedSort', () => {
       Array.from(ns.getSortableList().getElementsByTagName('li')).forEach(li => {
         expect(li.getAttribute('draggable')).toBe('false')
       })
+    })
+  })
+
+  describe('toggleMainListLifeCycleClassName method', () => {
+    it('should add the modifier class name to the main list if invoked without argument', () => {
+      const ns = initDataDrivenList({ init: false })
+      const mainList = ns.getSortableList()
+      expect(Object.values(mainList.classList)).not.toContain('nested-sort--enabled')
+      ns.toggleMainListLifeCycleClassName()
+      expect(Object.values(mainList.classList)).toContain('nested-sort--enabled')
+    })
+
+    it('should add the modifier class name to the main list if argument equals true', () => {
+      const ns = initDataDrivenList({ init: false })
+      const mainList = ns.getSortableList()
+      expect(Object.values(mainList.classList)).not.toContain('nested-sort--enabled')
+      ns.toggleMainListLifeCycleClassName()
+      expect(Object.values(mainList.classList)).toContain('nested-sort--enabled')
+    })
+
+    it('should remove the modifier class name from the main list if argument equals false', () => {
+      const ns = initDataDrivenList({ init: true })
+      const mainList = ns.getSortableList()
+      expect(Object.values(mainList.classList)).toContain('nested-sort--enabled')
+      ns.toggleMainListLifeCycleClassName(false)
+      expect(Object.values(mainList.classList)).not.toContain('nested-sort--enabled')
     })
   })
 })
