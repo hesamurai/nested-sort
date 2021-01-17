@@ -46,3 +46,7 @@ body {
 .list-group .ns-targeted {
   background-color: rgb(115, 255, 117);
 }
+
+.list-group li ul {
+  margin-top: 10px;
+}
