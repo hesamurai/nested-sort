@@ -39,6 +39,22 @@ describe('NestedSort', () => {
         spy.mockRestore()
       })
     })
+
+    describe('nestingLevels property assignment', () => {
+      it('should be set to -1 if nestingLevels option cannot be converted to an integer', () => {
+        [null, undefined, NaN, '', 'foo'].forEach(nestingLevels => {
+          const ns = initDataDrivenList({ nestingLevels })
+          expect(ns.nestingLevels).toBe(-1)
+        })
+      })
+
+      it('should be set to the integer equivalent of the nestingLevels option if it is greater than or equal to -1', () => {
+        ['-6', -4, '-1', -1, 0, '0', 1, '1', 37, '114'].forEach(nestingLevels => {
+          const ns = initDataDrivenList({ nestingLevels })
+          expect(ns.nestingLevels).toBe(parseInt(nestingLevels))
+        })
+      })
+    })
   })
 
   describe('How it deals with List Class Names', () => {

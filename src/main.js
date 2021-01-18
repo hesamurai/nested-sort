@@ -10,6 +10,7 @@ class NestedSort {
    * @param {string} el
    * @param {array|string} listClassNames
    * @param {array|string} listItemClassNames
+   * @param {number|string} nestingLevels
    * @param {object} [propertyMap={}]
    */
   constructor({
@@ -20,6 +21,7 @@ class NestedSort {
     init = true,
     listClassNames,
     listItemClassNames,
+    nestingLevels,
     propertyMap = {},
   } = {}) {
     this.data = data
@@ -73,6 +75,9 @@ class NestedSort {
       dragend: this.onDragEnd.bind(this),
       drop: this.onDrop.bind(this),
     }
+
+    const intNestingLevels = parseInt(nestingLevels)
+    this.nestingLevels = isNaN(intNestingLevels) ? -1 : intNestingLevels // values less than 0 mean infinite levels of nesting
 
     this.maybeInitDataDom()
     this.addListAttributes()
