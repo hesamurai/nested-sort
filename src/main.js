@@ -311,6 +311,26 @@ class NestedSort {
     return this.targetedNode.nodeName === 'UL' && this.targetedNode.classList.contains(this.classNames.placeholder)
   }
 
+  getTargetedNodeDepth() {
+    let depth = 0
+    let el = this.targetedNode
+    const list = this.getSortableList()
+
+    while (list !== el.parentElement) {
+      if (el.parentElement.nodeName === 'UL') depth++
+      el = el.parentElement
+    }
+
+    return depth
+  }
+
+  nestingThresholdReached() {
+    if (this.nestingLevels < 0) return false
+    if (this.nestingLevels === 0) return true
+
+    return this.getTargetedNodeDepth() >= this.nestingLevels
+  }
+
   analysePlaceHolderSituation() {
     if (!this.targetedNode || this.areNested(this.targetedNode, this.draggedNode)) {
       return []

@@ -1129,4 +1129,81 @@ describe('NestedSort', () => {
       expect(Object.values(mainList.classList)).not.toContain('nested-sort--enabled')
     })
   })
+
+  describe('getTargetedElementDepth method', () => {
+    it('should return the correct depth of the targeted element', () => {
+      const ns = initDataDrivenList({
+        data: [
+          {id: 1, text: '1'},
+          {id: 11, text: '1-1', parent: 1},
+          {id: 111, text: '1-1-1', parent: 11},
+          {id: 1111, text: '1-1-1-1', parent: 111},
+          {id: 11111, text: '1-1-1-1-1', parent: 1111},
+        ],
+      });
+
+      [1, 11, 111, 1111, 11111].forEach(id => {
+        ns.targetedNode = document.querySelector(`[data-id="${id}"]`)
+        const depth = ns.getTargetedNodeDepth()
+        expect(depth).toBe(id.toString().split('').length - 1)
+      })
+    })
+  })
+
+  describe('nestingThresholdReached method', () => {
+    it('should return false if nesting levels equals a negative integer', () => {
+      const ns = initDataDrivenList({ nestingLevels: -1 })
+      const result = ns.nestingThresholdReached()
+
+      expect(result).toBe(false)
+    })
+
+    it('should return true if nesting levels equals 0', () => {
+      const ns = initDataDrivenList({ nestingLevels: 0 })
+      const result = ns.nestingThresholdReached()
+
+      expect(result).toBe(true)
+    })
+
+    it('should return false if getTargetedNodeDepth() returns a value less than the nesting levels', () => {
+      [
+        {nestingLevels: '2', targetedNodeDepth: 1},
+        {nestingLevels: '3', targetedNodeDepth: 1},
+        {nestingLevels: '3', targetedNodeDepth: 2},
+        {nestingLevels: '11', targetedNodeDepth: 10},
+      ].forEach(({nestingLevels, targetedNodeDepth}) => {
+        const ns = initDataDrivenList({ nestingLevels })
+        const spy = jest.spyOn(ns, 'getTargetedNodeDepth').mockReturnValue(targetedNodeDepth)
+        const result = ns.nestingThresholdReached()
+
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(result).toBe(false)
+      })
+    })
+
+    it('should return true if getTargetedNodeDepth() returns a value greater than the nesting levels', () => {
+      [
+        {nestingLevels: '1', targetedNodeDepth: 2},
+        {nestingLevels: '1', targetedNodeDepth: 3},
+        {nestingLevels: '3', targetedNodeDepth: 4},
+        {nestingLevels: '11', targetedNodeDepth: 13},
+      ].forEach(({nestingLevels, targetedNodeDepth}) => {
+        const ns = initDataDrivenList({ nestingLevels })
+        const spy = jest.spyOn(ns, 'getTargetedNodeDepth').mockReturnValue(targetedNodeDepth)
+        const result = ns.nestingThresholdReached()
+
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(result).toBe(true)
+      })
+    })
+
+    it('should return true if getTargetedNodeDepth() returns a value equal to the nesting levels', () => {
+      const ns = initDataDrivenList({ nestingLevels: '2' })
+      const spy = jest.spyOn(ns, 'getTargetedNodeDepth').mockReturnValue(2)
+      const result = ns.nestingThresholdReached()
+
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(result).toBe(true)
+    })
+  })
 })
