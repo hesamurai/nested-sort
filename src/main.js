@@ -23,7 +23,7 @@ class NestedSort {
     listItemClassNames,
     nestingLevels,
     propertyMap = {},
-  } = {}) {
+  }) {
     this.data = data
     this.selector = el
     this.sortableList = null
