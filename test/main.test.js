@@ -769,14 +769,15 @@ describe('NestedSort', () => {
 
       describe('when cursorIsIndentedEnough() returns true and mouseIsTooCloseToTop() returns false', () => {
         it('should return en empty array if targetedNode is the same as draggedNode', () => {
+          jest.spyOn(NestedSort.prototype, 'areNested').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'cursorIsIndentedEnough').mockReturnValue(true)
+          jest.spyOn(NestedSort.prototype, 'mouseIsTooCloseToTop').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'nestingThresholdReached').mockReturnValue(false)
           const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
-          ns.areNested = jest.fn().mockReturnValue(false)
 
-          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
-          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(false)
           ns.draggedNode = ns.targetedNode
 
           const actions = ns.analysePlaceHolderSituation()
@@ -785,14 +786,15 @@ describe('NestedSort', () => {
         })
 
         it('should return en empty array if targetedNode name is not LI', () => {
+          jest.spyOn(NestedSort.prototype, 'areNested').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'cursorIsIndentedEnough').mockReturnValue(true)
+          jest.spyOn(NestedSort.prototype, 'mouseIsTooCloseToTop').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'nestingThresholdReached').mockReturnValue(false)
           const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.createElement('ul')
-          ns.areNested = jest.fn().mockReturnValue(false)
 
-          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
-          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(false)
           ns.draggedNode = document.querySelector('li[data-id="2"]')
 
           const actions = ns.analysePlaceHolderSituation()
@@ -801,14 +803,15 @@ describe('NestedSort', () => {
         })
 
         it('should return en empty array if targetedNode contains a ul element', () => {
+          jest.spyOn(NestedSort.prototype, 'areNested').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'cursorIsIndentedEnough').mockReturnValue(true)
+          jest.spyOn(NestedSort.prototype, 'mouseIsTooCloseToTop').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'nestingThresholdReached').mockReturnValue(false)
           const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
-          ns.areNested = jest.fn().mockReturnValue(false)
 
-          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
-          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(false)
           ns.draggedNode = document.querySelector('li[data-id="2"]')
           ns.targetedNode.appendChild(document.createElement('ul'))
 
@@ -817,15 +820,33 @@ describe('NestedSort', () => {
           expect(actions).toEqual([])
         })
 
-        it('should return en array with `add` as its only item when all conditions meet', () => {
+        it('should return en empty array if nestingThresholdReached() returns true', () => {
+          jest.spyOn(NestedSort.prototype, 'areNested').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'cursorIsIndentedEnough').mockReturnValue(true)
+          jest.spyOn(NestedSort.prototype, 'mouseIsTooCloseToTop').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'nestingThresholdReached').mockReturnValue(true)
           const ns = initDataDrivenList()
 
           // to bypass the early return
           ns.targetedNode = document.querySelector('li[data-id="1"]')
-          ns.areNested = jest.fn().mockReturnValue(false)
 
-          ns.cursorIsIndentedEnough = jest.fn().mockReturnValue(true)
-          ns.mouseIsTooCloseToTop = jest.fn().mockReturnValue(false)
+          ns.draggedNode = document.querySelector('li[data-id="2"]')
+
+          const actions = ns.analysePlaceHolderSituation()
+
+          expect(actions).toEqual([])
+        })
+
+        it('should return en array with `add` as its only item when all conditions meet', () => {
+          jest.spyOn(NestedSort.prototype, 'areNested').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'cursorIsIndentedEnough').mockReturnValue(true)
+          jest.spyOn(NestedSort.prototype, 'mouseIsTooCloseToTop').mockReturnValue(false)
+          jest.spyOn(NestedSort.prototype, 'nestingThresholdReached').mockReturnValue(false)
+          const ns = initDataDrivenList()
+
+          // to bypass the early return
+          ns.targetedNode = document.querySelector('li[data-id="1"]')
+
           ns.draggedNode = document.querySelector('li[data-id="2"]')
 
           const actions = ns.analysePlaceHolderSituation()

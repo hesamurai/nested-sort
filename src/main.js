@@ -344,7 +344,8 @@ class NestedSort {
       }
     } else if (this.targetedNode !== this.draggedNode
       && this.targetedNode.nodeName === 'LI'
-      && !this.targetedNode.querySelectorAll('ul').length) {
+      && !this.targetedNode.querySelectorAll('ul').length
+      && !this.nestingThresholdReached()) {
       actions.push('add')
     }
 
