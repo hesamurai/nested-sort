@@ -28,7 +28,7 @@ class NestedSort {
     this.data = data
     this.selector = el
     this.sortableList = null
-    this.placeholderUl = null
+    this.placeholderList = null
     this.placeholderInUse = null
     this.draggedNode = null
     this.targetedNode = null
@@ -400,12 +400,12 @@ class NestedSort {
   }
 
   initPlaceholderList() {
-    this.placeholderUl = document.createElement('ul')
-    this.placeholderUl.classList.add(this.classNames.placeholder, ...this.listClassNames)
+    this.placeholderList = document.createElement('ul')
+    this.placeholderList.classList.add(this.classNames.placeholder, ...this.listClassNames)
   }
 
   getPlaceholderList() {
-    this.placeholderInUse = this.placeholderUl.cloneNode(true)
+    this.placeholderInUse = this.placeholderList.cloneNode(true)
     return this.placeholderInUse
   }
 }
