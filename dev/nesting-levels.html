@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Nested Sort | Nesting Levels Option Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <h1>Nesting Levels Option</h1>
+
+  <label for="nesting-level">Nesting Levels:</label>
+  <input type="number" id="nesting-level" onchange="updateNestingLevels()" value="-1">
+
+  <ul id="draggable">
+    <li data-id="1">Topic 1</li>
+    <li data-id="2">Topic 2</li>
+    <li data-id="3">Topic 3</li>
+    <li data-id="4">Topic 4</li>
+    <li data-id="5">Topic 5</li>
+    <li data-id="6">Topic 6</li>
+    <li data-id="7">Topic 7</li>
+    <li data-id="8">Topic 8</li>
+    <li data-id="9">Topic 9</li>
+    <li data-id="10">Topic 10</li>
+  </ul>
+</div>
+
+<!-- Scripts -->
+<script src="../dist/nested-sort.umd.js"></script>
+<script>
+  function updateNestingLevels() {
+    if (window.ns) window.ns.destroy()
+    window.ns = new NestedSort({
+      actions: {
+        onDrop: function (data) {
+          console.log(data)
+        }
+      },
+      el: '#draggable',
+      droppingEdge: 5,
+      nestingLevels: document.getElementById('nesting-level').value
+    })
+  }
+
+  updateNestingLevels()
+</script>
+</body>
+</html>

@@ -10,6 +10,7 @@ class NestedSort {
    * @param {string} el
    * @param {array|string} listClassNames
    * @param {array|string} listItemClassNames
+   * @param {number|string} nestingLevels
    * @param {object} [propertyMap={}]
    */
   constructor({
@@ -20,8 +21,9 @@ class NestedSort {
     init = true,
     listClassNames,
     listItemClassNames,
+    nestingLevels,
     propertyMap = {},
-  } = {}) {
+  }) {
     this.data = data
     this.selector = el
     this.sortableList = null
@@ -73,6 +75,9 @@ class NestedSort {
       dragend: this.onDragEnd.bind(this),
       drop: this.onDrop.bind(this),
     }
+
+    const intNestingLevels = parseInt(nestingLevels)
+    this.nestingLevels = isNaN(intNestingLevels) ? -1 : intNestingLevels // values less than 0 mean infinite levels of nesting
 
     this.maybeInitDataDom()
     this.addListAttributes()
@@ -306,6 +311,26 @@ class NestedSort {
     return this.targetedNode.nodeName === 'UL' && this.targetedNode.classList.contains(this.classNames.placeholder)
   }
 
+  getTargetedNodeDepth() {
+    let depth = 0
+    let el = this.targetedNode
+    const list = this.getSortableList()
+
+    while (list !== el.parentElement) {
+      if (el.parentElement.nodeName === 'UL') depth++
+      el = el.parentElement
+    }
+
+    return depth
+  }
+
+  nestingThresholdReached() {
+    if (this.nestingLevels < 0) return false
+    if (this.nestingLevels === 0) return true
+
+    return this.getTargetedNodeDepth() >= this.nestingLevels
+  }
+
   analysePlaceHolderSituation() {
     if (!this.targetedNode || this.areNested(this.targetedNode, this.draggedNode)) {
       return []
@@ -319,7 +344,8 @@ class NestedSort {
       }
     } else if (this.targetedNode !== this.draggedNode
       && this.targetedNode.nodeName === 'LI'
-      && !this.targetedNode.querySelectorAll('ul').length) {
+      && !this.targetedNode.querySelectorAll('ul').length
+      && !this.nestingThresholdReached()) {
       actions.push('add')
     }
 
