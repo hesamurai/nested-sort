@@ -102,7 +102,7 @@ class DataEngine {
    * @param {HTMLElement} node
    * @param {object} item
    * @param {string} nodeName
-   * @returns {HTMLElement|null}
+   * @returns {Element|null}
    */
   getParentNodeOfItem(node, item, nodeName) {
     return node.querySelector(`${nodeName}[data-id="${item.parent}"]`)
