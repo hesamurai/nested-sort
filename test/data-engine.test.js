@@ -4,39 +4,39 @@ describe('DataEngine class', () => {
   let list
 
   beforeEach(() => {
-    list = document.createElement('ul')
+    list = document.createElement('ol')
     list.innerHTML =
       '<li data-id="1">One' +
-        '<ul data-id="1">' +
+        '<ol data-id="1">' +
           '<li data-id="11">One-One' +
-            '<ul data-id="11">' +
+            '<ol data-id="11">' +
               '<li data-id="111">One-One-One</li>' +
               '<li data-id="112">One-One-Two' +
-                '<ul data-id="112">' +
+                '<ol data-id="112">' +
                   '<li data-id="1121">One-One-Two-One</li>' +
                   '<li data-id="1122">One-One-Two-Two</li>' +
                   '<li data-id="1123">One-One-Two-Three</li>' +
-                '</ul>' +
+                '</ol>' +
               '</li>' +
               '<li data-id="113">One-One-Three</li>' +
-            '</ul>' +
+            '</ol>' +
           '</li>' +
           '<li data-id="12">One-Two</li>' +
-        '</ul>' +
+        '</ol>' +
       '</li>' +
       '<li data-id="2">Two</li>' +
       '<li data-id="3">Three</li>' +
       '<li data-id="4">Four' +
-        '<ul data-id="4">' +
+        '<ol data-id="4">' +
           '<li data-id="41">Four-One</li>' +
           '<li data-id="42">Four-Two' +
-            '<ul data-id="42">' +
+            '<ol data-id="42">' +
               '<li data-id="421">Four-Two-One</li>' +
               '<li data-id="422">Four-Two-Two</li>' +
               '<li data-id="423">Four-Two-Three</li>' +
-            '</ul>' +
+            '</ol>' +
           '</li>' +
-        '</ul>' +
+        '</ol>' +
       '</li>' +
       '<li data-id="5">Five</li>'
   })
@@ -166,7 +166,7 @@ describe('DataEngine class', () => {
         data
       }
 
-      const list = document.createElement('ul')
+      const list = document.createElement('ol')
       list.innerHTML =
         '<li data-id="1">One</li>' +
         '<li data-id="3">Three</li>' +
@@ -194,24 +194,24 @@ describe('DataEngine class', () => {
         data
       }
 
-      const list = document.createElement('ul')
+      const list = document.createElement('ol')
       list.innerHTML =
         '<li data-id="1">One' +
-          '<ul data-id="1">' +
+          '<ol data-id="1">' +
             '<li data-id="12">One-Two</li>' +
             '<li data-id="11">One-One' +
-              '<ul data-id="11">' +
+              '<ol data-id="11">' +
                 '<li data-id="112">One-One-Two' +
-                  '<ul data-id="112">' +
+                  '<ol data-id="112">' +
                     '<li data-id="1122">One-One-Two-Two</li>' +
                     '<li data-id="1123">One-One-Two-Three</li>' +
                     '<li data-id="1121">One-One-Two-One</li>' +
-                  '</ul>' +
+                  '</ol>' +
                 '</li>' +
                 '<li data-id="111">One-One-One</li>' +
-              '</ul>' +
+              '</ol>' +
             '</li>' +
-          '</ul>' +
+          '</ol>' +
         '</li>' +
         '<li data-id="2">Two</li>' +
         '<li data-id="3">Three</li>' +
@@ -254,20 +254,20 @@ describe('DataEngine class', () => {
       const list = document.createElement('ul')
       list.innerHTML =
         '<li data-id="1">One' +
-          '<ul data-id="1">' +
+          '<ol data-id="1">' +
             '<li data-id="11">One-One' +
-              '<ul data-id="11">' +
+              '<ol data-id="11">' +
                 '<li data-id="111">One-One-One</li>' +
                 '<li data-id="112">One-One-Two' +
-                  '<ul data-id="112">' +
+                  '<ol data-id="112">' +
                     '<li data-id="1121">One-One-Two-One</li>' +
                     '<li data-id="1122">One-One-Two-Two</li>' +
-                  '</ul>' +
+                  '</ol>' +
                 '</li>' +
-              '</ul>' +
+              '</ol>' +
             '</li>' +
             '<li data-id="12">One-Two</li>' +
-          '</ul>' +
+          '</ol>' +
         '</li>' +
         '<li data-id="2">Two</li>' +
         '<li data-id="3">Three</li>' +
