@@ -1,7 +1,6 @@
 import DataEngine from './data-engine'
 
 class NestedSort {
-
   /**
    * @constructor
    * @param {object} [actions={}]
@@ -44,7 +43,6 @@ class NestedSort {
       X: null,
       Y: null,
     }
-
     this.distances = {
       droppingEdge,
       droppingEdgeNegative: droppingEdge * -1,
@@ -52,18 +50,15 @@ class NestedSort {
         targetedElTop: undefined,
       },
     }
-
     this.dimensions = {
       targetedEl: {
         H: undefined,
       },
     }
-
     this.cursor = {
       X: null,
       Y: null,
     }
-
     this.classNames = {
       dragged: 'ns-dragged',
       placeholder: 'ns-placeholder',
@@ -76,7 +71,6 @@ class NestedSort {
       dragend: this.onDragEnd.bind(this),
       drop: this.onDrop.bind(this),
     }
-
     const intNestingLevels = parseInt(nestingLevels)
     this.nestingLevels = isNaN(intNestingLevels) ? -1 : intNestingLevels // values less than 0 mean infinite levels of nesting
 
