@@ -4,13 +4,14 @@ class NestedSort {
 
   /**
    * @constructor
-   * @param {{onDrop: function}} actions
-   * @param {array} data
-   * @param {number} droppingEdge
-   * @param {string} el
-   * @param {array|string} listClassNames
-   * @param {array|string} listItemClassNames
-   * @param {number|string} nestingLevels
+   * @param {object} [actions={}]
+   * @param {array} [data]
+   * @param {number} [droppingEdge=15]
+   * @param {string|HTMLElement} el
+   * @param {boolean} [init=true]
+   * @param {array|string} [listClassNames]
+   * @param {array|string} [listItemClassNames]
+   * @param {number|string} [nestingLevels]
    * @param {object} [propertyMap={}]
    */
   constructor({
