@@ -123,7 +123,7 @@ class DataEngine {
    * @returns {HTMLElement}
    */
   getDirectListParentOfItem(node, item) {
-    return this.getParentNodeOfItem(node, item, 'ul')
+    return this.getParentNodeOfItem(node, item, 'ol')
   }
 
   /**
@@ -142,8 +142,8 @@ class DataEngine {
     let directParentList = this.getDirectListParentOfItem(topParent, item)
 
     if (!directParentList) {
-      // so we need to create the direct parent UL and append it to the direct parent LI
-      directParentList = this.createItemElement({ id: parent }, 'ul')
+      // so we need to create the direct parent OL and append it to the direct parent LI
+      directParentList = this.createItemElement({ id: parent }, 'ol')
       const directParentListItem = this.getParentNodeOfItem(topParent, item, 'li') || topParent
       directParentListItem.appendChild(directParentList)
     }
@@ -184,11 +184,11 @@ class DataEngine {
   }
 
   /**
-   * @param {HTMLUListElement} ul
+   * @param {HTMLOListElement|HTMLUListElement} list
    * @returns {object[]}
    */
-  convertDomToData(ul) {
-    return Array.from(ul.querySelectorAll('li')).map(li => {
+  convertDomToData(list) {
+    return Array.from(list.querySelectorAll('li')).map(li => {
       const parentListItem = li.parentNode
       const parent = parentListItem.dataset.id
       const order = Array.from(parentListItem.children).findIndex(item => item === li) + 1
@@ -202,10 +202,10 @@ class DataEngine {
   }
 
   /**
-   * @returns {HTMLUListElement}
+   * @returns {HTMLOListElement}
    */
   render() {
-    const list = document.createElement('ul')
+    const list = document.createElement('ol')
     this.getListItemsDom().forEach(listItem => list.appendChild(listItem))
     return list
   }
