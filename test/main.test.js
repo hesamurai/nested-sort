@@ -135,8 +135,8 @@ describe('NestedSort', () => {
 
         ns.initPlaceholderList()
 
-        expect(ns.placeholderUl.nodeName).toBe('UL')
-        expect(Object.values(ns.placeholderUl.classList)).toEqual(expect.arrayContaining(listClassNames))
+        expect(ns.placeholderList.nodeName).toBe('UL')
+        expect(Object.values(ns.placeholderList.classList)).toEqual(expect.arrayContaining(listClassNames))
       })
     })
   })
