@@ -1281,4 +1281,18 @@ describe('NestedSort', () => {
       })
     })
   })
+
+  describe('getListTagName method', () => {
+    it('should return ol if the listInterface property equals HTMLOListElement', () => {
+      const ns = initDataDrivenList()
+      ns.listInterface = HTMLOListElement
+      expect(ns.getListTagName()).toBe('ol')
+    })
+
+    it('should return ul if the listInterface property equals anything but HTMLOListElement', () => {
+      const ns = initDataDrivenList()
+      ns.listInterface = HTMLUListElement
+      expect(ns.getListTagName()).toBe('ul')
+    })
+  })
 })
