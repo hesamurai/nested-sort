@@ -79,6 +79,16 @@ class NestedSort {
     if (init) this.initDragAndDrop()
   }
 
+  getListInterface() {
+    if (Array.isArray(this.data) && this.data.length) return HTMLOListElement
+
+    const el = this.selector instanceof HTMLElement
+      ? this.selector
+      : document.querySelector(this.selector)
+
+    return el instanceof HTMLOListElement ? HTMLOListElement : HTMLUListElement
+  }
+
   getDataEngine() {
     if (this.dataEngine instanceof DataEngine) {
       return this.dataEngine
