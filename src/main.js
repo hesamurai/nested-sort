@@ -73,6 +73,7 @@ class NestedSort {
     }
     const intNestingLevels = parseInt(nestingLevels)
     this.nestingLevels = isNaN(intNestingLevels) ? -1 : intNestingLevels // values less than 0 mean infinite levels of nesting
+    this.listInterface = this.getListInterface()
 
     this.maybeInitDataDom()
     this.addListAttributes()
