@@ -112,6 +112,10 @@ class NestedSort {
     wrapper.appendChild(list)
   }
 
+  getListTagName() {
+    return this.listInterface === HTMLOListElement ? 'ol' : 'ul'
+  }
+
   getSortableList() {
     if (this.sortableList instanceof HTMLUListElement) return this.sortableList
 
