@@ -1227,4 +1227,53 @@ describe('NestedSort', () => {
       expect(result).toBe(true)
     })
   })
+
+  describe('getListInterface method', () => {
+    it('should return HTMLOListElement for a data-driven list', () => {
+      const ns = initDataDrivenList({
+        data: [
+          {id: 1, text: 'One'},
+        ]
+      })
+      expect(ns.getListInterface()).toBe(HTMLOListElement)
+    })
+
+    describe('when the list is server rendered', () => {
+      describe('when the el option is a selector string', () => {
+        it('should return HTMLOListElement if the list is an ordered one', () => {
+          initServerRenderedList('ol')
+          const ns = new NestedSort({
+            el: `#${STATIC_LIST_WRAPPER_ID}`,
+          })
+          expect(ns.getListInterface()).toBe(HTMLOListElement)
+        })
+
+        it('should return HTMLUListElement if the list is an unordered one', () => {
+          initServerRenderedList('ul')
+          const ns = new NestedSort({
+            el: `#${STATIC_LIST_WRAPPER_ID}`,
+          })
+          expect(ns.getListInterface()).toBe(HTMLUListElement)
+        })
+      })
+
+      describe('when the el option is a DOM node', () => {
+        it('should return HTMLOListElement if the list is an ordered one', () => {
+          initServerRenderedList('ol')
+          const ns = new NestedSort({
+            el: document.getElementById(STATIC_LIST_WRAPPER_ID),
+          })
+          expect(ns.getListInterface()).toBe(HTMLOListElement)
+        })
+
+        it('should return HTMLUListElement if the list is an unordered one', () => {
+          initServerRenderedList('ul')
+          const ns = new NestedSort({
+            el: document.getElementById(STATIC_LIST_WRAPPER_ID),
+          })
+          expect(ns.getListInterface()).toBe(HTMLUListElement)
+        })
+      })
+    })
+  })
 })
