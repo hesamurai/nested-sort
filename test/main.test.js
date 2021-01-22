@@ -884,13 +884,13 @@ describe('NestedSort', () => {
   })
 
   describe('addPlaceholderList method', () => {
-    it('should append the placeholderInUse property to the targetedNode and call the animatePlaceholderList method', async () => {
+    it('should append the placeholderInUse property to the targetedNode and call the animatePlaceholderList method', () => {
       const ns = initDataDrivenList()
       ns.targetedNode = document.querySelector('li[data-id="1"]')
       ns.targetedNode.appendChild = jest.fn()
       ns.animatePlaceholderList = jest.fn()
 
-      await ns.addPlaceholderList()
+      ns.addPlaceholderList()
 
       expect(ns.targetedNode.appendChild).toHaveBeenCalledTimes(1)
       expect(ns.targetedNode.appendChild).toHaveBeenCalledWith(ns.placeholderInUse)

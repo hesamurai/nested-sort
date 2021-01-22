@@ -359,9 +359,9 @@ class NestedSort {
     this.placeholderInUse.style.minHeight = `${this.draggedNode.offsetHeight}px`
   }
 
-  async addPlaceholderList() {
+  addPlaceholderList() {
     this.getPlaceholderList()
-    await this.targetedNode.appendChild(this.placeholderInUse)
+    this.targetedNode.appendChild(this.placeholderInUse)
     this.animatePlaceholderList()
   }
 
