@@ -40,6 +40,11 @@ describe('NestedSort', () => {
       })
     })
 
+    it('should set the value of the listInterface property', () => {
+      const ns = initDataDrivenList()
+      expect(ns.listInterface).toBe(HTMLOListElement)
+    })
+
     describe('nestingLevels property assignment', () => {
       it('should be set to -1 if nestingLevels option cannot be converted to an integer', () => {
         [null, undefined, NaN, '', 'foo'].forEach(nestingLevels => {
