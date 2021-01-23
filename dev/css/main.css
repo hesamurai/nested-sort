@@ -18,6 +18,7 @@ body {
   border: 1px solid #ccc;
 }
 
+.nested-sort li ol,
 .nested-sort li ul {
   padding: 0;
   margin-top: 10px;
@@ -47,6 +48,6 @@ body {
   background-color: rgb(115, 255, 117);
 }
 
-.list-group li ul {
+.list-group li ol {
   margin-top: 10px;
 }
