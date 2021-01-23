@@ -40,6 +40,11 @@ describe('NestedSort', () => {
       })
     })
 
+    it('should set the value of the listInterface property', () => {
+      const ns = initDataDrivenList()
+      expect(ns.listInterface).toBe(HTMLOListElement)
+    })
+
     describe('nestingLevels property assignment', () => {
       it('should be set to -1 if nestingLevels option cannot be converted to an integer', () => {
         [null, undefined, NaN, '', 'foo'].forEach(nestingLevels => {
@@ -72,12 +77,12 @@ describe('NestedSort', () => {
           })
 
           const list = ns.getSortableList()
-          const nestedLists = list.querySelectorAll('ul')
+          const nestedLists = list.querySelectorAll('ol')
 
           expect(nestedLists.length).toBe(2)
           expect(Object.values(list.classList)).toEqual(['nested-sort'])
-          nestedLists.forEach(ul => {
-            expect(Object.values(ul.classList)).toEqual([])
+          nestedLists.forEach(l => {
+            expect(Object.values(l.classList)).toEqual([])
           })
         })
       })
@@ -115,15 +120,15 @@ describe('NestedSort', () => {
         })
 
         const list = ns.getSortableList()
-        const nestedLists = list.querySelectorAll('ul')
+        const nestedLists = list.querySelectorAll('ol')
         const lists = [
           list,
           ...nestedLists
         ]
 
         expect(nestedLists.length).toBe(2)
-        lists.forEach(ul => {
-          expect(Object.values(ul.classList)).toEqual(listClassNames)
+        lists.forEach(l => {
+          expect(Object.values(l.classList)).toEqual(listClassNames)
         })
       })
 
@@ -135,8 +140,8 @@ describe('NestedSort', () => {
 
         ns.initPlaceholderList()
 
-        expect(ns.placeholderUl.nodeName).toBe('UL')
-        expect(Object.values(ns.placeholderUl.classList)).toEqual(expect.arrayContaining(listClassNames))
+        expect(ns.placeholderList.nodeName).toBe('OL')
+        expect(Object.values(ns.placeholderList.classList)).toEqual(expect.arrayContaining(listClassNames))
       })
     })
   })
@@ -470,7 +475,7 @@ describe('NestedSort', () => {
       expect(ns.getDataEngine).not.toHaveBeenCalled()
     })
 
-    it('should assign the config el property value to this.sortableList if it is an instance of HTMLUListElement', () => {
+    it('should assign the config el property value to this.sortableList if it is an instance of HTMLOListElement', () => {
       const el = document.getElementById(STATIC_LIST_WRAPPER_ID)
       const ns = new NestedSort({
         el,
@@ -484,10 +489,9 @@ describe('NestedSort', () => {
     describe('maybeInitDataDom method', () => {
       it('should not create multiple lists inside the list wrapper if Nested Sort is initialised more than once', () => {
         initDataDrivenList()
-        initDataDrivenList()
         const wrapper = document.getElementById(DYNAMIC_LIST_WRAPPER_ID)
 
-        expect(wrapper.getElementsByTagName('ul').length).toBe(1)
+        expect(wrapper.getElementsByTagName('ol').length).toBe(1)
       })
     })
   })
@@ -596,9 +600,12 @@ describe('NestedSort', () => {
     })
 
     describe('When canBeDropped() returns true', () => {
+      beforeEach(() => {
+        jest.spyOn(NestedSort.prototype, 'canBeDropped').mockReturnValue(true)
+      })
+
       it('should return undefined if targetedNode is LI and cursorIsIndentedEnough() returns true', () => {
         const ns = initDataDrivenList()
-        ns.canBeDropped = () => true
         ns.cursorIsIndentedEnough = () => true
         ns.targetedNode = document.querySelector('li[data-id="1"]')
 
@@ -608,7 +615,6 @@ describe('NestedSort', () => {
 
       it('should return `before` if targetedNode is LI and cursorIsIndentedEnough() returns false', () => {
         const ns = initDataDrivenList()
-        ns.canBeDropped = () => true
         ns.cursorIsIndentedEnough = () => false
         ns.targetedNode = document.querySelector('li[data-id="1"]')
 
@@ -616,13 +622,12 @@ describe('NestedSort', () => {
         expect(ns.getDropLocation()).toBe('before')
       })
 
-      it('should return `inside` if targetedNode is UL', () => {
+      it('should return `inside` if targetedNode is OL', () => {
         const ns = initDataDrivenList()
-        ns.canBeDropped = () => true
         ns.cursorIsIndentedEnough = () => false
 
-        // let's fake the targetedNode to be a UL
-        ns.targetedNode = document.createElement('ul')
+        // let's fake the targetedNode to be an OL
+        ns.targetedNode = document.createElement('ol')
 
         expect(ns.getDropLocation()).toBe('inside')
       })
@@ -667,7 +672,7 @@ describe('NestedSort', () => {
     it('should insert the dragged node inside the targeted node', () => {
       const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="2"]')
-      ns.targetedNode = document.createElement('ul')
+      ns.targetedNode = document.createElement('ol')
       ns.targetedNode.appendChild = jest.fn()
       ns.dropTheItem('inside')
 
@@ -768,7 +773,7 @@ describe('NestedSort', () => {
       })
 
       describe('when cursorIsIndentedEnough() returns true and mouseIsTooCloseToTop() returns false', () => {
-        it('should return en empty array if targetedNode is the same as draggedNode', () => {
+        it('should return an empty array if targetedNode is the same as draggedNode', () => {
           jest.spyOn(NestedSort.prototype, 'areNested').mockReturnValue(false)
           jest.spyOn(NestedSort.prototype, 'cursorIsIndentedEnough').mockReturnValue(true)
           jest.spyOn(NestedSort.prototype, 'mouseIsTooCloseToTop').mockReturnValue(false)
@@ -785,7 +790,7 @@ describe('NestedSort', () => {
           expect(actions).toEqual([])
         })
 
-        it('should return en empty array if targetedNode name is not LI', () => {
+        it('should return an empty array if targetedNode name is not LI', () => {
           jest.spyOn(NestedSort.prototype, 'areNested').mockReturnValue(false)
           jest.spyOn(NestedSort.prototype, 'cursorIsIndentedEnough').mockReturnValue(true)
           jest.spyOn(NestedSort.prototype, 'mouseIsTooCloseToTop').mockReturnValue(false)
@@ -793,7 +798,7 @@ describe('NestedSort', () => {
           const ns = initDataDrivenList()
 
           // to bypass the early return
-          ns.targetedNode = document.createElement('ul')
+          ns.targetedNode = document.createElement('ol')
 
           ns.draggedNode = document.querySelector('li[data-id="2"]')
 
@@ -802,7 +807,7 @@ describe('NestedSort', () => {
           expect(actions).toEqual([])
         })
 
-        it('should return en empty array if targetedNode contains a ul element', () => {
+        it('should return an empty array if targetedNode contains an ol element', () => {
           jest.spyOn(NestedSort.prototype, 'areNested').mockReturnValue(false)
           jest.spyOn(NestedSort.prototype, 'cursorIsIndentedEnough').mockReturnValue(true)
           jest.spyOn(NestedSort.prototype, 'mouseIsTooCloseToTop').mockReturnValue(false)
@@ -813,7 +818,7 @@ describe('NestedSort', () => {
           ns.targetedNode = document.querySelector('li[data-id="1"]')
 
           ns.draggedNode = document.querySelector('li[data-id="2"]')
-          ns.targetedNode.appendChild(document.createElement('ul'))
+          ns.targetedNode.appendChild(document.createElement('ol'))
 
           const actions = ns.analysePlaceHolderSituation()
 
@@ -899,7 +904,7 @@ describe('NestedSort', () => {
   })
 
   describe('cleanupPlaceholderLists method', () => {
-    it('should remove any ul list which does not have any list items', () => {
+    it('should remove any ol list which does not have any list items', () => {
       const ns = initDataDrivenList({
         data: [
           {id: 1, text: 'One'},
@@ -907,19 +912,19 @@ describe('NestedSort', () => {
           {id: 2, text: 'Two'},
         ],
       })
-      const ul = document.createElement('ul')
-      document.querySelector('li[data-id="11"]').appendChild(ul.cloneNode(true))
-      document.querySelector('li[data-id="2"]').appendChild(ul.cloneNode(true))
+      const list = document.createElement('ol')
+      document.querySelector('li[data-id="11"]').appendChild(list.cloneNode(true))
+      document.querySelector('li[data-id="2"]').appendChild(list.cloneNode(true))
 
       ns.cleanupPlaceholderLists()
-      const lists = ns.getSortableList().querySelectorAll('ul')
+      const lists = ns.getSortableList().querySelectorAll('ol')
 
       expect(lists.length).toBe(1)
     })
 
     it('should treat a legit placeholder list correctly', () => {
       const ns = initDataDrivenList()
-      const placeholderList = document.createElement('ul')
+      const placeholderList = document.createElement('ol')
       placeholderList.classList.add(ns.classNames.placeholder)
       placeholderList.classList.add('test-placeholder')
       placeholderList.style.minHeight = '100px'
@@ -927,7 +932,7 @@ describe('NestedSort', () => {
       placeholderList.appendChild(document.querySelector('li[data-id="2"]'))
 
       ns.cleanupPlaceholderLists()
-      const list = ns.getSortableList().querySelector('ul.test-placeholder')
+      const list = ns.getSortableList().querySelector('ol.test-placeholder')
 
       expect(list.classList).not.toContain(ns.classNames.placeholder)
       expect(list.style.minHeight).toBe('auto')
@@ -962,16 +967,16 @@ describe('NestedSort', () => {
     it('should return true if the passed element is a placeholder list', () => {
       const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="1"]')
-      const placeholderList = document.createElement('ul')
+      const placeholderList = document.createElement('ol')
       placeholderList.classList.add(ns.classNames.placeholder)
 
       expect(ns.canBeTargeted(placeholderList)).toBe(true)
     })
 
-    it('should return false if the passed element is list but not a placeholder one', () => {
+    it('should return false if the passed element is a list but not a placeholder one', () => {
       const ns = initDataDrivenList()
       ns.draggedNode = document.querySelector('li[data-id="1"]')
-      const placeholderList = document.createElement('ul')
+      const placeholderList = document.createElement('ol')
 
       expect(ns.canBeTargeted(placeholderList)).toBe(false)
     })
@@ -1225,6 +1230,69 @@ describe('NestedSort', () => {
 
       expect(spy).toHaveBeenCalledTimes(1)
       expect(result).toBe(true)
+    })
+  })
+
+  describe('getListInterface method', () => {
+    it('should return HTMLOListElement for a data-driven list', () => {
+      const ns = initDataDrivenList({
+        data: [
+          {id: 1, text: 'One'},
+        ]
+      })
+      expect(ns.getListInterface()).toBe(HTMLOListElement)
+    })
+
+    describe('when the list is server rendered', () => {
+      describe('when the el option is a selector string', () => {
+        it('should return HTMLOListElement if the list is an ordered one', () => {
+          initServerRenderedList('ol')
+          const ns = new NestedSort({
+            el: `#${STATIC_LIST_WRAPPER_ID}`,
+          })
+          expect(ns.getListInterface()).toBe(HTMLOListElement)
+        })
+
+        it('should return HTMLUListElement if the list is an unordered one', () => {
+          initServerRenderedList('ul')
+          const ns = new NestedSort({
+            el: `#${STATIC_LIST_WRAPPER_ID}`,
+          })
+          expect(ns.getListInterface()).toBe(HTMLUListElement)
+        })
+      })
+
+      describe('when the el option is a DOM node', () => {
+        it('should return HTMLOListElement if the list is an ordered one', () => {
+          initServerRenderedList('ol')
+          const ns = new NestedSort({
+            el: document.getElementById(STATIC_LIST_WRAPPER_ID),
+          })
+          expect(ns.getListInterface()).toBe(HTMLOListElement)
+        })
+
+        it('should return HTMLUListElement if the list is an unordered one', () => {
+          initServerRenderedList('ul')
+          const ns = new NestedSort({
+            el: document.getElementById(STATIC_LIST_WRAPPER_ID),
+          })
+          expect(ns.getListInterface()).toBe(HTMLUListElement)
+        })
+      })
+    })
+  })
+
+  describe('getListTagName method', () => {
+    it('should return ol if the listInterface property equals HTMLOListElement', () => {
+      const ns = initDataDrivenList()
+      ns.listInterface = HTMLOListElement
+      expect(ns.getListTagName()).toBe('ol')
+    })
+
+    it('should return ul if the listInterface property equals anything but HTMLOListElement', () => {
+      const ns = initDataDrivenList()
+      ns.listInterface = HTMLUListElement
+      expect(ns.getListTagName()).toBe('ul')
     })
   })
 })

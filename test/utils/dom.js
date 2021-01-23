@@ -22,14 +22,14 @@ export const createEvent = (type, props = {}) => {
   return event
 }
 
-export const initServerRenderedList = () => {
+export const initServerRenderedList = (tag = 'ol') => {
   document.body.innerHTML = `
     <div>
-      <ul id="${STATIC_LIST_WRAPPER_ID}">
+      <${tag} id="${STATIC_LIST_WRAPPER_ID}">
         <li data-id="1">One</li>
         <li data-id="2">Two</li>
         <li data-id="3">Three</li>
-      </ul>
+      </${tag}>
     </div>
   `
 }
