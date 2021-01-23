@@ -123,7 +123,7 @@ class NestedSort {
       this.sortableList = this.selector
     } else {
       const list = document.querySelector(this.selector)
-      this.sortableList = (list instanceof this.listInterface)
+      this.sortableList = list instanceof this.listInterface
         ? list
         : list.querySelector(this.getListTagName())
     }
