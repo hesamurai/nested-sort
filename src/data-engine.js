@@ -142,7 +142,7 @@ class DataEngine {
     let directParentList = this.getDirectListParentOfItem(topParent, item)
 
     if (!directParentList) {
-      // so we need to create the direct parent OL and append it to the direct parent LI
+      // we need to create the direct parent OL and append it to the direct parent LI
       directParentList = this.createItemElement({ id: parent }, 'ol')
       const directParentListItem = this.getParentNodeOfItem(topParent, item, 'li') || topParent
       directParentListItem.appendChild(directParentList)
