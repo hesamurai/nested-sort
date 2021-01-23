@@ -15,6 +15,9 @@
 
   <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
 
+  <input type="checkbox" id="property-mapping" onchange="updateList()">
+  <label for="property-mapping">Use property mapping (affects the list data structure logged to the console after each drag and drop)</label>
+
   <ul id="draggable">
     <li data-id="1">Topic 1</li>
     <li data-id="2">Topic 2</li>
@@ -34,19 +37,28 @@
 </div>
 
 <!-- Scripts -->
-<script src="../dist/nested-sort.umd.min.js"></script>
+<script src="../dist/nested-sort.umd.js"></script>
 <script>
-  (function() {
-    new NestedSort({
+  function updateList() {
+    if (window.ns) window.ns.destroy()
+
+    const usePropertyMapping = document.getElementById('property-mapping').checked
+    window.ns = new NestedSort({
       actions: {
         onDrop: function (data) {
-          console.log(data)
+          console.log(`data ${usePropertyMapping ? 'with' : 'without'} property mapping`, data)
         }
       },
+      propertyMap: usePropertyMapping ? {
+        id: 'item_id',
+        order: 'position',
+      } : undefined,
       el: '#draggable',
       droppingEdge: 5
     })
-  })()
+  }
+
+  updateList()
 </script>
 </body>
 </html>

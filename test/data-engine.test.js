@@ -56,6 +56,22 @@ describe('DataEngine class', () => {
       expect((new DataEngine(dataEngineConfig)).sortedData).toEqual([])
       expect((new DataEngine(dataEngineConfig)).sortedDataDomArray).toEqual([])
     })
+
+    it('should invoke the maybeTransformData method', () => {
+      jest.spyOn(DataEngine.prototype, 'maybeTransformData')
+      const de = new DataEngine({})
+      expect(de.maybeTransformData).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not throw an error if only the propertyMap options is defined', () => {
+      jest.spyOn(DataEngine.prototype, 'maybeTransformData')
+      const de = new DataEngine({
+        propertyMap: {
+          id: 'item_id',
+        }
+      })
+      expect(de.maybeTransformData).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('sortListItems method', () => {
