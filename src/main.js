@@ -117,13 +117,15 @@ class NestedSort {
   }
 
   getSortableList() {
-    if (this.sortableList instanceof HTMLUListElement) return this.sortableList
+    if (this.sortableList instanceof this.listInterface) return this.sortableList
 
-    if (this.selector instanceof HTMLUListElement) {
+    if (this.selector instanceof this.listInterface) {
       this.sortableList = this.selector
     } else {
       const list = document.querySelector(this.selector)
-      this.sortableList = list.nodeName === 'UL' ? list : list.querySelector('ul')
+      this.sortableList = (list instanceof this.listInterface)
+        ? list
+        : list.querySelector(this.getListTagName())
     }
 
     return this.sortableList
@@ -133,8 +135,8 @@ class NestedSort {
     const list = this.getSortableList()
 
     list.classList.add(...this.listClassNames.concat(this.mainListClassName))
-    list.querySelectorAll('ul').forEach(ul => {
-      ul.classList.add(...this.listClassNames)
+    list.querySelectorAll(this.getListTagName()).forEach(l => {
+      l.classList.add(...this.listClassNames)
     })
 
     list.querySelectorAll('li').forEach(li => {
@@ -196,7 +198,7 @@ class NestedSort {
 
   canBeTargeted(el) {
     if (!this.draggedNode || this.draggedNode === el) return false
-    return el.nodeName === 'LI' || (el.nodeName === 'UL' && el.classList.contains(this.classNames.placeholder))
+    return el.nodeName === 'LI' || (el instanceof this.listInterface && el.classList.contains(this.classNames.placeholder))
   }
 
   onDragStart(e) {
@@ -246,7 +248,7 @@ class NestedSort {
   getDropLocation() {
     if (this.canBeDropped()) {
       if (this.targetedNode.nodeName === 'LI' && !this.cursorIsIndentedEnough()) return 'before'
-      else if (this.targetedNode.nodeName === 'UL') return 'inside'
+      else if (this.targetedNode instanceof this.listInterface) return 'inside'
     }
   }
 
@@ -318,7 +320,8 @@ class NestedSort {
   }
 
   targetedNodeIsPlaceholder() {
-    return this.targetedNode.nodeName === 'UL' && this.targetedNode.classList.contains(this.classNames.placeholder)
+    return this.targetedNode instanceof this.listInterface
+      && this.targetedNode.classList.contains(this.classNames.placeholder)
   }
 
   getTargetedNodeDepth() {
@@ -327,7 +330,7 @@ class NestedSort {
     const list = this.getSortableList()
 
     while (list !== el.parentElement) {
-      if (el.parentElement.nodeName === 'UL') depth++
+      if (el.parentElement instanceof this.listInterface) depth++
       el = el.parentElement
     }
 
@@ -354,7 +357,7 @@ class NestedSort {
       }
     } else if (this.targetedNode !== this.draggedNode
       && this.targetedNode.nodeName === 'LI'
-      && !this.targetedNode.querySelectorAll('ul').length
+      && !this.targetedNode.querySelectorAll(this.getListTagName()).length
       && !this.nestingThresholdReached()) {
       actions.push('add')
     }
@@ -385,7 +388,7 @@ class NestedSort {
 
   targetNodeIsListWithItems() {
     return this.targetNodeIsIdentified()
-      && this.targetedNode.nodeName === 'UL'
+      && this.targetedNode instanceof this.listInterface
       && this.targetedNode.querySelectorAll('li').length
   }
 
@@ -397,7 +400,7 @@ class NestedSort {
   }
 
   cleanupPlaceholderLists() {
-    this.getSortableList().querySelectorAll('ul').forEach(ul => {
+    this.getSortableList().querySelectorAll(this.getListTagName()).forEach(ul => {
       if (!ul.querySelectorAll('li').length) {
         ul.remove()
       } else if (ul.classList.contains(this.classNames.placeholder)) {
@@ -409,7 +412,7 @@ class NestedSort {
   }
 
   initPlaceholderList() {
-    this.placeholderList = document.createElement('ul')
+    this.placeholderList = document.createElement(this.getListTagName())
     this.placeholderList.classList.add(this.classNames.placeholder, ...this.listClassNames)
   }
 
