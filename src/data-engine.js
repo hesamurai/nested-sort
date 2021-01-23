@@ -1,7 +1,7 @@
 class DataEngine {
   /**
    * @constructor
-   * @param {object[]} data
+   * @param {object[]} [data]
    * @param {object} [propertyMap={}]
    */
   constructor({ data, propertyMap = {} }) {
@@ -14,7 +14,7 @@ class DataEngine {
   }
 
   maybeTransformData() {
-    if (!Object.keys(this.propertyMap).length) return
+    if (!Object.keys(this.propertyMap).length || !Array.isArray(this.data)) return
 
     const getItemPropProxyName = this.getItemPropProxyName.bind(this)
 
