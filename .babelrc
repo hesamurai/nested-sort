@@ -5,12 +5,12 @@
       "targets": {
         "browsers": "ie >= 11"
       }
-    }]
+    }],
+    "@babel/typescript"
   ],
   "plugins": [
-    ["@babel/plugin-transform-runtime", {
-      "regenerator": true
-    }]
+    "@babel/proposal-class-properties",
+    "@babel/proposal-object-rest-spread"
   ],
   "env": {
     "test": {

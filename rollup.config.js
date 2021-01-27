@@ -1,46 +1,57 @@
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import pkg from './package.json';
-import babel from 'rollup-plugin-babel';
-import { eslint } from "rollup-plugin-eslint";
-import { terser } from 'rollup-plugin-terser';
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import babel from '@rollup/plugin-babel'
+// import eslint from '@rollup/plugin-eslint'
+import { terser } from 'rollup-plugin-terser'
+import pkg from './package.json'
+
+const extensions = [
+  '.js',
+  '.jsx',
+  '.ts',
+  '.tsx',
+]
+const resolveOptions = {
+  extensions,
+}
+const babelOptions = {
+  extensions,
+  exclude: 'node_modules/**',
+  babelHelpers: 'bundled',
+}
 
 export default [
   // browser-friendly UMD build
   {
-    input: 'src/main.js',
+    input: 'src/main.ts',
     output: {
-      name: 'NestedSort',
+      name: pkg.umdClassName,
       file: pkg.browser,
       format: 'umd',
     },
     plugins: [
-      resolve(),
+      resolve(resolveOptions),
       commonjs(),
-      eslint({
-        throwOnError: true,
-        throwOnWarning: true,
-      }),
-      babel({
-        exclude: 'node_modules/**',
-        runtimeHelpers: true,
-      }),
+      // eslint({
+      //   throwOnError: true,
+      //   throwOnWarning: true,
+      // }),
+      babel(babelOptions),
     ],
   },
+
+  // Minified browser-friendly UMD build
   {
-    input: 'src/main.js',
+    input: 'src/main.ts',
     output: {
-      name: 'NestedSort',
+      name: pkg.umdClassName,
       file: pkg.browserMin,
       format: 'umd',
     },
     plugins: [
-      resolve(),
+      resolve(resolveOptions),
       commonjs(),
-      babel({
-        exclude: 'node_modules/**',
-        runtimeHelpers: true
-      }),
+      babel(babelOptions),
       terser(),
     ],
   },
@@ -52,11 +63,15 @@ export default [
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
   {
-    input: 'src/main.js',
+    input: 'src/main.ts',
     external: [],
+    plugins: [
+      resolve(resolveOptions),
+      babel(babelOptions),
+    ],
     output: [
-      { file: pkg.main, format: 'cjs' },
+      { exports: 'default', file: pkg.main, format: 'cjs' },
       { file: pkg.module, format: 'es' },
     ],
   },
-];
+]

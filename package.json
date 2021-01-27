@@ -3,6 +3,7 @@
   "version": "4.3.0",
   "author": "Hesam Bahrami (Genzo)",
   "description": "A JavaScript library to create a nested list of elements",
+  "umdClassName": "NestedSort",
   "main": "dist/nested-sort.cjs.js",
   "module": "dist/nested-sort.esm.js",
   "browser": "dist/nested-sort.umd.js",
@@ -35,7 +36,9 @@
   },
   "scripts": {
     "prepare": "yarn build",
-    "build": "rollup -c",
+    "build": "yarn build:types && yarn build:js",
+    "build:js": "rollup -c",
+    "build:types": "tsc --emitDeclarationOnly",
     "build:watch": "rollup -c -w",
     "watch": "concurrently 'yarn build:watch' 'yarn serve -l tcp://127.0.0.1'",
     "test:coverage": "jest --coverage",
