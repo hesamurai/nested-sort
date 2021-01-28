@@ -2,6 +2,16 @@ export interface Actions {
   onDrop?: (data: Array<object>) => void
 }
 
+export type DropLocation = 'before' | 'inside'
+
+export type ListInterface = typeof HTMLOListElement | typeof HTMLUListElement
+
+export type ListElement = HTMLOListElement | HTMLUListElement
+
+export type ListTagName = 'ol' | 'ul'
+
+export type PlaceholderMaintenanceActions = Array<'add' | 'cleanup'>
+
 export interface ClassNames {
   dragged: string
   placeholder: string
@@ -17,6 +27,7 @@ export interface DataItem {
   id: string | number
   order: number
   parent: string | number
+  text: string
 }
 
 export interface Dimensions {
@@ -47,14 +58,16 @@ export interface TargetNode {
   Y: number
 }
 
+export type ClassNamesList = Array<string> | string
+
 export interface Options {
   actions: Actions
   data: Array<DataItem>
   droppingEdge: number
   el: HTMLElement | string
   init: boolean
-  listClassNames: Array<string> | string
-  listItemClassNames: Array<string> | string
+  listClassNames: ClassNamesList
+  listItemClassNames: ClassNamesList
   nestingLevels: string
   propertyMap: Partial<PropertyMap>
 }
