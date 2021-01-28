@@ -1,10 +1,19 @@
+import {
+  DataEngineOptions,
+  DataItem,
+  PropertyMap,
+} from './types'
+
 class DataEngine {
+  data: Array<DataItem>
+  sortedData: Array<DataItem>
+  sortedDataDomArray: Array<object>
+  propertyMap: PropertyMap | object
+
   /**
    * @constructor
-   * @param {object[]} [data]
-   * @param {object} [propertyMap={}]
    */
-  constructor({ data, propertyMap = {} }) {
+  constructor({ data, propertyMap = {} }: DataEngineOptions) {
     this.data = data
     this.sortedData = []
     this.sortedDataDomArray = []
@@ -61,7 +70,7 @@ class DataEngine {
           groups[item.parent] = [item]
         }
         return groups
-      }, {})
+      }, {}) as Array<DataItem>
 
     Object.keys(childItems).forEach(parentId => {
       childItems[parentId].sort((a, b) => a.order && b.order ? a.order - b.order : 0)
@@ -188,8 +197,8 @@ class DataEngine {
    * @returns {object[]}
    */
   convertDomToData(list) {
-    return Array.from(list.querySelectorAll('li')).map(li => {
-      const parentListItem = li.parentNode
+    return Array.from(list.querySelectorAll('li') as HTMLCollectionOf<HTMLElement>).map(li => {
+      const parentListItem = li.parentNode as HTMLElement
       const parent = parentListItem.dataset.id
       const order = Array.from(parentListItem.children).findIndex(item => item === li) + 1
 
@@ -206,7 +215,7 @@ class DataEngine {
    */
   render() {
     const list = document.createElement('ol')
-    this.getListItemsDom().forEach(listItem => list.appendChild(listItem))
+    this.getListItemsDom().forEach((listItem: HTMLElement) => list.appendChild(listItem))
     return list
   }
 }

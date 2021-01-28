@@ -1,20 +1,43 @@
 import DataEngine from './data-engine'
+import {
+  Actions,
+  DataItem,
+  TargetNode,
+  Distances,
+  Dimensions,
+  Cursor,
+  ClassNames,
+  EventListeners,
+  Options,
+} from './types'
 
 class NestedSort {
-  /**
-   * @constructor
-   * @param {object} [actions={}]
-   * @param {array} [data]
-   * @param {number} [droppingEdge=15]
-   * @param {string|HTMLElement} el
-   * @param {boolean} [init=true]
-   * @param {array|string} [listClassNames]
-   * @param {array|string} [listItemClassNames]
-   * @param {number|string} [nestingLevels]
-   * @param {object} [propertyMap={}]
-   */
+  actions: Actions
+  data: Array<DataItem>
+  dataEngine: DataEngine
+  draggedNode: HTMLElement
+  initialised: boolean
+  listClassNames: Array<string>
+  listItemClassNames: Array<string>
+  mainListClassName: string
+  placeholderList: HTMLElement
+  placeholderInUse: HTMLElement
+  propertyMap: object
+  el: HTMLElement
+  selector: string
+  sortableList: HTMLElement
+  targetedNode: HTMLElement
+  targetNode: TargetNode
+  distances: Distances
+  dimensions: Dimensions
+  cursor: Cursor
+  classNames: ClassNames
+  listEventListeners: EventListeners
+  nestingLevels: number
+  listInterface: any
+
   constructor({
-    actions: { onDrop } = {},
+    actions = {},
     data,
     droppingEdge = 15,
     el,
@@ -23,9 +46,10 @@ class NestedSort {
     listItemClassNames,
     nestingLevels,
     propertyMap = {},
-  }) {
+  }: Options) {
     this.data = data
-    this.selector = el
+    this.el = el instanceof HTMLElement ? el : document.querySelector(el)
+    this.selector = typeof el === 'string' ? el : undefined
     this.sortableList = null
     this.placeholderList = null
     this.placeholderInUse = null
@@ -36,7 +60,7 @@ class NestedSort {
     this.listItemClassNames = this.createListClassNamesArray(listItemClassNames)
     this.propertyMap = propertyMap
     this.actions = {
-      onDrop,
+      onDrop: actions.onDrop,
     }
     this.initialised = false
     this.targetNode = {
@@ -45,9 +69,10 @@ class NestedSort {
     }
     this.distances = {
       droppingEdge,
-      droppingEdgeNegative: droppingEdge * -1,
       mouseTo: {
         targetedElTop: undefined,
+        targetedElTopAbs: undefined,
+        targetedElBot: undefined,
       },
     }
     this.dimensions = {
@@ -83,8 +108,8 @@ class NestedSort {
   getListInterface() {
     if (Array.isArray(this.data) && this.data.length) return HTMLOListElement
 
-    const el = this.selector instanceof HTMLElement
-      ? this.selector
+    const el = this.el instanceof HTMLElement
+      ? this.el
       : document.querySelector(this.selector)
 
     return el instanceof HTMLOListElement ? HTMLOListElement : HTMLUListElement
@@ -119,10 +144,10 @@ class NestedSort {
   getSortableList() {
     if (this.sortableList instanceof this.listInterface) return this.sortableList
 
-    if (this.selector instanceof this.listInterface) {
-      this.sortableList = this.selector
+    if (this.el instanceof this.listInterface) {
+      this.sortableList = this.el
     } else {
-      const list = document.querySelector(this.selector)
+      const list = document.querySelector(this.selector) as HTMLElement
       this.sortableList = list instanceof this.listInterface
         ? list
         : list.querySelector(this.getListTagName())
@@ -154,7 +179,7 @@ class NestedSort {
 
   toggleListItemAttributes(enable = true) {
     this.getSortableList().querySelectorAll('li').forEach(el => {
-      el.setAttribute('draggable', enable)
+      el.setAttribute('draggable', enable.toString())
     })
   }
 
@@ -179,7 +204,7 @@ class NestedSort {
     this.initialised = true
   }
 
-  init() {
+  init(): void {
     this.initDragAndDrop()
   }
 
@@ -210,7 +235,7 @@ class NestedSort {
   onDragOver(e) {
     e.preventDefault() // prevent default to allow drop
     this.updateCoordination(e)
-    this.managePlaceholderLists(e)
+    this.managePlaceholderLists()
   }
 
   onDragEnter(e) {
@@ -252,9 +277,9 @@ class NestedSort {
     }
   }
 
-  maybeDrop(e) {
+  maybeDrop() {
     const location = this.getDropLocation()
-    if (location) this.dropTheItem(location, e)
+    if (location) this.dropTheItem(location)
   }
 
   dropTheItem(place) {
@@ -279,11 +304,11 @@ class NestedSort {
       return
     }
 
-    let offset = this.targetedNode.getBoundingClientRect()
+    const offset = this.targetedNode.getBoundingClientRect()
     this.targetNode.X = offset.left
     this.targetNode.Y = offset.top
 
-    let result = this.targetNode.Y - this.cursor.Y
+    const result = this.targetNode.Y - this.cursor.Y
     this.distances.mouseTo.targetedElTop = result
     this.distances.mouseTo.targetedElTopAbs = Math.abs(result)
     this.dimensions.targetedEl.H = this.targetedNode.clientHeight
@@ -302,9 +327,8 @@ class NestedSort {
     return this.cursor.Y - this.targetNode.Y < this.distances.droppingEdge
   }
 
-  managePlaceholderLists(e) {
-
-    let actions = this.analysePlaceHolderSituation(e)
+  managePlaceholderLists() {
+    const actions = this.analysePlaceHolderSituation()
 
     actions.forEach(action => {
       switch (action) {
@@ -349,7 +373,7 @@ class NestedSort {
       return []
     }
 
-    let actions = []
+    const actions = []
 
     if (!this.cursorIsIndentedEnough() || this.mouseIsTooCloseToTop()) {
       if (!this.targetedNodeIsPlaceholder()) {
@@ -400,13 +424,15 @@ class NestedSort {
   }
 
   cleanupPlaceholderLists() {
-    this.getSortableList().querySelectorAll(this.getListTagName()).forEach(ul => {
+    const tag = this.getListTagName()
+    const listsArray = this.getSortableList().querySelectorAll(tag)
+    Array.from(listsArray).forEach(ul => {
       if (!ul.querySelectorAll('li').length) {
         ul.remove()
       } else if (ul.classList.contains(this.classNames.placeholder)) {
         ul.classList.remove(this.classNames.placeholder)
         ul.style.minHeight = 'auto'
-        ul.dataset.id = ul.parentNode.dataset.id
+        ul.dataset.id = (ul.parentNode as HTMLElement).dataset.id
       }
     })
   }
@@ -417,7 +443,7 @@ class NestedSort {
   }
 
   getPlaceholderList() {
-    this.placeholderInUse = this.placeholderList.cloneNode(true)
+    this.placeholderInUse = this.placeholderList.cloneNode(true) as HTMLElement
     return this.placeholderInUse
   }
 }

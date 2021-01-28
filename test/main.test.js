@@ -301,7 +301,7 @@ describe('NestedSort', () => {
         spy.mockRestore()
       })
 
-      it('should fire the managePlaceholderLists method with the event as its argument', () => {
+      it('should fire the managePlaceholderLists', () => {
         const spy = jest.spyOn(NestedSort.prototype, 'managePlaceholderLists')
         initDataDrivenList()
         const item = document.querySelector('li[data-id="1"]')
@@ -310,7 +310,6 @@ describe('NestedSort', () => {
         item.dispatchEvent(event)
 
         expect(spy).toHaveBeenCalledTimes(1)
-        expect(spy).toHaveBeenCalledWith(event)
 
         spy.mockRestore()
       })
@@ -649,11 +648,10 @@ describe('NestedSort', () => {
       const location = 'before'
       ns.getDropLocation = () => location
       ns.dropTheItem = jest.fn()
-      const event = { foo: 'bar' }
-      ns.maybeDrop(event)
+      ns.maybeDrop()
 
       expect(ns.dropTheItem).toHaveBeenCalledTimes(1)
-      expect(ns.dropTheItem).toHaveBeenCalledWith(location, event)
+      expect(ns.dropTheItem).toHaveBeenCalledWith(location)
     })
   })
 
