@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Nested Sort VueJS Component</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <div id="app">
+    <h1 class="mt-3">Nested Sort VueJS Component</h1>
+    <button class="btn btn-primary my-3" @click="addDataItem">Add Item</button>
+    <nested-sort :data="data" :property-map="propertyMap" @dropped="onDrop" />
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="../dist/nested-sort.umd.js"></script>
+<script>
+  Vue.component('nested-sort', {
+    template: `
+      <div id="wrapper" ref="wrapper" />
+    `,
+    props: {
+      data: {
+        required: true,
+        type: Array,
+      },
+      propertyMap: {
+        type: Object,
+      },
+    },
+    data() {
+      return {
+        sortedData: null,
+        ns: null,
+      }
+    },
+    computed: {
+      transformedData() {
+        return this.sortedData.map(item => {
+          const idKey = this.propertyMap?.id || 'id'
+          const textKey = this.propertyMap?.text || 'text'
+          const orig = this.data.find(origItem => origItem[idKey].toString() === item[idKey])
+          return {
+            ...item,
+            [textKey]: orig[textKey]
+          }
+        })
+      },
+    },
+    watch: {
+      data() {
+        this.ns.destroy()
+        this.initialise()
+      }
+    },
+    mounted() {
+      this.initialise()
+    },
+    methods: {
+      initialise() {
+        const context = this
+        this.ns = new NestedSort({
+          el: '#wrapper', // TODO: needs a change in the main Nested Sort class
+          actions: {
+            onDrop(data) {
+              context.sortedData = data
+              context.$emit('dropped', context.transformedData)
+            }
+          },
+          data: context.data,
+          propertyMap: context.propertyMap,
+          droppingEdge: 5,
+        })
+      },
+    },
+  })
+
+
+  new Vue({
+    el: '#app',
+    data: {
+      data: [
+        { item_id: 1, title: 'One' },
+        { item_id: 11, title: 'One-One', parent_id: 1 },
+        { item_id: 2, title: 'Two' },
+        { item_id: 3, title: 'Three' },
+        { item_id: 4, title: 'Four' },
+        { item_id: 5, title: 'Five' },
+      ],
+      propertyMap: {
+        id: 'item_id',
+        text: 'title',
+        parent: 'parent_id',
+        order: 'position',
+      }
+    },
+    methods: {
+      addDataItem() {
+        this.data = [
+          ...this.data,
+          {
+            [this.propertyMap.id]: this.data.length + 1,
+            [this.propertyMap.text]: 'New item',
+          }
+        ]
+      },
+      onDrop(data) {
+        console.log('Sorted data =>', data)
+        this.data = data
+      },
+    },
+  })
+</script>
+</body>
+</html>
