@@ -1,6 +1,6 @@
 {
   "name": "nested-sort",
-  "version": "4.3.0",
+  "version": "5.0.0",
   "author": "Hesam Bahrami (Genzo)",
   "description": "A JavaScript library to create a nested list of elements",
   "main": "dist/nested-sort.cjs.js",
