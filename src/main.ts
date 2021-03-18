@@ -5,7 +5,6 @@ import {
   ClassNamesList,
   Cursor,
   DataItem,
-  Dimensions,
   Distances,
   DropLocation,
   EventListeners,
@@ -20,28 +19,26 @@ import {
 
 class NestedSort {
   actions: Actions
+  classNames: ClassNames
+  cursor: Cursor
   data: Array<DataItem>
   dataEngine: DataEngine
-  draggedNode: HTMLElement
+  distances: Partial<Distances>
+  draggedNode?: HTMLElement
   initialised: boolean
   listClassNames: Array<string>
+  listEventListeners: EventListeners
+  listInterface: ListInterface
   listItemClassNames: Array<string>
   mainListClassName: string
+  nestingLevels: number
   placeholderList: HTMLElement
   placeholderInUse: HTMLElement
   propertyMap: Partial<PropertyMap>
-  el: HTMLElement
-  selector: string
   sortableList: ListElement
-  targetedNode: HTMLElement
+  targetedNode?: HTMLElement
   targetNode: TargetNode
-  distances: Distances
-  dimensions: Dimensions
-  cursor: Cursor
-  classNames: ClassNames
-  listEventListeners: EventListeners
-  nestingLevels: number
-  listInterface: ListInterface
+  wrapper: Element | null
 
   constructor({
     actions = {},
@@ -54,14 +51,12 @@ class NestedSort {
     nestingLevels,
     propertyMap = {},
   }: Options) {
+    const element = typeof el === 'string' ? document.querySelector(el) as HTMLElement : el
+    const elementIsAList = element instanceof HTMLOListElement || element instanceof HTMLUListElement
+    this.wrapper = elementIsAList ? null : element
+    this.sortableList = elementIsAList ? element : null
+
     this.data = data
-    this.el = el instanceof HTMLElement ? el : document.querySelector(el)
-    this.selector = typeof el === 'string' ? el : undefined
-    this.sortableList = null
-    this.placeholderList = null
-    this.placeholderInUse = null
-    this.draggedNode = null
-    this.targetedNode = null
     this.listClassNames = this.createListClassNamesArray(listClassNames)
     this.mainListClassName = this.listClassNames[0] || 'nested-sort'
     this.listItemClassNames = this.createListClassNamesArray(listItemClassNames)
@@ -70,26 +65,8 @@ class NestedSort {
       onDrop: actions.onDrop,
     }
     this.initialised = false
-    this.targetNode = {
-      X: null,
-      Y: null,
-    }
     this.distances = {
       droppingEdge,
-      mouseTo: {
-        targetedElTop: undefined,
-        targetedElTopAbs: undefined,
-        targetedElBot: undefined,
-      },
-    }
-    this.dimensions = {
-      targetedEl: {
-        H: undefined,
-      },
-    }
-    this.cursor = {
-      X: null,
-      Y: null,
     }
     this.classNames = {
       dragged: 'ns-dragged',
@@ -114,18 +91,11 @@ class NestedSort {
 
   getListInterface(): ListInterface {
     if (Array.isArray(this.data) && this.data.length) return HTMLOListElement
-
-    const el = this.el instanceof HTMLElement
-      ? this.el
-      : document.querySelector(this.selector)
-
-    return el instanceof HTMLOListElement ? HTMLOListElement : HTMLUListElement
+    return this.sortableList instanceof HTMLOListElement ? HTMLOListElement : HTMLUListElement
   }
 
   getDataEngine(): DataEngine {
-    if (this.dataEngine instanceof DataEngine) {
-      return this.dataEngine
-    }
+    if (this.dataEngine) return this.dataEngine
     this.dataEngine = new DataEngine({data: this.data, propertyMap: this.propertyMap})
     return this.dataEngine
   }
@@ -136,12 +106,11 @@ class NestedSort {
   }
 
   maybeInitDataDom(): void {
-    if (!(Array.isArray(this.data) && this.data.length)) return
+    if (!(Array.isArray(this.data) && this.data.length && this.wrapper)) return
 
-    const wrapper = document.querySelector(this.selector)
     const list = this.getDataEngine().render()
-    wrapper.innerHTML = ''
-    wrapper.appendChild(list)
+    this.wrapper.innerHTML = ''
+    this.wrapper.appendChild(list)
   }
 
   getListTagName(): ListTagName {
@@ -150,42 +119,33 @@ class NestedSort {
 
   getSortableList(): ListElement {
     if (this.sortableList instanceof this.listInterface) return this.sortableList
-
-    if (this.el instanceof this.listInterface) {
-      this.sortableList = this.el
-    } else {
-      const list = document.querySelector(this.selector) as HTMLElement
-      this.sortableList = list instanceof this.listInterface
-        ? list
-        : list.querySelector(this.getListTagName())
-    }
-
+    this.sortableList = this.wrapper?.querySelector(this.getListTagName()) as ListElement
     return this.sortableList
   }
 
   addListAttributes(): void {
     const list = this.getSortableList()
 
-    list.classList.add(...this.listClassNames.concat(this.mainListClassName))
-    list.querySelectorAll(this.getListTagName()).forEach(l => {
+    list?.classList.add(...this.listClassNames.concat(this.mainListClassName))
+    list?.querySelectorAll(this.getListTagName()).forEach(l => {
       l.classList.add(...this.listClassNames)
     })
 
-    list.querySelectorAll('li').forEach(li => {
+    list?.querySelectorAll('li').forEach(li => {
       li.classList.add(...this.listItemClassNames)
     })
   }
 
   toggleMainListLifeCycleClassName(enabled = true): void {
     const className = `${this.mainListClassName}--enabled`
-    const classList = this.getSortableList().classList
+    const classList = this.getSortableList()?.classList
     return enabled
-      ? classList.add(className)
-      : classList.remove(className)
+      ? classList?.add(className)
+      : classList?.remove(className)
   }
 
   toggleListItemAttributes(enable = true): void {
-    this.getSortableList().querySelectorAll('li').forEach(el => {
+    this.getSortableList()?.querySelectorAll('li').forEach(el => {
       el.setAttribute('draggable', enable.toString())
     })
   }
@@ -194,9 +154,9 @@ class NestedSort {
     const list = this.getSortableList()
     Object.keys(this.listEventListeners).forEach(event => {
       if (remove) {
-        list.removeEventListener(event, this.listEventListeners[event])
+        list?.removeEventListener(event, this.listEventListeners[event])
       } else {
-        list.addEventListener(event, this.listEventListeners[event], false)
+        list?.addEventListener(event, this.listEventListeners[event], false)
       }
     })
   }
@@ -222,7 +182,7 @@ class NestedSort {
     this.initialised = false
   }
 
-  removeClassFromEl(el: HTMLElement, className: string): void {
+  removeClassFromEl(className: string, el?: HTMLElement): void {
     if (el && el.classList.contains(className)) {
       el.classList.remove(className)
     }
@@ -236,7 +196,7 @@ class NestedSort {
   onDragStart(e: DragEvent): void {
     this.draggedNode = e.target as HTMLElement
     this.draggedNode.classList.add(this.classNames.dragged)
-    e.dataTransfer.setData('text', 'Drag started!') // Hack for Firefox!
+    e?.dataTransfer?.setData('text', 'Drag started!') // Hack for Firefox!
   }
 
   onDragOver(e: DragEvent): void {
@@ -248,18 +208,18 @@ class NestedSort {
   onDragEnter(e: DragEvent): void {
     if (!this.canBeTargeted(e.target as HTMLElement)) return
 
-    this.removeClassFromEl(this.targetedNode, this.classNames.targeted)
+    this.removeClassFromEl(this.classNames.targeted, this.targetedNode)
     this.targetedNode = e.target as HTMLElement
     this.targetedNode.classList.add(this.classNames.targeted)
   }
 
   onDragEnd(e: DragEvent): void {
     e.stopPropagation()
-    this.removeClassFromEl(this.draggedNode, this.classNames.dragged)
-    this.removeClassFromEl(this.targetedNode, this.classNames.targeted)
+    this.removeClassFromEl(this.classNames.dragged, this.draggedNode)
+    this.removeClassFromEl(this.classNames.targeted, this.targetedNode)
     this.cleanupPlaceholderLists()
-    this.draggedNode = null
-    this.targetedNode = null
+    delete this.draggedNode
+    delete this.targetedNode
   }
 
   onDrop(e: DragEvent): void {
@@ -277,9 +237,9 @@ class NestedSort {
     this.calcMouseToTargetedElDist()
   }
 
-  getDropLocation(): DropLocation {
+  getDropLocation(): DropLocation|undefined {
     if (this.canBeDropped()) {
-      if (this.targetedNode.nodeName === 'LI' && !this.cursorIsIndentedEnough()) return 'before'
+      if (this?.targetedNode?.nodeName === 'LI' && !this.cursorIsIndentedEnough()) return 'before'
       else if (this.targetedNode instanceof this.listInterface) return 'inside'
     }
   }
@@ -292,18 +252,20 @@ class NestedSort {
   dropTheItem(place: DropLocation): void {
     switch (place) {
       case 'before':
-        this.targetedNode.parentNode.insertBefore(this.draggedNode, this.targetedNode)
+        this.targetedNode?.parentNode?.insertBefore(this.draggedNode as Node, this.targetedNode as Node)
         break
       case 'inside':
-        this.targetedNode.appendChild(this.draggedNode)
+        this.targetedNode?.appendChild(this.draggedNode as Node)
         break
     }
   }
 
   calcMouseCoords(e: DragEvent): void {
     // we're having the client coords because on the next lines, we use getBoundingClientRect which behaves in the same way
-    this.cursor.X = e.clientX
-    this.cursor.Y = e.clientY
+    this.cursor = {
+      X: e.clientX,
+      Y: e.clientY,
+    }
   }
 
   calcMouseToTargetedElDist(): void {
@@ -312,18 +274,22 @@ class NestedSort {
     }
 
     const offset = this.targetedNode.getBoundingClientRect()
-    this.targetNode.X = offset.left
-    this.targetNode.Y = offset.top
+    this.targetNode = {
+      X: offset.left,
+      Y: offset.top,
+    }
 
     const result = this.targetNode.Y - this.cursor.Y
-    this.distances.mouseTo.targetedElTop = result
-    this.distances.mouseTo.targetedElTopAbs = Math.abs(result)
-    this.dimensions.targetedEl.H = this.targetedNode.clientHeight
-    this.distances.mouseTo.targetedElBot = this.distances.mouseTo.targetedElTopAbs - this.dimensions.targetedEl.H
+    const targetedElTopAbs = Math.abs(result)
+    this.distances.mouseTo = {
+      targetedElTop: result,
+      targetedElTopAbs,
+      targetedElBot: targetedElTopAbs - this.targetedNode.clientHeight,
+    }
   }
 
-  areNested(child: HTMLElement, parent: HTMLElement): boolean {
-    return parent && Array.from(parent.querySelectorAll('li')).some(li => li === child)
+  areNested(child: HTMLElement|undefined, parent: HTMLElement|undefined): boolean {
+    return !!child && !!parent && Array.from(parent?.querySelectorAll('li')).some(li => li === child)
   }
 
   cursorIsIndentedEnough(): boolean {
@@ -331,6 +297,7 @@ class NestedSort {
   }
 
   mouseIsTooCloseToTop(): boolean {
+    if (!this?.distances?.droppingEdge) return false
     return this.cursor.Y - this.targetNode.Y < this.distances.droppingEdge
   }
 
@@ -360,9 +327,9 @@ class NestedSort {
     let el = this.targetedNode
     const list = this.getSortableList()
 
-    while (list !== el.parentElement) {
-      if (el.parentElement instanceof this.listInterface) depth++
-      el = el.parentElement
+    while (list !== el?.parentElement) {
+      if (el?.parentElement instanceof this.listInterface) depth++
+      el = el?.parentElement as HTMLElement
     }
 
     return depth
@@ -380,7 +347,7 @@ class NestedSort {
       return []
     }
 
-    const actions = []
+    const actions: PlaceholderMaintenanceActions = []
 
     if (!this.cursorIsIndentedEnough() || this.mouseIsTooCloseToTop()) {
       if (!this.targetedNodeIsPlaceholder()) {
@@ -399,12 +366,12 @@ class NestedSort {
   animatePlaceholderList(): void {
     this.placeholderInUse.style.minHeight = '0'
     this.placeholderInUse.style.transition = 'min-height ease .2s'
-    this.placeholderInUse.style.minHeight = `${this.draggedNode.offsetHeight}px`
+    this.placeholderInUse.style.minHeight = `${this.draggedNode?.offsetHeight}px`
   }
 
   addPlaceholderList(): void {
     this.getPlaceholderList()
-    this.targetedNode.appendChild(this.placeholderInUse)
+    this.targetedNode?.appendChild(this.placeholderInUse)
     this.animatePlaceholderList()
   }
 
@@ -432,7 +399,7 @@ class NestedSort {
 
   cleanupPlaceholderLists(): void {
     const tag = this.getListTagName()
-    const listsArray = this.getSortableList().querySelectorAll(tag)
+    const listsArray = this.getSortableList()?.querySelectorAll(tag) || []
     Array.from(listsArray).forEach(ul => {
       if (!ul.querySelectorAll('li').length) {
         ul.remove()

@@ -6,7 +6,7 @@ export type DropLocation = 'before' | 'inside'
 
 export type ListInterface = typeof HTMLOListElement | typeof HTMLUListElement
 
-export type ListElement = HTMLOListElement | HTMLUListElement
+export type ListElement = HTMLElement | null
 
 export type ListTagName = 'ol' | 'ul'
 
@@ -28,12 +28,6 @@ export interface DataItem {
   order: number
   parent: string | number
   text: string
-}
-
-export interface Dimensions {
-  targetedEl: {
-    H: number,
-  }
 }
 
 export interface Distances {
@@ -76,6 +70,7 @@ export interface PropertyMap {
   id: string
   order: string
   parent: string
+  text: string
 }
 
 export interface DataEngineOptions {

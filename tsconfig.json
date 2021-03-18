@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "strictNullChecks": true,
     "declaration": true,
     "declarationDir": "./dist",
     "esModuleInterop": true,

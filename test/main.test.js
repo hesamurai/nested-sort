@@ -342,8 +342,8 @@ describe('NestedSort', () => {
           })
         )
 
-        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(1, ns.draggedNode, 'ns-dragged')
-        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(2, ns.targetedNode, 'ns-targeted')
+        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(1, 'ns-dragged', ns.draggedNode)
+        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(2, 'ns-targeted', ns.targetedNode)
       })
 
       it('should call the cleanupPlaceholderLists method', () => {
@@ -372,7 +372,7 @@ describe('NestedSort', () => {
           })
         )
 
-        expect(ns.draggedNode).toBeNull()
+        expect(ns.draggedNode).toBeUndefined()
       })
 
       it('should set the targetedNode property to null', () => {
@@ -387,7 +387,7 @@ describe('NestedSort', () => {
           })
         )
 
-        expect(ns.targetedNode).toBeNull()
+        expect(ns.targetedNode).toBeUndefined()
       })
     })
 

@@ -82,7 +82,7 @@ class DataEngine {
     const { id, text } = item
     const el = document.createElement(nodeName)
     el.dataset.id = id as string
-    if (nodeName === 'li') el.innerHTML = text
+    if (nodeName === 'li' && text) el.innerHTML = text
 
     return el
   }
@@ -99,7 +99,7 @@ class DataEngine {
     return !!this.getParentNodeOfItem(node, item, 'li')
   }
 
-  getDirectListParentOfItem(node: HTMLElement, item: DataItem): HTMLElement {
+  getDirectListParentOfItem(node: HTMLElement, item: DataItem): HTMLElement|null {
     return this.getParentNodeOfItem(node, item, 'ol')
   }
 
@@ -128,11 +128,11 @@ class DataEngine {
 
   getListItemsDom(): Array<HTMLElement> {
     this.sortedDataDomArray = []
-    let processedItems = []
+    let processedItems: string[] = []
 
     while (processedItems.length !== this.sortListItems().length) {
       processedItems = this.sortedData.reduce((processedItems, item) => {
-        const { id } = item
+        const id = item.id.toString()
         if (processedItems.includes(id)) return processedItems
 
         let itemAdded
@@ -154,7 +154,7 @@ class DataEngine {
   }
 
   convertDomToData(list: ListElement): Array<Record<string, unknown>> {
-    return Array.from(list.querySelectorAll('li')).map(li => {
+    return Array.from(list?.querySelectorAll('li') || []).map(li => {
       const parentListItem = li.parentNode as HTMLElement
       const parent = parentListItem.dataset.id
       const order = Array.from(parentListItem.children).findIndex(item => item === li) + 1
@@ -167,7 +167,7 @@ class DataEngine {
     })
   }
 
-  render(): ListElement {
+  render(): Node {
     const list = document.createElement('ol')
     this.getListItemsDom().forEach((listItem: HTMLElement) => list.appendChild(listItem))
     return list
