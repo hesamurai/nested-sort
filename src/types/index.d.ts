@@ -78,5 +78,5 @@ export interface PropertyMap {
 
 export interface DataEngineOptions {
   data: Array<DataItem>
-  propertyMap: PropertyMap | object
+  propertyMap: Partial<PropertyMap>
 }
