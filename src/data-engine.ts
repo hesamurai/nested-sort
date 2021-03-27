@@ -1,10 +1,21 @@
+import {
+  DataEngineOptions,
+  DataItem,
+  ListElement,
+  MappedDataItem,
+  PropertyMap,
+} from './types'
+
 class DataEngine {
+  data: Array<DataItem>
+  sortedData: Array<DataItem>
+  sortedDataDomArray: Array<HTMLElement>
+  propertyMap: Partial<PropertyMap>
+
   /**
    * @constructor
-   * @param {object[]} [data]
-   * @param {object} [propertyMap={}]
    */
-  constructor({ data, propertyMap = {} }) {
+  constructor({ data, propertyMap = {} }: DataEngineOptions) {
     this.data = data
     this.sortedData = []
     this.sortedDataDomArray = []
@@ -13,7 +24,7 @@ class DataEngine {
     this.maybeTransformData()
   }
 
-  maybeTransformData() {
+  maybeTransformData(): void {
     if (!Object.keys(this.propertyMap).length || !Array.isArray(this.data)) return
 
     const getItemPropProxyName = this.getItemPropProxyName.bind(this)
@@ -27,25 +38,18 @@ class DataEngine {
     })
   }
 
-  /**
-   * @param {PropertyKey} prop
-   * @returns {PropertyKey}
-   */
-  getItemPropProxyName(prop) {
+  getItemPropProxyName(prop: string): string {
     if (Object.prototype.hasOwnProperty.call(this.propertyMap, prop)) {
       return this.propertyMap[prop]
     }
     return prop
   }
 
-  isTopLevelItem(item) {
+  isTopLevelItem(item: DataItem): boolean {
     return !item.parent
   }
 
-  /**
-   * @returns {object[]}
-   */
-  sortListItems() {
+  sortListItems(): Array<DataItem> {
     const items = [...this.data]
 
     const topLevelItems = items
@@ -61,7 +65,7 @@ class DataEngine {
           groups[item.parent] = [item]
         }
         return groups
-      }, {})
+      }, {}) as Array<DataItem>
 
     Object.keys(childItems).forEach(parentId => {
       childItems[parentId].sort((a, b) => a.order && b.order ? a.order - b.order : 0)
@@ -75,62 +79,32 @@ class DataEngine {
     return this.sortedData
   }
 
-  /**
-   * @param {object[]} item
-   * @param {string} nodeName
-   * @returns {HTMLElement}
-   */
-  createItemElement(item, nodeName = 'li') {
+  createItemElement(item: Partial<DataItem>, nodeName = 'li'): HTMLElement {
     const { id, text } = item
     const el = document.createElement(nodeName)
-    el.dataset.id = id
-    if (nodeName === 'li') el.innerHTML = text
+    el.dataset.id = id as string
+    if (nodeName === 'li' && text) el.innerHTML = text
 
     return el
   }
 
-  /**
-   * @param {HTMLElement} node
-   * @param {object} item
-   * @returns {boolean}
-   */
-  elementIsParentOfItem(node, item) {
+  elementIsParentOfItem(node: HTMLElement, item: DataItem): boolean {
     return node.dataset.id === `${item.parent}`
   }
 
-  /**
-   * @param {HTMLElement} node
-   * @param {object} item
-   * @param {string} nodeName
-   * @returns {Element|null}
-   */
-  getParentNodeOfItem(node, item, nodeName) {
+  getParentNodeOfItem(node: HTMLElement, item: DataItem, nodeName: string): HTMLElement|null {
     return node.querySelector(`${nodeName}[data-id="${item.parent}"]`)
   }
 
-  /**
-   * @param {HTMLElement} node
-   * @param {object} item
-   * @returns {boolean}
-   */
-  elementIsAncestorOfItem(node, item) {
+  elementIsAncestorOfItem(node: HTMLElement, item: DataItem): boolean {
     return !!this.getParentNodeOfItem(node, item, 'li')
   }
 
-  /**
-   * @param {HTMLElement} node
-   * @param {object} item
-   * @returns {HTMLElement}
-   */
-  getDirectListParentOfItem(node, item) {
+  getDirectListParentOfItem(node: HTMLElement, item: DataItem): HTMLElement|null {
     return this.getParentNodeOfItem(node, item, 'ol')
   }
 
-  /**
-   * @param {object} item
-   * @returns {boolean}
-   */
-  maybeAppendItemToParentDom(item) {
+  maybeAppendItemToParentDom(item: DataItem): boolean {
     const { parent } = item
     const topParent = this.sortedDataDomArray.find(topLevelListItem => {
       return this.elementIsParentOfItem(topLevelListItem, item) || this.elementIsAncestorOfItem(topLevelListItem, item)
@@ -153,16 +127,13 @@ class DataEngine {
     return true
   }
 
-  /**
-   * @returns {array}
-   */
-  getListItemsDom() {
+  getListItemsDom(): Array<HTMLElement> {
     this.sortedDataDomArray = []
-    let processedItems = []
+    let processedItems: string[] = []
 
     while (processedItems.length !== this.sortListItems().length) {
       processedItems = this.sortedData.reduce((processedItems, item) => {
-        const { id } = item
+        const id = item.id.toString()
         if (processedItems.includes(id)) return processedItems
 
         let itemAdded
@@ -183,13 +154,9 @@ class DataEngine {
     return this.sortedDataDomArray
   }
 
-  /**
-   * @param {HTMLOListElement|HTMLUListElement} list
-   * @returns {object[]}
-   */
-  convertDomToData(list) {
-    return Array.from(list.querySelectorAll('li')).map(li => {
-      const parentListItem = li.parentNode
+  convertDomToData(list: ListElement): Array<MappedDataItem> {
+    return Array.from(list?.querySelectorAll('li') || []).map(li => {
+      const parentListItem = li.parentNode as HTMLElement
       const parent = parentListItem.dataset.id
       const order = Array.from(parentListItem.children).findIndex(item => item === li) + 1
 
@@ -201,12 +168,9 @@ class DataEngine {
     })
   }
 
-  /**
-   * @returns {HTMLOListElement}
-   */
-  render() {
+  render(): Node {
     const list = document.createElement('ol')
-    this.getListItemsDom().forEach(listItem => list.appendChild(listItem))
+    this.getListItemsDom().forEach((listItem: HTMLElement) => list.appendChild(listItem))
     return list
   }
 }

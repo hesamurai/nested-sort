@@ -301,7 +301,7 @@ describe('NestedSort', () => {
         spy.mockRestore()
       })
 
-      it('should fire the managePlaceholderLists method with the event as its argument', () => {
+      it('should fire the managePlaceholderLists', () => {
         const spy = jest.spyOn(NestedSort.prototype, 'managePlaceholderLists')
         initDataDrivenList()
         const item = document.querySelector('li[data-id="1"]')
@@ -310,7 +310,6 @@ describe('NestedSort', () => {
         item.dispatchEvent(event)
 
         expect(spy).toHaveBeenCalledTimes(1)
-        expect(spy).toHaveBeenCalledWith(event)
 
         spy.mockRestore()
       })
@@ -343,8 +342,8 @@ describe('NestedSort', () => {
           })
         )
 
-        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(1, ns.draggedNode, 'ns-dragged')
-        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(2, ns.targetedNode, 'ns-targeted')
+        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(1, 'ns-dragged', ns.draggedNode)
+        expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(2, 'ns-targeted', ns.targetedNode)
       })
 
       it('should call the cleanupPlaceholderLists method', () => {
@@ -373,7 +372,7 @@ describe('NestedSort', () => {
           })
         )
 
-        expect(ns.draggedNode).toBeNull()
+        expect(ns.draggedNode).toBeUndefined()
       })
 
       it('should set the targetedNode property to null', () => {
@@ -388,7 +387,7 @@ describe('NestedSort', () => {
           })
         )
 
-        expect(ns.targetedNode).toBeNull()
+        expect(ns.targetedNode).toBeUndefined()
       })
     })
 
@@ -649,11 +648,10 @@ describe('NestedSort', () => {
       const location = 'before'
       ns.getDropLocation = () => location
       ns.dropTheItem = jest.fn()
-      const event = { foo: 'bar' }
-      ns.maybeDrop(event)
+      ns.maybeDrop()
 
       expect(ns.dropTheItem).toHaveBeenCalledTimes(1)
-      expect(ns.dropTheItem).toHaveBeenCalledWith(location, event)
+      expect(ns.dropTheItem).toHaveBeenCalledWith(location)
     })
   })
 

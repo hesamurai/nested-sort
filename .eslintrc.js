@@ -1,16 +1,26 @@
 module.exports = {
+  root: true,
+  parser: '@typescript-eslint/parser',
+  plugins: [
+    '@typescript-eslint',
+  ],
   env: {
     browser: true,
     es6: true,
   },
-  extends: 'eslint:recommended',
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+  ],
   parserOptions: {
     ecmaVersion: 8,
     sourceType: 'module',
     ecmaFeatures: {},
   },
   rules: {
-    semi: [2, 'never'],
+    semi: 'off',
+    '@typescript-eslint/semi': [2, 'never'],
     'comma-dangle': ['error', {
       arrays: 'always-multiline',
       objects: 'always-multiline',
