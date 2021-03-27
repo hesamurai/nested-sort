@@ -18,10 +18,14 @@ export interface ClassNames {
   targeted: string
 }
 
-export interface Cursor {
+export interface Coordinates {
   X: number
   Y: number
 }
+
+export interface Cursor extends Coordinates {}
+
+export interface TargetNode extends Coordinates {}
 
 export interface DataItem {
   id: string | number
@@ -49,11 +53,6 @@ export interface EventListeners {
   dragenter: (e: object) => void
   dragend: (e: object) => void
   drop: (e: object) => void
-}
-
-export interface TargetNode {
-  X: number
-  Y: number
 }
 
 export type ClassNamesList = Array<string> | string
