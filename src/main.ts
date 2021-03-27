@@ -240,7 +240,7 @@ class NestedSort {
 
   getDropLocation(): DropLocation|undefined {
     if (this.canBeDropped()) {
-      if (this?.targetedNode?.nodeName === 'LI' && !this.cursorIsIndentedEnough()) return 'before'
+      if (this.targetedNode?.nodeName === 'LI' && !this.cursorIsIndentedEnough()) return 'before'
       else if (this.targetedNode instanceof this.listInterface) return 'inside'
     }
   }
