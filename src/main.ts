@@ -38,7 +38,7 @@ class NestedSort {
   sortableList: ListElement
   targetedNode?: HTMLElement
   targetNode: TargetNode
-  wrapper: Element | null
+  wrapper?: Element
 
   constructor({
     actions = {},
@@ -53,7 +53,7 @@ class NestedSort {
   }: Options) {
     const element = typeof el === 'string' ? document.querySelector(el) as HTMLElement : el
     const elementIsAList = element instanceof HTMLOListElement || element instanceof HTMLUListElement
-    this.wrapper = elementIsAList ? null : element
+    this.wrapper = elementIsAList ? undefined : element
     this.sortableList = elementIsAList ? element : null
 
     this.data = data
