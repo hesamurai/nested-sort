@@ -298,7 +298,7 @@ class NestedSort {
   }
 
   mouseIsTooCloseToTop(): boolean {
-    if (!this?.distances?.droppingEdge) return false
+    if (!this.distances?.droppingEdge) return false
     return this.cursor.Y - this.targetNode.Y < this.distances.droppingEdge
   }
 
