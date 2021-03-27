@@ -138,11 +138,11 @@ class NestedSort {
   }
 
   toggleMainListLifeCycleClassName(enabled = true): void {
+    const list = this.getSortableList()
+    if (!list) return
+
     const className = `${this.mainListClassName}--enabled`
-    const classList = this.getSortableList()?.classList
-    return enabled
-      ? classList?.add(className)
-      : classList?.remove(className)
+    enabled ? list.classList.add(className) : list.classList.remove(className)
   }
 
   toggleListItemAttributes(enable = true): void {
