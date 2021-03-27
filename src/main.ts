@@ -197,7 +197,7 @@ class NestedSort {
   onDragStart(e: DragEvent): void {
     this.draggedNode = e.target as HTMLElement
     this.draggedNode.classList.add(this.classNames.dragged)
-    e?.dataTransfer?.setData('text', 'Drag started!') // Hack for Firefox!
+    e.dataTransfer?.setData('text', 'Drag started!') // Hack for Firefox!
   }
 
   onDragOver(e: DragEvent): void {
