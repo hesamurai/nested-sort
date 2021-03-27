@@ -125,13 +125,14 @@ class NestedSort {
 
   addListAttributes(): void {
     const list = this.getSortableList()
+    if (!list) return
 
-    list?.classList.add(...this.listClassNames.concat(this.mainListClassName))
-    list?.querySelectorAll(this.getListTagName()).forEach(l => {
+    list.classList.add(...this.listClassNames.concat(this.mainListClassName))
+    list.querySelectorAll(this.getListTagName()).forEach(l => {
       l.classList.add(...this.listClassNames)
     })
 
-    list?.querySelectorAll('li').forEach(li => {
+    list.querySelectorAll('li').forEach(li => {
       li.classList.add(...this.listItemClassNames)
     })
   }
