@@ -153,12 +153,12 @@ class NestedSort {
 
   toggleListEventListeners(remove = false): void {
     const list = this.getSortableList()
+    if (!list) return
+
     Object.keys(this.listEventListeners).forEach(event => {
-      if (remove) {
-        list?.removeEventListener(event, this.listEventListeners[event])
-      } else {
-        list?.addEventListener(event, this.listEventListeners[event], false)
-      }
+      remove
+        ? list.removeEventListener(event, this.listEventListeners[event])
+        : list.addEventListener(event, this.listEventListeners[event], false)
     })
   }
 
