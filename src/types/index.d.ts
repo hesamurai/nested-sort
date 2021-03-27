@@ -30,6 +30,10 @@ export interface DataItem {
   text: string
 }
 
+export interface MappedDataItem {
+  [key: string]: string | number | undefined
+}
+
 export interface Distances {
   droppingEdge: number
   mouseTo: {

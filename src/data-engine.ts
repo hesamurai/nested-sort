@@ -2,6 +2,7 @@ import {
   DataEngineOptions,
   DataItem,
   ListElement,
+  MappedDataItem,
   PropertyMap,
 } from './types'
 
@@ -153,7 +154,7 @@ class DataEngine {
     return this.sortedDataDomArray
   }
 
-  convertDomToData(list: ListElement): Array<Record<string, unknown>> {
+  convertDomToData(list: ListElement): Array<MappedDataItem> {
     return Array.from(list?.querySelectorAll('li') || []).map(li => {
       const parentListItem = li.parentNode as HTMLElement
       const parent = parentListItem.dataset.id
