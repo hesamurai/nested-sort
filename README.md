@@ -9,7 +9,7 @@ Nested Sort is a vanilla JavaScript library, without any dependencies, which hel
 
 ## Docs
 
-[https://gilgaz.com/nested-sort](https://gilgaz.com/nested-sort)
+[hesamurai.com/nested-sort](https://www.hesamurai.com/nested-sort)
 
 ## Download
 
