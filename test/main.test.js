@@ -603,21 +603,9 @@ describe('NestedSort', () => {
         jest.spyOn(NestedSort.prototype, 'canBeDropped').mockReturnValue(true)
       })
 
-      it('should return undefined if targetedNode is LI and cursorIsIndentedEnough() returns true', () => {
+      it('should return `before` if targetedNode is LI', () => {
         const ns = initDataDrivenList()
-        ns.cursorIsIndentedEnough = () => true
         ns.targetedNode = document.querySelector('li[data-id="1"]')
-
-        expect(ns.targetedNode).toBeTruthy() // just to stay on the safe side
-        expect(ns.getDropLocation()).toBeUndefined()
-      })
-
-      it('should return `before` if targetedNode is LI and cursorIsIndentedEnough() returns false', () => {
-        const ns = initDataDrivenList()
-        ns.cursorIsIndentedEnough = () => false
-        ns.targetedNode = document.querySelector('li[data-id="1"]')
-
-        expect(ns.targetedNode).toBeTruthy() // just to stay on the safe side
         expect(ns.getDropLocation()).toBe('before')
       })
 
