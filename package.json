@@ -1,8 +1,8 @@
 {
   "name": "nested-sort",
-  "version": "5.0.0",
-  "author": "Hesam Bahrami (Genzo)",
-  "description": "A JavaScript library to create a nested list of elements",
+  "version": "5.0.1",
+  "author": "Hesam Bahrami (hesamurai)",
+  "description": "A JavaScript library for sorting a nested list of items via drag and drop.",
   "umdClassName": "NestedSort",
   "main": "dist/nested-sort.cjs.js",
   "module": "dist/nested-sort.esm.js",
