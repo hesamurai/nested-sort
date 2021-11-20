@@ -20,5 +20,8 @@ jobs:
           node-version: '14'
           check-latest: true
 
+      - name: NPM Install
+        run: npm ci
+
       - name: Test
         run: npm run test
