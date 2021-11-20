@@ -22,27 +22,21 @@ Using npm:
 $ npm install nested-sort
 ```
 
-Using yarn:
-```shell
-$ yarn add nested-sort
-```
-
 ## Contribution
 
 ### Developer environment requirements
 
 To run this project, you will need:
 
-- Node.js >= v10.5.0, use nvm - [install instructions](https://github.com/creationix/nvm#install-script)
-- Yarn >= v1.7.0 - [install instructions ("Alternatives" tab)](https://yarnpkg.com/en/docs/install#alternatives-rc)
+- Node.js >= v14.15.5, use nvm - [install instructions](https://github.com/creationix/nvm#install-script)
+- NPM >= v7.22.0
 
 ### Running tests
 
 ```sh
-yarn
-yarn test
-yarn test --watch
-yarn test:coverage
+npm run test
+npm run test:coverage
+npm run test:watch
 ```
 
 ### Dev mode
@@ -50,9 +44,9 @@ yarn test:coverage
 When developing you can run:
 
 ```
-yarn watch
+npm run watch
 ```
 
-This will regenerate the build files each time a source file is changed and serve on http://127.0.0.1:5000.
+This will regenerate the build files each time a source file is changed and serve on http://127.0.0.1:3000.
 
-You can navigate to http://127.0.0.1:5000/dev/ in order to see the samples.
+You can navigate to http://127.0.0.1:3000/dev/ in order to see the samples.
