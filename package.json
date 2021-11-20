@@ -38,14 +38,15 @@
     "typescript": "4.1.2"
   },
   "scripts": {
-    "prepare": "yarn build",
-    "build": "yarn build:types && yarn build:js",
+    "prepare": "npm run build",
+    "build": "npm run build:types && npm run build:js",
     "build:js": "rollup -c",
     "build:types": "tsc --emitDeclarationOnly",
     "build:watch": "rollup -c -w",
-    "watch": "concurrently 'yarn build:watch' 'yarn serve -l tcp://127.0.0.1'",
+    "watch": "concurrently 'npm run build:watch' 'serve -l tcp://127.0.0.1'",
+    "test": "jest && npm run build",
     "test:coverage": "jest --coverage",
-    "test": "jest && yarn build"
+    "test:watch": "jest --watch"
   },
   "renovate": {
     "extends": [

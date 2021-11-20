@@ -3,4 +3,4 @@ branches:
   only:
     - master
 cache:
-  yarn: true
+  npm: true

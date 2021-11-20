@@ -20,8 +20,5 @@ jobs:
           node-version: '14'
           check-latest: true
 
-      - name: Install
-        run: yarn install
-
       - name: Test
-        run: yarn test
+        run: npm run test
