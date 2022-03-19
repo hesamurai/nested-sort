@@ -1,4 +1,5 @@
 import NestedSort from '../src/main'
+import DataEngine from '../src/data-engine'
 import {
   createEvent,
   initDataDrivenList,
@@ -45,6 +46,12 @@ describe('NestedSort', () => {
       expect(ns.listInterface).toBe(HTMLOListElement)
     })
 
+    it('should set the value of the renderListItem property', () => {
+      const renderListItem = jest.fn().mockImplementation(() => document.createElement('li'))
+      const ns = initDataDrivenList({ renderListItem })
+      expect(ns.renderListItem).toBe(renderListItem)
+    })
+
     describe('nestingLevels property assignment', () => {
       it('should be set to -1 if nestingLevels option cannot be converted to an integer', () => {
         [null, undefined, NaN, '', 'foo'].forEach(nestingLevels => {
@@ -58,6 +65,17 @@ describe('NestedSort', () => {
           const ns = initDataDrivenList({ nestingLevels })
           expect(ns.nestingLevels).toBe(parseInt(nestingLevels))
         })
+      })
+    })
+
+    describe('when it is data-driven', () => {
+      it('should set the value of dataEngine property with a correct instance of DataEngine', () => {
+        const renderListItem = jest.fn().mockImplementation(() => document.createElement('li'))
+        const ns = initDataDrivenList({ renderListItem })
+
+        expect(ns.dataEngine).toBeInstanceOf(DataEngine)
+        // TODO: not ideal to test the inner working of a dependency but ok for now
+        expect(ns.dataEngine.renderListItem).toEqual(renderListItem)
       })
     })
   })

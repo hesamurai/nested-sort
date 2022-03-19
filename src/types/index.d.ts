@@ -67,6 +67,7 @@ export interface Options {
   listItemClassNames: ClassNamesList
   nestingLevels: string
   propertyMap: Partial<PropertyMap>
+  renderListItem: RenderListItemFn
 }
 
 export interface PropertyMap {
