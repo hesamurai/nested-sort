@@ -48,13 +48,17 @@ describe('DataEngine class', () => {
         { id: 2 },
         { id: 3 },
       ]
+      const renderListItem = jest.fn()
       const dataEngineConfig = {
-        data
+        data,
+        renderListItem,
       }
 
-      expect((new DataEngine(dataEngineConfig)).data).toEqual(data)
-      expect((new DataEngine(dataEngineConfig)).sortedData).toEqual([])
-      expect((new DataEngine(dataEngineConfig)).sortedDataDomArray).toEqual([])
+      const dataEngine = new DataEngine(dataEngineConfig)
+      expect(dataEngine.data).toEqual(data)
+      expect(dataEngine.sortedData).toEqual([])
+      expect(dataEngine.sortedDataDomArray).toEqual([])
+      expect(dataEngine.renderListItem).toEqual(renderListItem)
     })
 
     it('should invoke the maybeTransformData method', () => {
@@ -152,6 +156,21 @@ describe('DataEngine class', () => {
         const engine = new DataEngine({data: [item]})
         expect(engine.createItemElement(item).innerHTML).toBe(text)
       })
+
+      it('should pass the list item through the custom render function if exists', () => {
+        const data = [{ id: 1, text: 'Hello world' }]
+        const p = document.createElement('p')
+        const renderListItem = jest.fn().mockImplementation(() => p)
+        const engine = new DataEngine({
+          data,
+          renderListItem,
+        })
+
+        expect(engine.createItemElement(data[0])).toBe(p)
+        expect(renderListItem).toHaveBeenCalledTimes(1)
+        expect(renderListItem.mock.calls[0][0]).toBeInstanceOf(HTMLLIElement)
+        expect(renderListItem.mock.calls[0][1]).toEqual(data[0])
+      })
     })
 
     describe('when `ul` is passed as the nodeName argument', () => {
@@ -160,6 +179,18 @@ describe('DataEngine class', () => {
         const item = { id: 1, text }
         const engine = new DataEngine({data: [item]})
         expect(engine.createItemElement(item, 'ul').innerHTML).toBe('')
+      })
+
+      it('should not pass the element through the custom render function', () => {
+        const data = [{ id: 1, text: 'Hello world' }]
+        const renderListItem = jest.fn()
+        const engine = new DataEngine({
+          data,
+          renderListItem,
+        })
+
+        engine.createItemElement(data[0], 'ul')
+        expect(renderListItem).not.toHaveBeenCalled()
       })
     })
 
