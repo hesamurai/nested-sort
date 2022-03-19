@@ -4,6 +4,7 @@ import {
   ListElement,
   MappedDataItem,
   PropertyMap,
+  RenderListItemFn,
 } from './types'
 
 class DataEngine {
@@ -11,15 +12,17 @@ class DataEngine {
   sortedData: Array<DataItem>
   sortedDataDomArray: Array<HTMLElement>
   propertyMap: Partial<PropertyMap>
+  renderListItem: RenderListItemFn
 
   /**
    * @constructor
    */
-  constructor({ data, propertyMap = {} }: DataEngineOptions) {
+  constructor({ data, propertyMap = {}, renderListItem }: DataEngineOptions) {
     this.data = data
     this.sortedData = []
     this.sortedDataDomArray = []
     this.propertyMap = propertyMap
+    this.renderListItem = renderListItem
 
     this.maybeTransformData()
   }
@@ -85,7 +88,9 @@ class DataEngine {
     el.dataset.id = id as string
     if (nodeName === 'li' && text) el.innerHTML = text
 
-    return el
+    return nodeName === 'li' && typeof this.renderListItem === 'function'
+      ? this.renderListItem(el, item)
+      : el
   }
 
   elementIsParentOfItem(node: HTMLElement, item: DataItem): boolean {

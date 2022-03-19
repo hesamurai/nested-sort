@@ -67,6 +67,7 @@ export interface Options {
   listItemClassNames: ClassNamesList
   nestingLevels: string
   propertyMap: Partial<PropertyMap>
+  renderListItem: RenderListItemFn
 }
 
 export interface PropertyMap {
@@ -76,7 +77,10 @@ export interface PropertyMap {
   text: string
 }
 
+type RenderListItemFn = (el: Element, item: Partial<DataItem>) => HTMLElement
+
 export interface DataEngineOptions {
   data: Array<DataItem>
   propertyMap: Partial<PropertyMap>
+  renderListItem: RenderListItemFn
 }

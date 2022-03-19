@@ -14,6 +14,7 @@ import {
   Options,
   PlaceholderMaintenanceActions,
   PropertyMap,
+  RenderListItemFn,
   TargetNode,
 } from './types'
 
@@ -35,6 +36,7 @@ class NestedSort {
   placeholderList: HTMLElement
   placeholderInUse: HTMLElement
   propertyMap: Partial<PropertyMap>
+  renderListItem: RenderListItemFn
   sortableList: ListElement
   targetedNode?: HTMLElement
   targetNode: TargetNode
@@ -50,7 +52,9 @@ class NestedSort {
     listItemClassNames,
     nestingLevels,
     propertyMap = {},
+    renderListItem,
   }: Options) {
+    this.renderListItem = renderListItem
     const element = typeof el === 'string' ? document.querySelector(el) as HTMLElement : el
     const elementIsAList = element instanceof HTMLOListElement || element instanceof HTMLUListElement
     this.wrapper = elementIsAList ? undefined : element
@@ -96,7 +100,11 @@ class NestedSort {
 
   getDataEngine(): DataEngine {
     if (this.dataEngine) return this.dataEngine
-    this.dataEngine = new DataEngine({data: this.data, propertyMap: this.propertyMap})
+    this.dataEngine = new DataEngine({
+      data: this.data,
+      propertyMap: this.propertyMap,
+      renderListItem: this.renderListItem,
+    })
     return this.dataEngine
   }
 
