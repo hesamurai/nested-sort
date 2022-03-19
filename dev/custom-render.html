@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Custom Render Function Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+
+  <style>
+    .nested-sort {
+      display: flex;
+    }
+    .nested-sort > li {
+      border: none;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .nested-sort > li:not(:last-child) {
+      margin-right: 10px;
+    }
+
+    .nested-sort img {
+      display: block;
+      margin-top: 10px;
+    }
+    .nested-sort > .very-custom-list-item {
+      box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Custom render function for list items</h1>
+  <p>This sample uses a custom function to control how a list item should be rendered.</p>
+  <div id="draggable"></div>
+</div>
+
+<!-- Scripts -->
+<script src="../dist/nested-sort.umd.js"></script>
+<script>
+  (function() {
+    const data = [
+      { id: 1, text: 'One', imageUrl: 'https://dummyimage.com/120x120/485E33/ffffff' },
+      { id: 2, text: 'Two', imageUrl: 'https://dummyimage.com/120x120/60744D/ffffff' },
+      { id: 3, text: 'Three', imageUrl: 'https://dummyimage.com/120x120/7EA65A/ffffff' },
+      { id: 4, text: 'Four', imageUrl: 'https://dummyimage.com/120x120/A9DE78/000000' },
+      { id: 5, text: 'Five', imageUrl: 'https://dummyimage.com/120x120/D1E3BF/000000' },
+    ]
+
+    new NestedSort({
+      renderListItem: (el, { id, imageUrl, text }) => {
+        if (id === 2) el.classList.add('very-custom-list-item')
+        const img = document.createElement('img')
+        img.src = imageUrl
+        img.alt = ''
+        el.appendChild(img)
+        return el
+      },
+      actions: {
+        onDrop: function (data) {
+          console.log(data)
+        }
+      },
+      data: data,
+      el: '#draggable',
+      droppingEdge: 5,
+      nestingLevels: 0,
+    })
+  })()
+</script>
+</body>
+</html>
