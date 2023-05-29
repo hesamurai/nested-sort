@@ -199,7 +199,10 @@ class NestedSort {
 
   canBeTargeted(el: HTMLElement): boolean {
     if (!this.draggedNode || this.draggedNode === el) return false
-    return el.nodeName === 'LI' || (el instanceof this.listInterface && el.classList.contains(this.classNames.placeholder))
+    if (el.nodeName === 'LI') {
+      return !this.nestingThresholdReached(el)
+    }
+    return el instanceof this.listInterface && el.classList.contains(this.classNames.placeholder)
   }
 
   onDragStart(e: DragEvent): void {
@@ -331,9 +334,8 @@ class NestedSort {
       && this.targetedNode.classList.contains(this.classNames.placeholder)
   }
 
-  getTargetedNodeDepth(): number {
+  getNodeDepth(el: HTMLElement): number {
     let depth = 0
-    let el = this.targetedNode
     const list = this.getSortableList()
 
     while (list !== el?.parentElement) {
@@ -344,11 +346,12 @@ class NestedSort {
     return depth
   }
 
-  nestingThresholdReached(): boolean {
+  nestingThresholdReached(el: HTMLElement, isPlaceHolderCheck = false): boolean {
     if (this.nestingLevels < 0) return false
-    if (this.nestingLevels === 0) return true
 
-    return this.getTargetedNodeDepth() >= this.nestingLevels
+    return isPlaceHolderCheck
+      ? this.getNodeDepth(el) >= this.nestingLevels
+      : this.getNodeDepth(el) > this.nestingLevels
   }
 
   analysePlaceHolderSituation(): PlaceholderMaintenanceActions {
@@ -365,7 +368,7 @@ class NestedSort {
     } else if (this.targetedNode !== this.draggedNode
       && this.targetedNode.nodeName === 'LI'
       && !this.targetedNode.querySelectorAll(this.getListTagName()).length
-      && !this.nestingThresholdReached()) {
+      && !this.nestingThresholdReached(this.targetedNode, true)) {
       actions.push('add')
     }
 
