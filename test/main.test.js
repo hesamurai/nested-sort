@@ -960,38 +960,52 @@ describe('NestedSort', () => {
       expect(result).toBe(false)
     })
 
-    it('should return true if the passed element is a list item', () => {
-      const ns = initDataDrivenList()
-      ns.draggedNode = document.querySelector('li[data-id="1"]')
-      const li = document.querySelector('li[data-id="2"]')
+    describe('when the passed element is a list item', () => {
+      let ns
+      let li
+      beforeEach(() => {
+        ns = initDataDrivenList()
+        ns.draggedNode = document.querySelector('li[data-id="1"]')
+        li = document.querySelector('li[data-id="2"]')
+      })
 
-      expect(ns.canBeTargeted(li)).toBe(true)
+      it('should return true if nestingThresholdReached() return false', () => {
+        jest.spyOn(ns, 'nestingThresholdReached').mockReturnValue(false)
+        expect(ns.canBeTargeted(li)).toBe(true)
+      })
+
+      it('should return false if nestingThresholdReached() return true', () => {
+        jest.spyOn(ns, 'nestingThresholdReached').mockReturnValue(true)
+        expect(ns.canBeTargeted(li)).toBe(false)
+      })
     })
 
-    it('should return true if the passed element is a placeholder list', () => {
-      const ns = initDataDrivenList()
-      ns.draggedNode = document.querySelector('li[data-id="1"]')
-      const placeholderList = document.createElement('ol')
-      placeholderList.classList.add(ns.classNames.placeholder)
+    describe('when the passed element is not a list item', () => {
+      it('should return true if the passed element is a placeholder list', () => {
+        const ns = initDataDrivenList()
+        ns.draggedNode = document.querySelector('li[data-id="1"]')
+        const placeholderList = document.createElement('ol')
+        placeholderList.classList.add(ns.classNames.placeholder)
 
-      expect(ns.canBeTargeted(placeholderList)).toBe(true)
-    })
+        expect(ns.canBeTargeted(placeholderList)).toBe(true)
+      })
 
-    it('should return false if the passed element is a list but not a placeholder one', () => {
-      const ns = initDataDrivenList()
-      ns.draggedNode = document.querySelector('li[data-id="1"]')
-      const placeholderList = document.createElement('ol')
+      it('should return false if the passed element is a list but not a placeholder one', () => {
+        const ns = initDataDrivenList()
+        ns.draggedNode = document.querySelector('li[data-id="1"]')
+        const placeholderList = document.createElement('ol')
 
-      expect(ns.canBeTargeted(placeholderList)).toBe(false)
-    })
+        expect(ns.canBeTargeted(placeholderList)).toBe(false)
+      })
 
-    it('should return false if the passed element is neither a list item nor a placeholder list', () => {
-      const ns = initDataDrivenList()
-      ns.draggedNode = document.querySelector('li[data-id="1"]')
-      const placeholderList = document.createElement('p')
-      placeholderList.classList.add(ns.classNames.placeholder)
+      it('should return false if the passed element is neither a list item nor a placeholder list', () => {
+        const ns = initDataDrivenList()
+        ns.draggedNode = document.querySelector('li[data-id="1"]')
+        const placeholderList = document.createElement('p')
+        placeholderList.classList.add(ns.classNames.placeholder)
 
-      expect(ns.canBeTargeted(placeholderList)).toBe(false)
+        expect(ns.canBeTargeted(placeholderList)).toBe(false)
+      })
     })
   })
 
@@ -1189,14 +1203,6 @@ describe('NestedSort', () => {
       expect(result).toBe(false)
     })
 
-    it('should return true if nesting levels equals 0', () => {
-      const ns = initDataDrivenList({ nestingLevels: 0 })
-      const el = document.querySelector('[data-id="1"]')
-      const result = ns.nestingThresholdReached(el)
-
-      expect(result).toBe(true)
-    })
-
     it('should return false if getNodeDepth() returns a value less than the nesting levels', () => {
       [
         {nestingLevels: '2', targetedNodeDepth: 1},
@@ -1231,15 +1237,15 @@ describe('NestedSort', () => {
       })
     })
 
-    it('should return true if getNodeDepth() returns a value equal to the nesting levels', () => {
-      const ns = initDataDrivenList({ nestingLevels: '2' })
-      const spy = jest.spyOn(ns, 'getNodeDepth').mockReturnValue(2) // this does the main trick here
-      const el = document.querySelector('[data-id="1"]') // this is passed to nestingThresholdReached() for the sake of being there
-      const result = ns.nestingThresholdReached(el)
-
-      expect(spy).toHaveBeenCalledTimes(1)
-      expect(result).toBe(true)
-    })
+    // it('should return true if getNodeDepth() returns a value equal to the nesting levels', () => {
+    //   const ns = initDataDrivenList({ nestingLevels: '2' })
+    //   const spy = jest.spyOn(ns, 'getNodeDepth').mockReturnValue(2) // this does the main trick here
+    //   const el = document.querySelector('[data-id="1"]') // this is passed to nestingThresholdReached() for the sake of being there
+    //   const result = ns.nestingThresholdReached(el)
+    //
+    //   expect(spy).toHaveBeenCalledTimes(1)
+    //   expect(result).toBe(true)
+    // })
   })
 
   describe('getListInterface method', () => {

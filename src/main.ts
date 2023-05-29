@@ -199,7 +199,10 @@ class NestedSort {
 
   canBeTargeted(el: HTMLElement): boolean {
     if (!this.draggedNode || this.draggedNode === el) return false
-    return el.nodeName === 'LI' || (el instanceof this.listInterface && el.classList.contains(this.classNames.placeholder))
+    if (el.nodeName === 'LI') {
+      return !this.nestingThresholdReached(el)
+    }
+    return el instanceof this.listInterface && el.classList.contains(this.classNames.placeholder)
   }
 
   onDragStart(e: DragEvent): void {
@@ -345,9 +348,8 @@ class NestedSort {
 
   nestingThresholdReached(el: HTMLElement): boolean {
     if (this.nestingLevels < 0) return false
-    if (this.nestingLevels === 0) return true
 
-    return this.getNodeDepth(el) >= this.nestingLevels
+    return this.getNodeDepth(el) > this.nestingLevels
   }
 
   analysePlaceHolderSituation(): PlaceholderMaintenanceActions {
