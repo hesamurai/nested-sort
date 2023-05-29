@@ -1160,7 +1160,7 @@ describe('NestedSort', () => {
     })
   })
 
-  describe('getTargetedElementDepth method', () => {
+  describe('getNodeDepth method', () => {
     it('should return the correct depth of the targeted element', () => {
       const ns = initDataDrivenList({
         data: [
@@ -1173,8 +1173,8 @@ describe('NestedSort', () => {
       });
 
       [1, 11, 111, 1111, 11111].forEach(id => {
-        ns.targetedNode = document.querySelector(`[data-id="${id}"]`)
-        const depth = ns.getTargetedNodeDepth()
+        const node = document.querySelector(`[data-id="${id}"]`)
+        const depth = ns.getNodeDepth(node)
         expect(depth).toBe(id.toString().split('').length - 1)
       })
     })
@@ -1183,19 +1183,21 @@ describe('NestedSort', () => {
   describe('nestingThresholdReached method', () => {
     it('should return false if nesting levels equals a negative integer', () => {
       const ns = initDataDrivenList({ nestingLevels: -1 })
-      const result = ns.nestingThresholdReached()
+      const el = document.querySelector('[data-id="1"]')
+      const result = ns.nestingThresholdReached(el)
 
       expect(result).toBe(false)
     })
 
     it('should return true if nesting levels equals 0', () => {
       const ns = initDataDrivenList({ nestingLevels: 0 })
-      const result = ns.nestingThresholdReached()
+      const el = document.querySelector('[data-id="1"]')
+      const result = ns.nestingThresholdReached(el)
 
       expect(result).toBe(true)
     })
 
-    it('should return false if getTargetedNodeDepth() returns a value less than the nesting levels', () => {
+    it('should return false if getNodeDepth() returns a value less than the nesting levels', () => {
       [
         {nestingLevels: '2', targetedNodeDepth: 1},
         {nestingLevels: '3', targetedNodeDepth: 1},
@@ -1203,15 +1205,16 @@ describe('NestedSort', () => {
         {nestingLevels: '11', targetedNodeDepth: 10},
       ].forEach(({nestingLevels, targetedNodeDepth}) => {
         const ns = initDataDrivenList({ nestingLevels })
-        const spy = jest.spyOn(ns, 'getTargetedNodeDepth').mockReturnValue(targetedNodeDepth)
-        const result = ns.nestingThresholdReached()
+        const spy = jest.spyOn(ns, 'getNodeDepth').mockReturnValue(targetedNodeDepth) // this does the main trick here
+        const el = document.querySelector('[data-id="1"]') // this is passed to nestingThresholdReached() for the sake of being there
+        const result = ns.nestingThresholdReached(el)
 
         expect(spy).toHaveBeenCalledTimes(1)
         expect(result).toBe(false)
       })
     })
 
-    it('should return true if getTargetedNodeDepth() returns a value greater than the nesting levels', () => {
+    it('should return true if getNodeDepth() returns a value greater than the nesting levels', () => {
       [
         {nestingLevels: '1', targetedNodeDepth: 2},
         {nestingLevels: '1', targetedNodeDepth: 3},
@@ -1219,18 +1222,20 @@ describe('NestedSort', () => {
         {nestingLevels: '11', targetedNodeDepth: 13},
       ].forEach(({nestingLevels, targetedNodeDepth}) => {
         const ns = initDataDrivenList({ nestingLevels })
-        const spy = jest.spyOn(ns, 'getTargetedNodeDepth').mockReturnValue(targetedNodeDepth)
-        const result = ns.nestingThresholdReached()
+        const spy = jest.spyOn(ns, 'getNodeDepth').mockReturnValue(targetedNodeDepth) // this does the main trick here
+        const el = document.querySelector('[data-id="1"]') // this is passed to nestingThresholdReached() for the sake of being there
+        const result = ns.nestingThresholdReached(el)
 
         expect(spy).toHaveBeenCalledTimes(1)
         expect(result).toBe(true)
       })
     })
 
-    it('should return true if getTargetedNodeDepth() returns a value equal to the nesting levels', () => {
+    it('should return true if getNodeDepth() returns a value equal to the nesting levels', () => {
       const ns = initDataDrivenList({ nestingLevels: '2' })
-      const spy = jest.spyOn(ns, 'getTargetedNodeDepth').mockReturnValue(2)
-      const result = ns.nestingThresholdReached()
+      const spy = jest.spyOn(ns, 'getNodeDepth').mockReturnValue(2) // this does the main trick here
+      const el = document.querySelector('[data-id="1"]') // this is passed to nestingThresholdReached() for the sake of being there
+      const result = ns.nestingThresholdReached(el)
 
       expect(spy).toHaveBeenCalledTimes(1)
       expect(result).toBe(true)
