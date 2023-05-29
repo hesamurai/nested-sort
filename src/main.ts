@@ -346,10 +346,12 @@ class NestedSort {
     return depth
   }
 
-  nestingThresholdReached(el: HTMLElement): boolean {
+  nestingThresholdReached(el: HTMLElement, isPlaceHolderCheck = false): boolean {
     if (this.nestingLevels < 0) return false
 
-    return this.getNodeDepth(el) > this.nestingLevels
+    return isPlaceHolderCheck
+      ? this.getNodeDepth(el) >= this.nestingLevels
+      : this.getNodeDepth(el) > this.nestingLevels
   }
 
   analysePlaceHolderSituation(): PlaceholderMaintenanceActions {
@@ -366,7 +368,7 @@ class NestedSort {
     } else if (this.targetedNode !== this.draggedNode
       && this.targetedNode.nodeName === 'LI'
       && !this.targetedNode.querySelectorAll(this.getListTagName()).length
-      && !this.nestingThresholdReached(this.targetedNode)) {
+      && !this.nestingThresholdReached(this.targetedNode, true)) {
       actions.push('add')
     }
 

@@ -1237,15 +1237,17 @@ describe('NestedSort', () => {
       })
     })
 
-    // it('should return true if getNodeDepth() returns a value equal to the nesting levels', () => {
-    //   const ns = initDataDrivenList({ nestingLevels: '2' })
-    //   const spy = jest.spyOn(ns, 'getNodeDepth').mockReturnValue(2) // this does the main trick here
-    //   const el = document.querySelector('[data-id="1"]') // this is passed to nestingThresholdReached() for the sake of being there
-    //   const result = ns.nestingThresholdReached(el)
-    //
-    //   expect(spy).toHaveBeenCalledTimes(1)
-    //   expect(result).toBe(true)
-    // })
+    describe('when isPlaceHolderCheck argument equals true', () => {
+      it('should return true if getNodeDepth() returns a value equal to the nesting levels', () => {
+        const ns = initDataDrivenList({ nestingLevels: '2' })
+        const spy = jest.spyOn(ns, 'getNodeDepth').mockReturnValue(2) // this does the main trick here
+        const el = document.querySelector('[data-id="1"]') // this is passed to nestingThresholdReached() for the sake of being there
+        const result = ns.nestingThresholdReached(el, true)
+
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(result).toBe(true)
+      })
+    })
   })
 
   describe('getListInterface method', () => {
