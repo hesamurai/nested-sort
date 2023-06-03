@@ -173,7 +173,7 @@ class DataEngine {
     })
   }
 
-  render(): Node {
+  render(): HTMLOListElement {
     const list = document.createElement('ol')
     this.getListItemsDom().forEach((listItem: HTMLElement) => list.appendChild(listItem))
     return list

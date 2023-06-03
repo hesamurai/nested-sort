@@ -119,6 +119,7 @@ class NestedSort {
     const list = this.getDataEngine().render()
     this.wrapper.innerHTML = ''
     this.wrapper.appendChild(list)
+    this.sortableList = list
   }
 
   getListTagName(): ListTagName {
