@@ -23,8 +23,11 @@
   </p>
 
   <h2>Twitter Bootstrap [Data-driven List]</h2>
-  <div id="bootstrap"></div>
 
+  <div class="sample-wrap">
+    <div id="draggable"></div>
+    <pre class="result-wrap"></pre>
+  </div>
 </div>
 
 <!-- Scripts -->
@@ -45,11 +48,13 @@
     new NestedSort({
       actions: {
         onDrop: function (data) {
+          const resultWrap = document.querySelector('.result-wrap')
+          resultWrap.innerHTML = JSON.stringify(data, null, '  ')
           console.log(data)
         }
       },
       data: data,
-      el: '#bootstrap',
+      el: '#draggable',
       listClassNames: ['list-group'],
       listItemClassNames: ['list-group-item']
     })
