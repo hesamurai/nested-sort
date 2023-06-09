@@ -18,41 +18,79 @@
   <button type="button" onclick="initServerRenderedList()">Init / Enable</button>
   <button type="button" onclick="destroyServerRenderedList()">Destroy / Disable</button>
 
-  <ul id="server-rendered">
-    <li data-id="1">Topic 1</li>
-    <li data-id="2">Topic 2</li>
-    <li data-id="3">Topic 3
-      <ul data-id="3">
-        <li data-id="31">Topic 3-1</li>
-        <li data-id="32">Topic 3-2</li>
-      </ul>
-    </li>
-    <li data-id="4">Topic 4</li>
-    <li data-id="5">Topic 5</li>
-  </ul>
-
-  <hr>
+  <div class="sample-wrap">
+    <ul class="draggable">
+      <li data-id="1">Topic 1</li>
+      <li data-id="2">Topic 2</li>
+      <li data-id="3">Topic 3
+        <ul data-id="3">
+          <li data-id="31">Topic 3-1</li>
+          <li data-id="32">Topic 3-2</li>
+        </ul>
+      </li>
+      <li data-id="4">Topic 4</li>
+      <li data-id="5">Topic 5</li>
+    </ul>
+    <pre class="result-wrap result-wrap-1"></pre>
+  </div>
 
   <h2>Local storage persistent data-driven list</h2>
   <button type="button" onclick="initDataDrivenList()">Init / Enable</button>
   <button type="button" onclick="destroyDataDrivenList()">Destroy / Disable</button>
 
-  <div id="data-driven"></div>
+  <div class="sample-wrap">
+    <div id="draggable"></div>
+    <pre class="result-wrap result-wrap-2"></pre>
+  </div>
 </div>
 
 <!-- Scripts -->
 <script src="../dist/nested-sort.umd.js"></script>
 <script>
+  // Local storage persistent data-driven list
+  const originalData = [
+    { item_id: 1, item_title: 'One', position: 5 },
+    { item_id: 2, item_title: 'Two', position: 4 },
+    { item_id: 3, item_title: 'Three', position: 3 },
+    { item_id: 4, item_title: 'Four', position: 2 },
+    { item_id: 5, item_title: 'Five', position: 1 },
+  ]
+  const dataKey = 'nestedSortDataEnableDisableSample'
+  let data = JSON.parse(localStorage.getItem(dataKey)) || originalData
+
+  function onDropHandler (orderedItems) {
+    console.log(orderedItems)
+    const newData = originalData.map(origItem => {
+      const newItem = orderedItems.find(item => parseInt(item.item_id) === origItem.item_id)
+      return Object.assign({}, origItem, {
+        position: newItem.position,
+        item_parent: newItem.item_parent
+      })
+    })
+    data = newData
+    localStorage.setItem(dataKey, JSON.stringify(newData))
+  }
+
+  const propertyMap = {
+    id: 'item_id',
+    parent: 'item_parent',
+    text: 'item_title',
+    order: 'position',
+  }
+
   // Server rendered list
   const startServerRenderedList = () => {
     window.serverRenderedList = new NestedSort({
       actions: {
-        onDrop: function (data) {
-          console.log(data)
+        onDrop(data) {
+          const resultWrap = document.querySelector('.result-wrap-1')
+          resultWrap.innerHTML = JSON.stringify(data, null, '  ')
+          onDropHandler(data)
         }
       },
+      propertyMap,
       init: false,
-      el: '#server-rendered',
+      el: '.draggable',
       droppingEdge: 5
     })
   }
@@ -69,43 +107,19 @@
 
   startServerRenderedList()
 
-  // Local storage persistent data-driven list
-  const originalData = [
-    { item_id: 1, item_title: 'One', position: 5 },
-    { item_id: 2, item_title: 'Two', position: 4 },
-    { item_id: 3, item_title: 'Three', position: 3 },
-    { item_id: 4, item_title: 'Four', position: 2 },
-    { item_id: 5, item_title: 'Five', position: 1 },
-  ]
-  const dataKey = 'nestedSortData'
-  let data = JSON.parse(localStorage.getItem(dataKey)) || originalData
-  function onDrop (orderedItems) {
-    console.log(orderedItems)
-    const newData = originalData.map(origItem => {
-      const newItem = orderedItems.find(item => parseInt(item.item_id) === origItem.item_id)
-      return Object.assign({}, origItem, {
-        position: newItem.position,
-        item_parent: newItem.item_parent
-      })
-    })
-    data = newData
-    localStorage.setItem(dataKey, JSON.stringify(newData))
-  }
-
   const startDataDrivenList = () => {
     window.dataDrivenList = new NestedSort({
       actions: {
-        onDrop
+        onDrop(data) {
+          const resultWrap = document.querySelector('.result-wrap-2')
+          resultWrap.innerHTML = JSON.stringify(data, null, '  ')
+          onDropHandler(data)
+        }
       },
-      data: data,
+      data,
       init: false,
-      propertyMap: {
-        id: 'item_id',
-        parent: 'item_parent',
-        text: 'item_title',
-        order: 'position',
-      },
-      el: '#data-driven',
+      propertyMap,
+      el: '#draggable',
       droppingEdge: 5
     })
   }

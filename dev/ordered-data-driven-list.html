@@ -15,7 +15,10 @@
 
   <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
 
-  <div id="draggable"></div>
+  <div class="sample-wrap">
+    <div id="draggable"></div>
+    <pre class="result-wrap"></pre>
+  </div>
 </div>
 
 <!-- Scripts -->
@@ -38,6 +41,8 @@
     new NestedSort({
       actions: {
         onDrop: function (data) {
+          const resultWrap = document.querySelector('.result-wrap')
+          resultWrap.innerHTML = JSON.stringify(data, null, '  ')
           console.log(data)
         }
       },

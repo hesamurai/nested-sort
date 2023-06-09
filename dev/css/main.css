@@ -2,8 +2,33 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+.sample-wrap {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+#draggable,
+.draggable {
+  flex-basis: 50%;
+  margin: 0;
+}
+
+#draggable li:last-child,
+.draggable li:last-child {
+  margin-bottom: 0;
+}
+
+.result-wrap {
+  flex-basis: 50%;
+  margin: 0;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
 .nested-sort {
   padding: 0;
+  margin: 0;
 }
 
 .nested-sort--enabled li {
