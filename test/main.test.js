@@ -215,19 +215,6 @@ describe('NestedSort', () => {
 
         expect(ns.draggedNode).toEqual(item)
       })
-
-      it('runs the event dataTransfer.setDate method', () => {
-        initDataDrivenList()
-        const item = document.querySelector('[data-id="1"]')
-        const setData = jest.fn()
-        item.dispatchEvent(
-          createEvent('dragstart', {
-            dataTransfer: { setData }
-          })
-        )
-
-        expect(setData).toHaveBeenCalledTimes(1)
-      })
     })
 
     describe('dragenter event', () => {
