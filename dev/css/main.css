@@ -7,16 +7,17 @@ body {
   gap: 10px;
 }
 
-#draggable {
+#draggable, .draggable {
   flex-basis: 50%;
   margin: 20px 0 0;
 }
 
-#draggable li:last-child {
+#draggable li:last-child,
+.draggable li:last-child {
   margin-bottom: 0;
 }
 
-#result-wrap {
+.result-wrap {
   flex-basis: 50%;
   margin: 20px 0 0;
   border: 1px solid #ccc;

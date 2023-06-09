@@ -39,7 +39,7 @@
       <li data-id="8">Topic 8</li>
     </ul>
 
-    <pre id="result-wrap"></pre>
+    <pre class="result-wrap"></pre>
   </div>
 </div>
 
@@ -53,7 +53,7 @@
     window.ns = new NestedSort({
       actions: {
         onDrop: function (data) {
-          const resultWrap = document.getElementById('result-wrap')
+          const resultWrap = document.querySelector('.result-wrap')
           resultWrap.innerHTML = JSON.stringify(data, null, '  ')
           console.log(`data ${usePropertyMapping ? 'with' : 'without'} property mapping`, data)
         }

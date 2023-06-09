@@ -16,28 +16,38 @@
   <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
 
   <h2>List 1: Ordered List</h2>
-  <ol class="draggable">
-    <li data-id="1">Topic 1</li>
-    <li data-id="2">Topic 2</li>
-    <li data-id="3">Topic 3
-      <ol data-id="3">
-        <li data-id="4">Topic 4</li>
-      </ol>
-    </li>
-    <li data-id="5">Topic 5</li>
-  </ol>
+
+  <div class="sample-wrap">
+    <ol class="draggable" data-result-screen-id="1">
+      <li data-id="1">Topic 1</li>
+      <li data-id="2">Topic 2</li>
+      <li data-id="3">Topic 3
+        <ol data-id="3">
+          <li data-id="4">Topic 4</li>
+        </ol>
+      </li>
+      <li data-id="5">Topic 5</li>
+    </ol>
+
+    <pre class="result-wrap result-wrap-1"></pre>
+  </div>
 
   <h2>List 2: Unordered List</h2>
-  <ul class="draggable">
-    <li data-id="2">Topic 2
-      <ul data-id="2">
-        <li data-id="1">Topic 1</li>
-        <li data-id="3">Topic 3</li>
-      </ul>
-    </li>
-    <li data-id="4">Topic 4</li>
-    <li data-id="5">Topic 5</li>
-  </ul>
+
+  <div class="sample-wrap">
+    <ul class="draggable" data-result-screen-id="2">
+      <li data-id="2">Topic 2
+        <ul data-id="2">
+          <li data-id="1">Topic 1</li>
+          <li data-id="3">Topic 3</li>
+        </ul>
+      </li>
+      <li data-id="4">Topic 4</li>
+      <li data-id="5">Topic 5</li>
+    </ul>
+
+    <pre class="result-wrap result-wrap-2"></pre>
+  </div>
 </div>
 
 <!-- Scripts -->
@@ -48,6 +58,8 @@
       new NestedSort({
         actions: {
           onDrop: function (data) {
+            const resultWrap = document.querySelector(`.result-wrap-${list.dataset.resultScreenId}`)
+            resultWrap.innerHTML = JSON.stringify(data, null, '  ')
             console.log(data)
           }
         },
