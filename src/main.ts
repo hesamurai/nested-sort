@@ -208,6 +208,7 @@ class NestedSort {
   onDragStart(e: DragEvent): void {
     this.draggedNode = e.target as HTMLElement
     this.draggedNode.classList.add(this.classNames.dragged)
+    e.dataTransfer?.setData('text', '') // Hack for mobile devices
   }
 
   onDragOver(e: DragEvent): void {
