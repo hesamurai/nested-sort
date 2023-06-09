@@ -5,11 +5,13 @@ body {
 .sample-wrap {
   display: flex;
   gap: 10px;
+  margin: 20px 0;
 }
 
-#draggable, .draggable {
+#draggable,
+.draggable {
   flex-basis: 50%;
-  margin: 20px 0 0;
+  margin: 0;
 }
 
 #draggable li:last-child,
@@ -19,13 +21,14 @@ body {
 
 .result-wrap {
   flex-basis: 50%;
-  margin: 20px 0 0;
+  margin: 0;
   border: 1px solid #ccc;
   padding: 10px;
 }
 
 .nested-sort {
   padding: 0;
+  margin: 0;
 }
 
 .nested-sort--enabled li {
