@@ -13,27 +13,34 @@
 <div class="container">
   <h1>A server-rendered list</h1>
 
-  <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
+  <p>
+    The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse.
+    The result would appear on the right side of the screen.
+  </p>
 
   <input type="checkbox" id="property-mapping" onchange="updateList()">
   <label for="property-mapping">Use property mapping (affects the list data structure logged to the console after each drag and drop)</label>
 
-  <ul id="draggable">
-    <li data-id="1">Topic 1</li>
-    <li data-id="2">Topic 2</li>
-    <li data-id="3">Topic 3
-      <ul data-id="3">
-        <li data-id="31">Topic 3-1</li>
-        <li data-id="32">Topic 3-2</li>
-        <li data-id="33">Topic 3-3</li>
-      </ul>
-    </li>
-    <li data-id="4">Topic 4</li>
-    <li data-id="5">Topic 5</li>
-    <li data-id="6">Topic 6</li>
-    <li data-id="7">Topic 7</li>
-    <li data-id="8">Topic 8</li>
-  </ul>
+  <div class="sample-wrap">
+    <ul id="draggable">
+      <li data-id="1">Topic 1</li>
+      <li data-id="2">Topic 2</li>
+      <li data-id="3">Topic 3
+        <ul data-id="3">
+          <li data-id="31">Topic 3-1</li>
+          <li data-id="32">Topic 3-2</li>
+          <li data-id="33">Topic 3-3</li>
+        </ul>
+      </li>
+      <li data-id="4">Topic 4</li>
+      <li data-id="5">Topic 5</li>
+      <li data-id="6">Topic 6</li>
+      <li data-id="7">Topic 7</li>
+      <li data-id="8">Topic 8</li>
+    </ul>
+
+    <pre id="result-wrap"></pre>
+  </div>
 </div>
 
 <!-- Scripts -->
@@ -46,6 +53,8 @@
     window.ns = new NestedSort({
       actions: {
         onDrop: function (data) {
+          const resultWrap = document.getElementById('result-wrap')
+          resultWrap.innerHTML = JSON.stringify(data, null, '  ')
           console.log(`data ${usePropertyMapping ? 'with' : 'without'} property mapping`, data)
         }
       },
