@@ -16,7 +16,10 @@
   <p>Try to re-order the item and refresh the page. You'll see that your new order is persisting unless you clear your
     browser local storage.</p>
 
-  <div id="draggable"></div>
+  <div class="sample-wrap">
+    <div id="draggable"></div>
+    <pre class="result-wrap"></pre>
+  </div>
 </div>
 
 <!-- Scripts -->
@@ -33,6 +36,8 @@
     const dataKey = 'nestedSortData'
     const data = JSON.parse(localStorage.getItem(dataKey)) || originalData
     function onDrop (data) {
+      const resultWrap = document.querySelector('.result-wrap')
+      resultWrap.innerHTML = JSON.stringify(data, null, '  ')
       console.log(data)
       const newData = originalData.map(origItem => {
         const newItem = data.find(item => parseInt(item.item_id) === origItem.item_id)
