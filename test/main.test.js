@@ -141,7 +141,7 @@ describe('NestedSort', () => {
         const nestedLists = list.querySelectorAll('ol')
         const lists = [
           list,
-          ...nestedLists
+          ...nestedLists,
         ]
 
         expect(nestedLists.length).toBe(2)
@@ -200,7 +200,7 @@ describe('NestedSort', () => {
         initDataDrivenList()
         const item = document.querySelector('[data-id="1"]')
         item.dispatchEvent(
-          createEvent('dragstart')
+          createEvent('dragstart'),
         )
 
         expect(item.classList).toContain('ns-dragged')
@@ -210,7 +210,7 @@ describe('NestedSort', () => {
         const ns = initDataDrivenList()
         const item = document.querySelector('[data-id="1"]')
         item.dispatchEvent(
-          createEvent('dragstart')
+          createEvent('dragstart'),
         )
 
         expect(ns.draggedNode).toEqual(item)
@@ -222,8 +222,8 @@ describe('NestedSort', () => {
         const setData = jest.fn()
         item.dispatchEvent(
           createEvent('dragstart', {
-            dataTransfer: { setData }
-          })
+            dataTransfer: { setData },
+          }),
         )
 
         expect(setData).toHaveBeenCalledTimes(1)
@@ -300,7 +300,7 @@ describe('NestedSort', () => {
         item.dispatchEvent(
           createEvent('dragover', {
             preventDefault,
-          })
+          }),
         )
 
         expect(preventDefault).toHaveBeenCalledTimes(1)
@@ -343,7 +343,7 @@ describe('NestedSort', () => {
         item.dispatchEvent(
           createEvent('dragend', {
             stopPropagation,
-          })
+          }),
         )
 
         expect(stopPropagation).toHaveBeenCalledTimes(1)
@@ -358,7 +358,7 @@ describe('NestedSort', () => {
         item.dispatchEvent(
           createEvent('dragend', {
             stopPropagation,
-          })
+          }),
         )
 
         expect(ns.removeClassFromEl).toHaveBeenNthCalledWith(1, 'ns-dragged', ns.draggedNode)
@@ -374,7 +374,7 @@ describe('NestedSort', () => {
         item.dispatchEvent(
           createEvent('dragend', {
             stopPropagation,
-          })
+          }),
         )
 
         expect(ns.cleanupPlaceholderLists).toHaveBeenCalledTimes(1)
@@ -388,7 +388,7 @@ describe('NestedSort', () => {
         ns.draggedNode.dispatchEvent(
           createEvent('dragend', {
             stopPropagation,
-          })
+          }),
         )
 
         expect(ns.draggedNode).toBeUndefined()
@@ -403,7 +403,7 @@ describe('NestedSort', () => {
         ns.draggedNode.dispatchEvent(
           createEvent('dragend', {
             stopPropagation,
-          })
+          }),
         )
 
         expect(ns.targetedNode).toBeUndefined()
@@ -418,7 +418,7 @@ describe('NestedSort', () => {
         item.dispatchEvent(
           createEvent('drop', {
             stopPropagation,
-          })
+          }),
         )
 
         expect(stopPropagation).toHaveBeenCalledTimes(1)
@@ -432,7 +432,7 @@ describe('NestedSort', () => {
         item.dispatchEvent(
           createEvent('drop', {
             stopPropagation: jest.fn(),
-          })
+          }),
         )
 
         expect(ns.maybeDrop).toHaveBeenCalledTimes(1)
@@ -446,7 +446,7 @@ describe('NestedSort', () => {
         item.dispatchEvent(
           createEvent('drop', {
             stopPropagation: jest.fn(),
-          })
+          }),
         )
 
         expect(ns.cleanupPlaceholderLists).toHaveBeenCalledTimes(1)
@@ -464,7 +464,7 @@ describe('NestedSort', () => {
         item.dispatchEvent(
           createEvent('drop', {
             stopPropagation: jest.fn(),
-          })
+          }),
         )
 
         expect(onDrop).toHaveBeenCalledWith([
@@ -531,7 +531,7 @@ describe('NestedSort', () => {
           i + 1,
           event,
           ns.listEventListeners[event],
-          false
+          false,
         )
       })
     })
@@ -549,7 +549,7 @@ describe('NestedSort', () => {
         expect(el.removeEventListener).toHaveBeenNthCalledWith(
           i + 1,
           event,
-          ns.listEventListeners[event]
+          ns.listEventListeners[event],
         )
       })
     })
@@ -1256,7 +1256,7 @@ describe('NestedSort', () => {
       const ns = initDataDrivenList({
         data: [
           {id: 1, text: 'One'},
-        ]
+        ],
       })
       expect(ns.getListInterface()).toBe(HTMLOListElement)
     })
