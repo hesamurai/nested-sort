@@ -1193,6 +1193,26 @@ describe('NestedSort', () => {
         expect(depth).toBe(id.toString().split('').length - 1)
       })
     })
+
+    it('should take the depth of the dragged node into account', () => {
+      const ns = initDataDrivenList({
+        data: [
+          {id: 1, text: '1'},
+          {id: 11, text: '1-1', parent: 1},
+          {id: 111, text: '1-1-1', parent: 11},
+          {id: 1111, text: '1-1-1-1', parent: 111},
+          {id: 2, text: '2'},
+          {id: 22, text: '2-2', parent: 2},
+        ],
+      })
+
+      const node = document.querySelector('[data-id="1111"]') // has 3 levels of nesting
+      ns.draggedNode = document.querySelector('[data-id="2"]') // has 1 level of nesting since it includes the item with ID of 22
+
+      const depth = ns.getNodeDepth(node)
+
+      expect(depth).toBe(4)
+    })
   })
 
   describe('nestingThresholdReached method', () => {
