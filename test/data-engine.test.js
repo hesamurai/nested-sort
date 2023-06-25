@@ -72,7 +72,7 @@ describe('DataEngine class', () => {
       const de = new DataEngine({
         propertyMap: {
           id: 'item_id',
-        }
+        },
       })
       expect(de.maybeTransformData).toHaveBeenCalledTimes(1)
     })
@@ -90,7 +90,7 @@ describe('DataEngine class', () => {
           { id: 6, parent: '' },
         ]
         const dataEngineConfig = {
-          data
+          data,
         }
 
         expect((new DataEngine(dataEngineConfig)).sortListItems()).toEqual([
@@ -133,7 +133,7 @@ describe('DataEngine class', () => {
           { id: 10, parent: 8, order: 2 },
         ]
         const dataEngineConfig = {
-          data
+          data,
         }
         const actual = (new DataEngine(dataEngineConfig)).sortListItems()
 
@@ -210,7 +210,7 @@ describe('DataEngine class', () => {
         { id: 2, text: 'Two', order: 3 },
       ]
       const dataEngineConfig = {
-        data
+        data,
       }
 
       const list = document.createElement('ol')
@@ -238,7 +238,7 @@ describe('DataEngine class', () => {
         { id: 1, text: 'One', order: 1 },
       ]
       const dataEngineConfig = {
-        data
+        data,
       }
 
       const list = document.createElement('ol')
@@ -370,7 +370,7 @@ describe('DataEngine class', () => {
           id: 'item_id',
           parent: 'item_parent',
           text: 'item_title',
-        }
+        },
       }
 
       expect((new DataEngine(dataEngineConfig)).render()).toEqual(list)
