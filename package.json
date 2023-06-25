@@ -51,16 +51,6 @@
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch"
   },
-  "renovate": {
-    "extends": [
-      "config:js-lib"
-    ],
-    "automerge": true,
-    "major": {
-      "automerge": false
-    },
-    "automergeType": "branch"
-  },
   "files": [
     "dist"
   ]
