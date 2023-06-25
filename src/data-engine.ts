@@ -13,6 +13,7 @@ class DataEngine {
   sortedDataDomArray: Array<HTMLElement>
   propertyMap: Partial<PropertyMap>
   renderListItem: RenderListItemFn
+  boundGetItemPropProxyName: (prop: string | symbol) => string
 
   /**
    * @constructor
@@ -23,25 +24,25 @@ class DataEngine {
     this.sortedDataDomArray = []
     this.propertyMap = propertyMap
     this.renderListItem = renderListItem
+    this.boundGetItemPropProxyName = this.getItemPropProxyName.bind(this)
 
     this.maybeTransformData()
   }
 
-  maybeTransformData(): void {
-    if (!Object.keys(this.propertyMap).length || !Array.isArray(this.data)) return
-
-    const getItemPropProxyName = this.getItemPropProxyName.bind(this)
-
-    this.data = this.data.map(item => {
-      return new Proxy(item, {
-        get(target, prop, receiver) {
-          return Reflect.get(target, getItemPropProxyName(prop), receiver)
-        },
-      })
+  addMappingProxyToItem(item: DataItem): DataItem {
+    return new Proxy(item, {
+      get: (target, prop, receiver) => {
+        return Reflect.get(target, this.boundGetItemPropProxyName(prop), receiver)
+      },
     })
   }
 
-  getItemPropProxyName(prop: string): string {
+  maybeTransformData(): void {
+    if (!Object.keys(this.propertyMap).length || !Array.isArray(this.data)) return
+    this.data = this.data.map(this.addMappingProxyToItem.bind(this))
+  }
+
+  getItemPropProxyName(prop: string | symbol): string | symbol {
     if (Object.prototype.hasOwnProperty.call(this.propertyMap, prop)) {
       return this.propertyMap[prop]
     }
