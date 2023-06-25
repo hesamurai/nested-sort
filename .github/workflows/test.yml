@@ -14,10 +14,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Use Node.js v14
+      - name: Use Node.js v16.20.1
         uses: actions/setup-node@v1
         with:
-          node-version: '14'
+          node-version: '16.20.1'
           check-latest: true
 
       - name: Install dependencies
