@@ -338,12 +338,20 @@ class NestedSort {
     let depth = 0
     const list = this.getSortableList()
 
+    let selfDepth = 0
+    if (this.draggedNode) {
+      // the dragged node might be a nested list contributing to the final nesting levels
+      const depthUL = this.draggedNode.querySelectorAll('ul').length || 0
+      const depthOL = this.draggedNode.querySelectorAll('ol').length || 0
+      selfDepth = depthUL > depthOL ? depthUL : depthOL
+    }
+
     while (list !== el?.parentElement) {
       if (el?.parentElement instanceof this.listInterface) depth++
       el = el?.parentElement as HTMLElement
     }
 
-    return depth
+    return depth + selfDepth
   }
 
   nestingThresholdReached(el: HTMLElement, isPlaceHolderCheck = false): boolean {
