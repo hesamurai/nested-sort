@@ -27,12 +27,21 @@ export interface Cursor extends Coordinates {}
 
 export interface TargetNode extends Coordinates {}
 
-export interface DataItem {
-  id: string | number
-  order: number
-  parent: string | number
-  text: string
+export interface PropertyMap {
+  id?: string
+  order?: string
+  parent?: string
+  text?: string
 }
+
+type NumStr = string | number
+
+export type DataItem = {
+  id?: NumStr
+  order?: number
+  parent?: NumStr
+  text?: string
+} & Record<string, NumStr>
 
 export interface MappedDataItem {
   [key: string]: string | number | undefined
@@ -66,21 +75,14 @@ export interface Options {
   listClassNames: ClassNamesList
   listItemClassNames: ClassNamesList
   nestingLevels: string
-  propertyMap: Partial<PropertyMap>
+  propertyMap: PropertyMap
   renderListItem: RenderListItemFn
-}
-
-export interface PropertyMap {
-  id: string
-  order: string
-  parent: string
-  text: string
 }
 
 type RenderListItemFn = (el: Element, item: Partial<DataItem>) => HTMLElement
 
 export interface DataEngineOptions {
   data: Array<DataItem>
-  propertyMap: Partial<PropertyMap>
+  propertyMap: PropertyMap
   renderListItem: RenderListItemFn
 }

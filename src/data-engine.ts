@@ -11,7 +11,7 @@ class DataEngine {
   data: Array<DataItem>
   sortedData: Array<DataItem>
   sortedDataDomArray: Array<HTMLElement>
-  propertyMap: Partial<PropertyMap>
+  propertyMap: PropertyMap
   renderListItem: RenderListItemFn
   boundGetItemPropProxyName: (prop: string | symbol) => string
 
@@ -63,16 +63,19 @@ class DataEngine {
     const childItems = items
       .filter(a => !this.isTopLevelItem(a))
       .reduce((groups, item) => {
+        if (!item.parent) return groups
         if (Object.prototype.hasOwnProperty.call(groups, item.parent)) {
           groups[item.parent].push(item)
         } else {
           groups[item.parent] = [item]
         }
         return groups
-      }, {}) as Array<DataItem>
+      }, {} as Record<string, DataItem[]>)
 
     Object.keys(childItems).forEach(parentId => {
-      childItems[parentId].sort((a, b) => a.order && b.order ? a.order - b.order : 0)
+      childItems[parentId].sort((a, b) => {
+        return a.order && b.order ? a.order - b.order : 0
+      })
     })
 
     this.sortedData = [
@@ -139,6 +142,8 @@ class DataEngine {
 
     while (processedItems.length !== this.sortListItems().length) {
       processedItems = this.sortedData.reduce((processedItems, item) => {
+        if (!item.id) return processedItems
+
         const id = item.id.toString()
         if (processedItems.includes(id)) return processedItems
 
