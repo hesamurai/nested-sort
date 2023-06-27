@@ -1,4 +1,5 @@
 import {
+  AddNewItemArgs,
   DataEngineOptions,
   DataItem,
   ListElement,
@@ -86,6 +87,14 @@ class DataEngine {
     ]
 
     return this.sortedData
+  }
+
+  addNewItem({ item, asLastChild = false }: AddNewItemArgs): HTMLElement {
+    const mappedItem = this.addMappingProxyToItem(item)
+    if (Array.isArray(this.data)) {
+      this.data[asLastChild ? 'push' : 'unshift'](mappedItem)
+    }
+    return this.createItemElement(mappedItem)
   }
 
   createItemElement(item: Partial<DataItem>, nodeName = 'li'): HTMLElement {

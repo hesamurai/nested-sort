@@ -86,3 +86,8 @@ export interface DataEngineOptions {
   propertyMap: PropertyMap
   renderListItem: RenderListItemFn
 }
+
+export type AddNewItemArgs = {
+  item: DataItem
+  asLastChild?: boolean
+}
