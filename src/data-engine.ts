@@ -58,7 +58,9 @@ class DataEngine {
 
     const topLevelItems = items
       .filter(a => this.isTopLevelItem(a))
-      .sort((a, b) => a.order && b.order ? a.order - b.order : 0)
+      .sort((a, b) => {
+        return a.order && b.order ? a.order - b.order : 0
+      })
 
     const childItems = items
       .filter(a => !this.isTopLevelItem(a))
