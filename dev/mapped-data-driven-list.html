@@ -13,7 +13,17 @@
 <div class="container">
   <h1>A mapped data-driven list</h1>
 
-  <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse. Touch screens are not supported yet! 😐</p>
+  <p>The main goal is to create a tree-like list of nested items. You should be able to achieve that by simply dragging and dropping the items using your mouse.</p>
+
+  <input type="checkbox" id="property-mapping" checked onchange="updateList()">
+  <label for="property-mapping">Use property mapping</label>
+
+  <div style="margin: 20px 0;">
+    <input type="checkbox" id="new-item-position">
+    <label for="new-item-position">New item should sit at the end of the list</label>
+    <br>
+    <input type="button" value="Add New Item" id="add-new-item" style="margin-top: 5px;">
+  </div>
 
   <div class="sample-wrap">
     <div id="draggable"></div>
@@ -24,38 +34,79 @@
 <!-- Scripts -->
 <script src="../dist/nested-sort.umd.min.js"></script>
 <script>
-  (function() {
-    const data = [
-      { item_id: 1, item_title: 'One', position: 5 },
-      { item_id: 11, item_title: 'One-One', item_parent: 1, position: 1 },
-      { item_id: 2, item_title: 'Two', position: 1 },
-      { item_id: 3, item_title: 'Three', position: 2 },
-      { item_id: 1121, item_title: 'One-One-Two-One', item_parent: 112, position: 2 },
-      { item_id: 1123, item_title: 'One-One-Two-Three', item_parent: 112, position: 4 },
-      { item_id: 12, item_title: 'One-Two', item_parent: 1, position: 2 },
-      { item_id: 111, item_title: 'One-One-One', item_parent: 11, position: 1 },
-      { item_id: 112, item_title: 'One-One-Two', item_parent: 11, position: 2 },
-    ]
+  const logData = (data) => {
+    const resultWrap = document.querySelector('.result-wrap')
+    resultWrap.innerHTML = JSON.stringify(data, null, 2)
+  }
+  let data = [
+    { id: 1, text: 'One', order: 5 },
+    { id: 11, text: 'One-One', parent: 1, order: 1 },
+    { id: 2, text: 'Two', order: 1 },
+    { id: 3, text: 'Three', order: 2 },
+    { id: 1121, text: 'One-One-Two-One', parent: 112, order: 2 },
+    { id: 1123, text: 'One-One-Two-Three', parent: 112, order: 4 },
+    { id: 12, text: 'One-Two', parent: 1, order: 2 },
+    { id: 111, text: 'One-One-One', parent: 11, order: 1 },
+    { id: 112, text: 'One-One-Two', parent: 11, order: 2 },
+  ]
+  const propertyMap = {
+    id: 'item_id',
+    parent: 'item_parent',
+    text: 'item_title',
+    order: 'position',
+  }
 
-    new NestedSort({
+  document.getElementById('add-new-item').addEventListener('click', () => {
+    if (!window.ns) return
+
+    const item_title = prompt('New item name:')
+    if (!item_title) return
+
+    const item_id = item_title.toLowerCase().replaceAll(' ', '-')
+    if (document.querySelector(`#draggable [data-id="${item_id}"]`)) {
+      return alert('This is a duplicate item! Try another one please.')
+    }
+
+    const usePropertyMapping = document.getElementById('property-mapping').checked
+    const asLastChild = document.getElementById('new-item-position').checked
+
+    const item = usePropertyMapping
+      ? { [propertyMap.id]: item_id, [propertyMap.text]: item_title }
+      : { id: item_id, text: item_title }
+
+    const { data } = window.ns.addNewItem({ item, asLastChild })
+    logData(data)
+  })
+
+  function updateList() {
+    if (window.ns) {
+      window.ns.destroy()
+    }
+
+    const usePropertyMapping = document.getElementById('property-mapping').checked
+
+    window.ns = new NestedSort({
       actions: {
         onDrop: function (data) {
-          const resultWrap = document.querySelector('.result-wrap')
-          resultWrap.innerHTML = JSON.stringify(data, null, '  ')
+          logData(data)
           console.log(data)
         }
       },
-      data: data,
-      propertyMap: {
-        id: 'item_id',
-        parent: 'item_parent',
-        text: 'item_title',
-        order: 'position',
-      },
+      data: usePropertyMapping
+        ? data.map(({ id, text, order, parent }) => ({
+          [propertyMap.id]: id,
+          [propertyMap.parent]: parent,
+          [propertyMap.text]: text,
+          [propertyMap.order]: order,
+        }))
+        : [...data],
+      propertyMap: usePropertyMapping ? propertyMap : undefined,
       el: '#draggable',
       droppingEdge: 5
     })
-  })()
+  }
+
+  updateList()
 </script>
 </body>
 </html>

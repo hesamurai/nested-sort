@@ -202,6 +202,69 @@ describe('DataEngine class', () => {
     })
   })
 
+  describe('addNewItem method', () => {
+    describe('when asLastChild equals true', () => {
+      const args = { asLastChild: true }
+
+      it('should add the mapped item to the end of data array', () => {
+        const engine = new DataEngine({
+          data: [
+            { item_id: 1, item_name: 'One' },
+            { item_id: 2, item_name: 'Two' },
+          ],
+          propertyMap: { id: 'item_id', text: 'item_name' },
+        })
+        args.item = { item_id: 3, item_name: 'Three' }
+
+        engine.addNewItem(args)
+
+        const lastItem = engine.data.pop()
+
+        expect(lastItem.id).toBe(3)
+        expect(lastItem.text).toBe('Three')
+      })
+    })
+
+    describe('when asLastChild equals false', () => {
+      const args = { asLastChild: false }
+
+      it('should add the mapped item to the beginning of data array', () => {
+        const engine = new DataEngine({
+          data: [
+            { item_id: 4, item_name: 'Four' },
+            { item_id: 5, item_name: 'Five' },
+          ],
+          propertyMap: { id: 'item_id', text: 'item_name' },
+        })
+        args.item = { item_id: 6, item_name: 'Six' }
+
+        engine.addNewItem(args)
+
+        const lastItem = engine.data.shift()
+
+        expect(lastItem.id).toBe(6)
+        expect(lastItem.text).toBe('Six')
+      })
+    })
+
+    it('should return the generated list item element', () => {
+      const engine = new DataEngine({
+        propertyMap: { id: 'item_id', text: 'item_name' },
+      })
+      jest.spyOn(engine, 'createItemElement').mockReturnValue('mock-list-item')
+
+
+      const item = { item_id: 6, item_name: 'Six' }
+      const result = engine.addNewItem({ item })
+
+      expect(engine.createItemElement).toHaveBeenCalledTimes(1)
+      expect(engine.createItemElement).toHaveBeenCalledWith(
+        engine.addMappingProxyToItem(item),
+      )
+      expect(result).toBe('mock-list-item')
+    })
+  })
+
   describe('render method', () => {
     it('should return a flat list when data items do not have any parent property', () => {
       const data = [

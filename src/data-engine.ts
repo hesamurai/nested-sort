@@ -1,4 +1,5 @@
 import {
+  AddNewItemArgs,
   DataEngineOptions,
   DataItem,
   ListElement,
@@ -11,8 +12,9 @@ class DataEngine {
   data: Array<DataItem>
   sortedData: Array<DataItem>
   sortedDataDomArray: Array<HTMLElement>
-  propertyMap: Partial<PropertyMap>
+  propertyMap: PropertyMap
   renderListItem: RenderListItemFn
+  boundGetItemPropProxyName: (prop: string | symbol) => string
 
   /**
    * @constructor
@@ -23,25 +25,25 @@ class DataEngine {
     this.sortedDataDomArray = []
     this.propertyMap = propertyMap
     this.renderListItem = renderListItem
+    this.boundGetItemPropProxyName = this.getItemPropProxyName.bind(this)
 
     this.maybeTransformData()
   }
 
-  maybeTransformData(): void {
-    if (!Object.keys(this.propertyMap).length || !Array.isArray(this.data)) return
-
-    const getItemPropProxyName = this.getItemPropProxyName.bind(this)
-
-    this.data = this.data.map(item => {
-      return new Proxy(item, {
-        get(target, prop, receiver) {
-          return Reflect.get(target, getItemPropProxyName(prop), receiver)
-        },
-      })
+  addMappingProxyToItem(item: DataItem): DataItem {
+    return new Proxy(item, {
+      get: (target, prop, receiver) => {
+        return Reflect.get(target, this.boundGetItemPropProxyName(prop), receiver)
+      },
     })
   }
 
-  getItemPropProxyName(prop: string): string {
+  maybeTransformData(): void {
+    if (!Object.keys(this.propertyMap).length || !Array.isArray(this.data)) return
+    this.data = this.data.map(this.addMappingProxyToItem.bind(this))
+  }
+
+  getItemPropProxyName(prop: string | symbol): string | symbol {
     if (Object.prototype.hasOwnProperty.call(this.propertyMap, prop)) {
       return this.propertyMap[prop]
     }
@@ -57,21 +59,26 @@ class DataEngine {
 
     const topLevelItems = items
       .filter(a => this.isTopLevelItem(a))
-      .sort((a, b) => a.order && b.order ? a.order - b.order : 0)
+      .sort((a, b) => {
+        return a.order && b.order ? a.order - b.order : 0
+      })
 
     const childItems = items
       .filter(a => !this.isTopLevelItem(a))
       .reduce((groups, item) => {
+        if (!item.parent) return groups
         if (Object.prototype.hasOwnProperty.call(groups, item.parent)) {
           groups[item.parent].push(item)
         } else {
           groups[item.parent] = [item]
         }
         return groups
-      }, {}) as Array<DataItem>
+      }, {} as Record<string, DataItem[]>)
 
     Object.keys(childItems).forEach(parentId => {
-      childItems[parentId].sort((a, b) => a.order && b.order ? a.order - b.order : 0)
+      childItems[parentId].sort((a, b) => {
+        return a.order && b.order ? a.order - b.order : 0
+      })
     })
 
     this.sortedData = [
@@ -80,6 +87,14 @@ class DataEngine {
     ]
 
     return this.sortedData
+  }
+
+  addNewItem({ item, asLastChild = false }: AddNewItemArgs): HTMLElement {
+    const mappedItem = this.addMappingProxyToItem(item)
+    if (Array.isArray(this.data)) {
+      this.data[asLastChild ? 'push' : 'unshift'](mappedItem)
+    }
+    return this.createItemElement(mappedItem)
   }
 
   createItemElement(item: Partial<DataItem>, nodeName = 'li'): HTMLElement {
@@ -138,6 +153,8 @@ class DataEngine {
 
     while (processedItems.length !== this.sortListItems().length) {
       processedItems = this.sortedData.reduce((processedItems, item) => {
+        if (!item.id) return processedItems
+
         const id = item.id.toString()
         if (processedItems.includes(id)) return processedItems
 
@@ -173,7 +190,7 @@ class DataEngine {
     })
   }
 
-  render(): Node {
+  render(): HTMLOListElement {
     const list = document.createElement('ol')
     this.getListItemsDom().forEach((listItem: HTMLElement) => list.appendChild(listItem))
     return list
