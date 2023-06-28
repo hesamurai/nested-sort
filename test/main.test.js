@@ -1333,4 +1333,74 @@ describe('NestedSort', () => {
       expect(ns.getListTagName()).toBe('ul')
     })
   })
+
+  describe('addNewItem method', () => {
+    it('should add a new item to the end of the list when asLastChild equals true', () => {
+      const ns = initDataDrivenList()
+      ns.addNewItem({
+        item: { id: 3, text: 'Three' },
+        asLastChild: true,
+      })
+
+      const lastItem = document.querySelector(`#${DYNAMIC_LIST_WRAPPER_ID} li:last-child`)
+
+      expect(lastItem.innerHTML).toBe('Three')
+      expect(lastItem.dataset.id).toBe('3')
+    })
+
+    it('should add a new item to the beginning of the list when asLastChild equals false', () => {
+      const ns = initDataDrivenList()
+      ns.addNewItem({
+        item: { id: 3, text: 'Three' },
+        asLastChild: false,
+      })
+
+      const lastItem = document.querySelector(`#${DYNAMIC_LIST_WRAPPER_ID} li:first-child`)
+
+      expect(lastItem.innerHTML).toBe('Three')
+      expect(lastItem.dataset.id).toBe('3')
+    })
+
+    it('should add attribute draggable="true" if Nested Sort is already initialised', () => {
+      const ns = initDataDrivenList({
+        init: true,
+      })
+      ns.addNewItem({
+        item: { id: 3, text: 'Three' },
+        asLastChild: false,
+      })
+
+      const lastItem = document.querySelector(`#${DYNAMIC_LIST_WRAPPER_ID} li:first-child`)
+
+      expect(lastItem.getAttribute('draggable')).toBe('true')
+    })
+
+    it('should add attribute draggable="false" if Nested Sort is not initialised', () => {
+      const ns = initDataDrivenList({
+        init: false,
+      })
+      ns.addNewItem({
+        item: { id: 3, text: 'Three' },
+        asLastChild: false,
+      })
+
+      const lastItem = document.querySelector(`#${DYNAMIC_LIST_WRAPPER_ID} li:first-child`)
+
+      expect(lastItem.getAttribute('draggable')).toBe('false')
+    })
+
+    it('should return an object with data attribute holding the new list structure', () => {
+      const ns = initDataDrivenList()
+      const result = ns.addNewItem({
+        item: { id: 3, text: 'Three' },
+        asLastChild: true,
+      })
+
+      expect(result).toHaveProperty('data', [
+        { id: '1', order: 1, parent: undefined },
+        { id: '2', order: 2, parent: undefined },
+        { id: '3', order: 3, parent: undefined },
+      ])
+    })
+  })
 })

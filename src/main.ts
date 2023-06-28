@@ -1,6 +1,7 @@
 import DataEngine from './data-engine'
 import {
   Actions,
+  AddNewItemArgs,
   ClassNames,
   ClassNamesList,
   Cursor,
@@ -11,6 +12,7 @@ import {
   ListElement,
   ListInterface,
   ListTagName,
+  MappedDataItem,
   Options,
   PlaceholderMaintenanceActions,
   PropertyMap,
@@ -440,6 +442,20 @@ class NestedSort {
   getPlaceholderList(): HTMLElement {
     this.placeholderInUse = this.placeholderList.cloneNode(true) as HTMLElement
     return this.placeholderInUse
+  }
+
+  addNewItem({ item, asLastChild = false }: AddNewItemArgs): { data: MappedDataItem[] } {
+    const listItem = this.getDataEngine()
+      .addNewItem({
+        item,
+        asLastChild,
+      })
+    listItem.setAttribute('draggable', String(this.initialised))
+    this.getSortableList()?.[asLastChild ? 'append' : 'prepend'](listItem)
+
+    return {
+      data: this.getDataEngine().convertDomToData(this.getSortableList()),
+    }
   }
 }
 
