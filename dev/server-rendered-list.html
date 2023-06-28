@@ -21,22 +21,29 @@
   <input type="checkbox" id="property-mapping" onchange="updateList()">
   <label for="property-mapping">Use property mapping (affects the list data structure logged to the console after each drag and drop)</label>
 
+  <div style="margin: 20px 0;">
+    <input type="checkbox" id="new-item-position">
+    <label for="new-item-position">New item should sit at the end of the list</label>
+    <br>
+    <input type="button" value="Add New Item" id="add-new-item" style="margin-top: 5px;">
+  </div>
+
   <div class="sample-wrap">
     <ul id="draggable">
-      <li data-id="1">Topic 1</li>
-      <li data-id="2">Topic 2</li>
-      <li data-id="3">Topic 3
-        <ul data-id="3">
-          <li data-id="31">Topic 3-1</li>
-          <li data-id="32">Topic 3-2</li>
-          <li data-id="33">Topic 3-3</li>
+      <li data-id="topic-1">Topic 1</li>
+      <li data-id="topic-2">Topic 2</li>
+      <li data-id="topic-3">Topic 3
+        <ul data-id="topic-3">
+          <li data-id="topic-31">Topic 3-1</li>
+          <li data-id="topic-32">Topic 3-2</li>
+          <li data-id="topic-33">Topic 3-3</li>
         </ul>
       </li>
-      <li data-id="4">Topic 4</li>
-      <li data-id="5">Topic 5</li>
-      <li data-id="6">Topic 6</li>
-      <li data-id="7">Topic 7</li>
-      <li data-id="8">Topic 8</li>
+      <li data-id="topic-4">Topic 4</li>
+      <li data-id="topic-5">Topic 5</li>
+      <li data-id="topic-6">Topic 6</li>
+      <li data-id="topic-7">Topic 7</li>
+      <li data-id="topic-8">Topic 8</li>
     </ul>
 
     <pre class="result-wrap"></pre>
@@ -46,6 +53,33 @@
 <!-- Scripts -->
 <script src="../dist/nested-sort.umd.js"></script>
 <script>
+  const logData = (data) => {
+    const resultWrap = document.querySelector('.result-wrap')
+    resultWrap.innerHTML = JSON.stringify(data, null, 2)
+  }
+
+  document.getElementById('add-new-item').addEventListener('click', () => {
+    if (!window.ns) return
+
+    const item_name = prompt('New item name:')
+    if (!item_name) return
+
+    const item_id = item_name.toLowerCase().replaceAll(' ', '-')
+    if (document.querySelector(`#draggable [data-id="${item_id}"]`)) {
+      return alert('This is a duplicate item! Try another one please.')
+    }
+
+    const usePropertyMapping = document.getElementById('property-mapping').checked
+    const asLastChild = document.getElementById('new-item-position').checked
+
+    const item = usePropertyMapping
+      ? { item_id, item_name }
+      : { id: item_id, text: item_name }
+
+    const { data } = window.ns.addNewItem({ item, asLastChild })
+    logData(data)
+  })
+
   function updateList() {
     if (window.ns) window.ns.destroy()
 
@@ -53,14 +87,15 @@
     window.ns = new NestedSort({
       actions: {
         onDrop: function (data) {
-          const resultWrap = document.querySelector('.result-wrap')
-          resultWrap.innerHTML = JSON.stringify(data, null, '  ')
+          logData(data)
           console.log(`data ${usePropertyMapping ? 'with' : 'without'} property mapping`, data)
         }
       },
       propertyMap: usePropertyMapping ? {
         id: 'item_id',
         order: 'position',
+        parent: 'child_of',
+        text: 'item_name',
       } : undefined,
       el: '#draggable',
       droppingEdge: 5
