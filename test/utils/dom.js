@@ -13,10 +13,10 @@ export const createEvent = (type, props = {}) => {
       clientX: 0,
       clientY: 0,
       dataTransfer: {
-        setData: jest.fn()
-      }
+        setData: jest.fn(),
+      },
     },
-    props
+    props,
   )
 
   return event
@@ -41,6 +41,6 @@ export const initDataDrivenList = (options = {}) => {
       {id: 2, text: 'Two'},
     ],
     el: `#${DYNAMIC_LIST_WRAPPER_ID}`,
-    ...options
+    ...options,
   })
 }
