@@ -1,6 +1,6 @@
 {
   "name": "nested-sort",
-  "version": "5.1.3",
+  "version": "5.2.0",
   "author": "Hesam Bahrami (hesamurai)",
   "description": "A JavaScript library for sorting a nested list of items via drag and drop.",
   "umdClassName": "NestedSort",
