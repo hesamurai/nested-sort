@@ -3,7 +3,7 @@
 [![npm version](https://badge.fury.io/js/nested-sort.svg)](https://badge.fury.io/js/nested-sort)
 [![](https://data.jsdelivr.com/v1/package/npm/nested-sort/badge)](https://www.jsdelivr.com/package/npm/nested-sort)
 
-Nested Sort is a vanilla JavaScript library, without any dependencies, which helps you to sort a nested list of items via drag and drop. Unfortunately, it does not support touch screens yet.
+Nested Sort is a vanilla JavaScript library, without any dependencies, which helps you to sort a nested list of items via drag and drop.
 
 ![](demo.gif)
 
