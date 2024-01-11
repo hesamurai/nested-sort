@@ -34,6 +34,7 @@ class NestedSort {
   listInterface: ListInterface
   listItemClassNames: Array<string>
   mainListClassName: string
+  mouseTarget: HTMLElement
   nestingLevels: number
   placeholderList: HTMLElement
   placeholderInUse: HTMLElement
@@ -46,6 +47,7 @@ class NestedSort {
 
   constructor({
     actions = {},
+    classNames,
     data,
     droppingEdge = 15,
     el,
@@ -75,9 +77,13 @@ class NestedSort {
       droppingEdge,
     }
     this.classNames = {
-      dragged: 'ns-dragged',
-      placeholder: 'ns-placeholder',
-      targeted: 'ns-targeted',
+      ...{
+        dragged: 'ns-dragged',
+        handle: null,
+        placeholder: 'ns-placeholder',
+        targeted: 'ns-targeted',
+      },
+      ...classNames,
     }
     this.listEventListeners = {
       dragover: this.onDragOver.bind(this),
@@ -85,6 +91,7 @@ class NestedSort {
       dragenter: this.onDragEnter.bind(this),
       dragend: this.onDragEnd.bind(this),
       drop: this.onDrop.bind(this),
+      mousedown: this.onMouseDown.bind(this),
     }
     const intNestingLevels = parseInt(nestingLevels)
     this.nestingLevels = isNaN(intNestingLevels) ? -1 : intNestingLevels // values less than 0 mean infinite levels of nesting
@@ -209,6 +216,10 @@ class NestedSort {
   }
 
   onDragStart(e: DragEvent): void {
+    if (this.classNames.handle && ! this.mouseTarget.closest(`.${this.classNames.handle}`)) {
+      e.preventDefault() // Don't allow dragging if handles are specified
+      return
+    }
     this.draggedNode = e.target as HTMLElement
     this.draggedNode.classList.add(this.classNames.dragged)
     e.dataTransfer?.setData('text', '') // Hack for mobile devices
@@ -245,6 +256,10 @@ class NestedSort {
     if (typeof this.actions.onDrop === 'function') {
       this.actions.onDrop(this.getDataEngine().convertDomToData(this.getSortableList()))
     }
+  }
+
+  onMouseDown(e: MouseEvent): void {
+    this.mouseTarget = e.target as HTMLElement
   }
 
   updateCoordination(e: DragEvent): void {

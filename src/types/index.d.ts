@@ -14,6 +14,7 @@ export type PlaceholderMaintenanceActions = Array<'add' | 'cleanup'>
 
 export interface ClassNames {
   dragged: string
+  handle: string | null
   placeholder: string
   targeted: string
 }
@@ -62,12 +63,14 @@ export interface EventListeners {
   dragenter: (e: object) => void
   dragend: (e: object) => void
   drop: (e: object) => void
+  mousedown: (e: object) => void
 }
 
 export type ClassNamesList = Array<string> | string
 
 export interface Options {
   actions: Actions
+  classNames: ClassNames
   data: Array<DataItem>
   droppingEdge: number
   el: HTMLElement | string
