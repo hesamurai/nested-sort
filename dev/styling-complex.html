@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Nested Sort | Nesting Levels Option Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="css/main.css" rel="stylesheet">
+  <style>
+    .nested-sort li {
+      padding: 0;
+    }
+
+    .nested-sort li>ul {
+      margin: 10px 10px 10px 20px;
+    }
+
+    .fancy {
+      display: flex;
+      column-gap: 2rem;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Styling - Complex Items</h1>
+
+  <div class="sample-wrap">
+    <ul id="draggable">
+      <li data-id="1">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 1</div>
+        </div>
+      </li>
+      <li data-id="2">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 2</div>
+        </div>
+      </li>
+      <li data-id="3">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 3</div>
+        </div>
+      </li>
+      <li data-id="4">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 4</div>
+        </div>
+      </li>
+      <li data-id="5">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 5</div>
+        </div>
+      </li>
+      <li data-id="6">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 6</div>
+        </div>
+      </li>
+      <li data-id="7">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 7</div>
+        </div>
+      </li>
+      <li data-id="8">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 8</div>
+        </div>
+      </li>
+      <li data-id="9">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 9</div>
+        </div>
+      </li>
+      <li data-id="10">
+        <div class="fancy">
+          <div class="icon"><i class="fa fa-arrows"></i></div>
+          <div class="title">Topic 10</div>
+        </div>
+      </li>
+    </ul>
+    <pre class="result-wrap"></pre>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="../dist/nested-sort.umd.js"></script>
+<script>
+    new NestedSort({
+      actions: {
+        onDrop: function (data) {
+          const resultWrap = document.querySelector('.result-wrap')
+          resultWrap.innerHTML = JSON.stringify(data, null, '  ')
+          console.log(data)
+        }
+      },
+      el: '#draggable',
+      droppingEdge: 5,
+      nestingLevels: -1
+    })
+</script>
+</body>
+</html>
