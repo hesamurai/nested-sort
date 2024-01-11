@@ -221,10 +221,11 @@ class NestedSort {
   }
 
   onDragEnter(e: DragEvent): void {
-    if (!this.canBeTargeted(e.target as HTMLElement)) return
+    const target = (e.target as HTMLElement)?.closest(`li[data-id],.${this.classNames.placeholder}`) as HTMLElement
+    if (!target || !this.canBeTargeted(target)) return
 
     this.removeClassFromEl(this.classNames.targeted, this.targetedNode)
-    this.targetedNode = e.target as HTMLElement
+    this.targetedNode = target
     this.targetedNode.classList.add(this.classNames.targeted)
   }
 
