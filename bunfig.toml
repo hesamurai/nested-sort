@@ -1,0 +1,2 @@
+[test]
+preload = ["./test/__mocks__/dom.js"]

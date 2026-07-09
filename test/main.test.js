@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, jest } from 'bun:test'
 import NestedSort from '../src/main'
 import DataEngine from '../src/data-engine'
 import {
@@ -13,6 +14,10 @@ import {
 describe('NestedSort', () => {
   beforeEach(() => {
     document.body.innerHTML = `<div id="${DYNAMIC_LIST_WRAPPER_ID}"></div>`
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
   })
 
   describe('upon instantiation', () => {
@@ -478,10 +483,6 @@ describe('NestedSort', () => {
   describe('When the list is server rendered', () => {
     beforeEach(() => {
       initServerRenderedList()
-    })
-
-    afterEach(() => {
-      jest.restoreAllMocks()
     })
 
     it('should not call the getDataEngine method (upon instantiating) which resides inside the maybeInitDataDom method which goes through the early return', () => {

@@ -1,7 +1,12 @@
+import { afterEach, beforeEach, describe, expect, it, jest } from 'bun:test'
 import DataEngine from '../src/data-engine'
 
 describe('DataEngine class', () => {
   let list
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
 
   beforeEach(() => {
     list = document.createElement('ol')

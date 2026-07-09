@@ -38,7 +38,7 @@ class NestedSort {
   placeholderList: HTMLElement
   placeholderInUse: HTMLElement
   propertyMap: Partial<PropertyMap>
-  renderListItem: RenderListItemFn
+  renderListItem?: RenderListItemFn
   sortableList: ListElement
   targetedNode?: HTMLElement
   targetNode: TargetNode
@@ -46,7 +46,7 @@ class NestedSort {
 
   constructor({
     actions = {},
-    data,
+    data = [],
     droppingEdge = 15,
     el,
     init = true,
@@ -86,7 +86,7 @@ class NestedSort {
       dragend: this.onDragEnd.bind(this),
       drop: this.onDrop.bind(this),
     }
-    const intNestingLevels = parseInt(nestingLevels)
+    const intNestingLevels = parseInt(String(nestingLevels))
     this.nestingLevels = isNaN(intNestingLevels) ? -1 : intNestingLevels // values less than 0 mean infinite levels of nesting
     this.listInterface = this.getListInterface()
 
@@ -110,7 +110,7 @@ class NestedSort {
     return this.dataEngine
   }
 
-  createListClassNamesArray(listClassNames: ClassNamesList): Array<string> {
+  createListClassNamesArray(listClassNames?: ClassNamesList): Array<string> {
     if (!listClassNames) return []
     return Array.isArray(listClassNames) ? listClassNames : listClassNames.split(' ')
   }

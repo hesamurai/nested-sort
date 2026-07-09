@@ -51,23 +51,6 @@
 </div>
 
 <!-- Scripts -->
-<script src="../dist/nested-sort.umd.min.js"></script>
-<script>
-  (function() {
-    document.querySelectorAll('.draggable').forEach(function (list) {
-      new NestedSort({
-        actions: {
-          onDrop: function (data) {
-            const resultWrap = document.querySelector(`.result-wrap-${list.dataset.resultScreenId}`)
-            resultWrap.innerHTML = JSON.stringify(data, null, '  ')
-            console.log(data)
-          }
-        },
-        droppingEdge: 5,
-        el: list
-      })
-    })
-  })()
-</script>
+<script type="module" src="server-rendered-multiple-lists.ts"></script>
 </body>
 </html>

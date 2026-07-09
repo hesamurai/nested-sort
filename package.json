@@ -4,8 +4,15 @@
   "author": "Hesam Bahrami (hesamurai)",
   "description": "A JavaScript library for sorting a nested list of items via drag and drop.",
   "umdClassName": "NestedSort",
-  "main": "dist/nested-sort.cjs.js",
-  "module": "dist/nested-sort.esm.js",
+  "type": "module",
+  "module": "dist/nested-sort.js",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/nested-sort.js"
+    }
+  },
   "browser": "dist/nested-sort.umd.js",
   "browserMin": "dist/nested-sort.umd.min.js",
   "license": "MIT",
@@ -13,43 +20,32 @@
     "type": "git",
     "url": "https://github.com/hesamurai/nested-sort"
   },
+  "engines": {
+    "bun": ">=1.2.0"
+  },
+  "trustedDependencies": [
+    "husky"
+  ],
   "devDependencies": {
-    "@babel/core": "^7.21.8",
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
-    "@babel/plugin-transform-runtime": "^7.21.4",
-    "@babel/preset-env": "^7.21.5",
-    "@babel/preset-typescript": "^7.21.5",
-    "@rollup/plugin-babel": "^5.3.1",
-    "@rollup/plugin-commonjs": "^16.0.0",
-    "@rollup/plugin-eslint": "^8.0.5",
-    "@rollup/plugin-node-resolve": "^10.0.0",
-    "@types/jest": "^29.5.2",
-    "@types/node": "^20.3.1",
+    "@types/bun": "^1.3.14",
     "@typescript-eslint/eslint-plugin": "^5.59.5",
     "@typescript-eslint/parser": "^5.59.5",
-    "babel-jest": "^27.5.1",
-    "concurrently": "^6.5.1",
     "eslint": "^7.32.0",
     "husky": "^4.3.8",
-    "jest": "^26.6.3",
     "jsdom": "^16.7.0",
-    "rollup": "^2.79.1",
-    "rollup-plugin-terser": "^7.0.2",
-    "serve": "^14.2.0",
-    "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
   "scripts": {
-    "prepare": "npm run build",
-    "build": "npm run build:types && npm run build:js",
-    "build:js": "rollup -c",
-    "build:types": "tsc --emitDeclarationOnly",
-    "build:watch": "rollup -c -w",
-    "watch": "concurrently 'npm run build:watch' 'serve -l tcp://127.0.0.1'",
-    "test": "jest && npm run build",
-    "test:coverage": "jest --coverage",
-    "test:watch": "jest --watch"
+    "prepare": "bun run build",
+    "build": "bun run build:js && bun run build:types",
+    "build:types": "tsc --emitDeclarationOnly && mkdir -p dist/types && cp src/types/index.d.ts dist/types/index.d.ts",
+    "build:js": "bun run scripts/build.ts",
+    "dev": "bun --hot dev/dev-server.ts",
+    "lint": "eslint 'src/**/*.ts' 'test/**/*.js'",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p dev/tsconfig.json",
+    "test": "bun test && bun run typecheck && bun run build",
+    "test:coverage": "bun test --coverage",
+    "test:watch": "bun test --watch"
   },
   "files": [
     "dist"

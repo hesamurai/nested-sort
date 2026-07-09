@@ -23,9 +23,9 @@ export interface Coordinates {
   Y: number
 }
 
-export interface Cursor extends Coordinates {}
+export type Cursor = Coordinates
 
-export interface TargetNode extends Coordinates {}
+export type TargetNode = Coordinates
 
 export interface PropertyMap {
   id?: string
@@ -41,7 +41,7 @@ export type DataItem = {
   order?: number
   parent?: NumStr
   text?: string
-} & Record<string, NumStr>
+} & Record<string, NumStr | undefined>
 
 export interface MappedDataItem {
   [key: string]: string | number | undefined
@@ -67,24 +67,24 @@ export interface EventListeners {
 export type ClassNamesList = Array<string> | string
 
 export interface Options {
-  actions: Actions
-  data: Array<DataItem>
-  droppingEdge: number
+  actions?: Actions
+  data?: Array<DataItem>
+  droppingEdge?: number
   el: HTMLElement | string
-  init: boolean
-  listClassNames: ClassNamesList
-  listItemClassNames: ClassNamesList
-  nestingLevels: string
-  propertyMap: PropertyMap
-  renderListItem: RenderListItemFn
+  init?: boolean
+  listClassNames?: ClassNamesList
+  listItemClassNames?: ClassNamesList
+  nestingLevels?: NumStr
+  propertyMap?: PropertyMap
+  renderListItem?: RenderListItemFn
 }
 
-type RenderListItemFn = (el: Element, item: Partial<DataItem>) => HTMLElement
+type RenderListItemFn = (el: HTMLElement, item: Partial<DataItem>) => HTMLElement
 
 export interface DataEngineOptions {
-  data: Array<DataItem>
-  propertyMap: PropertyMap
-  renderListItem: RenderListItemFn
+  data?: Array<DataItem>
+  propertyMap?: PropertyMap
+  renderListItem?: RenderListItemFn
 }
 
 export type AddNewItemArgs = {

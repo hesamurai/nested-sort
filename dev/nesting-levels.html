@@ -34,25 +34,6 @@
 </div>
 
 <!-- Scripts -->
-<script src="../dist/nested-sort.umd.js"></script>
-<script>
-  function updateNestingLevels() {
-    if (window.ns) window.ns.destroy()
-    window.ns = new NestedSort({
-      actions: {
-        onDrop: function (data) {
-          const resultWrap = document.querySelector('.result-wrap')
-          resultWrap.innerHTML = JSON.stringify(data, null, '  ')
-          console.log(data)
-        }
-      },
-      el: '#draggable',
-      droppingEdge: 5,
-      nestingLevels: document.getElementById('nesting-level').value
-    })
-  }
-
-  updateNestingLevels()
-</script>
+<script type="module" src="nesting-levels.ts"></script>
 </body>
 </html>

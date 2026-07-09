@@ -13,13 +13,13 @@ class DataEngine {
   sortedData: Array<DataItem>
   sortedDataDomArray: Array<HTMLElement>
   propertyMap: PropertyMap
-  renderListItem: RenderListItemFn
+  renderListItem?: RenderListItemFn
   boundGetItemPropProxyName: (prop: string | symbol) => string
 
   /**
    * @constructor
    */
-  constructor({ data, propertyMap = {}, renderListItem }: DataEngineOptions) {
+  constructor({ data = [], propertyMap = {}, renderListItem }: DataEngineOptions) {
     this.data = data
     this.sortedData = []
     this.sortedDataDomArray = []

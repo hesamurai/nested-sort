@@ -4,13 +4,16 @@
     "declaration": true,
     "declarationDir": "./dist",
     "esModuleInterop": true,
-    "module": "es6",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "noImplicitAny": false,
     "outDir": "./dist",
-    "target": "es5",
+    "target": "es2021",
+    "types": [
+      "@types/bun"
+    ],
     "lib": [
-      "es2019",
+      "es2021",
       "dom"
     ],
   },
